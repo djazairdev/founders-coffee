@@ -21,6 +21,7 @@ const data: SitemapData = {
     },
   ],
   organisations: [],
+  profiles: [{ userId: 'usr_listed' }],
 };
 
 describe('llms discovery guide', () => {

@@ -182,6 +182,7 @@ export const profileDetailsSchema = z.strictObject({
   skills: profileSkillsSchema.default([]),
   links: profileLinksSchema.default([]),
   openTo: profileOpenToListSchema.default([]),
+  indexable: z.boolean().default(false),
   visibility: profileVisibilitySchema.default(() =>
     profileVisibilitySchema.parse({}),
   ),

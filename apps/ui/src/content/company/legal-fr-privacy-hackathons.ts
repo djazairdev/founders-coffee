@@ -38,7 +38,7 @@ export const privacyHackathonsFrench = section(
       '**Votre équipe :** ses membres, son dépôt, ainsi que les notes et commentaires du jury sur celui-ci, les membres du jury étant numérotés et non nommés.',
       '**Les modérateurs :** les signalements, les dépôts et équipes concernés et les décisions prises.',
       '**Les sponsors et fournisseurs de prix :** des totaux uniquement, comme le nombre d’inscrits. Ils ne reçoivent de notre part ni votre nom, ni vos coordonnées, ni vos notes.',
-      '**Les moteurs de recherche :** votre page de profil est marquée pour qu’ils ne la référencent pas. La page d’un projet n’est référencée que si son équipe l’active. Les pages des hackathons et des organisations sont publiques et peuvent être référencées.',
+      '**Les moteurs de recherche :** votre page de profil est marquée pour qu’ils ne la référencent pas, sauf si vous activez son réglage « Moteurs de recherche ». La page d’un projet n’est référencée que si son équipe l’active. Les pages des hackathons et des organisations sont publiques et peuvent être référencées.',
     ]),
     subheading('Base légale et fermeture du compte'),
     ...text(

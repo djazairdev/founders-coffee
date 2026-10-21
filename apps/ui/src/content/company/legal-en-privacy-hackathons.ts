@@ -38,7 +38,7 @@ export const privacyHackathonsEnglish = section(
       '**Your team:** its members, its submission, and the judges’ scores and comments on it, with judges numbered rather than named.',
       '**Moderators:** reports, the submissions and teams they concern, and the decisions taken on them.',
       '**Sponsors and prize providers:** totals only, such as how many people registered. They do not receive your name, your contact details or your scores from us.',
-      '**Search engines:** your profile page is marked so that search engines do not list it. A project’s page is listed only if its team turns that on. Hackathon and organisation pages are public and can be listed.',
+      '**Search engines:** your profile page is marked so that search engines do not list it, unless you turn on its search engines switch. A project’s page is listed only if its team turns that on. Hackathon and organisation pages are public and can be listed.',
     ]),
     subheading('Legal basis and closing your account'),
     ...text(

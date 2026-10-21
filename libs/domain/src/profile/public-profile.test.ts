@@ -49,6 +49,7 @@ describe('public profile projection', () => {
       skills: [],
       links: [],
       openTo: [],
+      indexable: false,
       hostedCount: 6,
       attendedCount: null,
       hackathonRecord: [],
@@ -88,6 +89,7 @@ describe('public profile projection', () => {
       skills: owner.skills,
       links: owner.links,
       openTo: owner.openTo,
+      indexable: false,
       hostedCount: 6,
       attendedCount: 11,
       hackathonRecord: [],
@@ -138,6 +140,16 @@ describe('public profile projection', () => {
         email: 'private@example.com',
       }).success,
     ).toBe(false);
+  });
+
+  it('carries the search-engine choice, which publishes no field by itself (B-PRF-04)', () => {
+    const listed = projectPublicProfile({ ...owner, indexable: true }, record);
+
+    expect(listed.indexable).toBe(true);
+    expect(listed).toEqual({
+      ...projectPublicProfile(owner, record),
+      indexable: true,
+    });
   });
 
   it('publishes the hosted count whatever the member chose, and never a negative or fractional one', () => {

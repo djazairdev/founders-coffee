@@ -21,45 +21,29 @@ export const SITE_ORIGIN = PRODUCTION_ORIGIN;
 export const SITE_NAME = 'Founders Coffee';
 export const DEFAULT_SOCIAL_IMAGE_PATH = '/social/founders-coffee-default.png';
 
-export type CanonicalRoute =
-  | {
-      readonly type: 'market';
-      readonly market: string;
-      readonly locale?: Locale;
-      readonly query?: string;
-    }
-  | {
-      readonly type: 'city';
-      readonly market: string;
-      readonly city: string;
-      readonly locale?: Locale;
-      readonly query?: string;
-    }
-  | {
-      readonly type: 'event';
-      readonly market: string;
-      readonly slug: string;
-      readonly locale?: Locale;
-      readonly query?: string;
-    }
-  | {
-      readonly type: 'organisation';
-      readonly slug: string;
-      readonly locale?: Locale;
-      readonly query?: string;
-    }
-  | {
-      readonly type: 'project';
-      readonly slug: string;
-      readonly locale?: Locale;
-      readonly query?: string;
-    }
-  | {
-      readonly type: 'company';
-      readonly path: string;
-      readonly locale?: Locale;
-      readonly query?: string;
-    };
+type RouteVariant = {
+  readonly locale?: Locale;
+  readonly query?: string;
+};
+
+export type CanonicalRoute = RouteVariant &
+  (
+    | { readonly type: 'market'; readonly market: string }
+    | {
+        readonly type: 'city';
+        readonly market: string;
+        readonly city: string;
+      }
+    | {
+        readonly type: 'event';
+        readonly market: string;
+        readonly slug: string;
+      }
+    | { readonly type: 'organisation'; readonly slug: string }
+    | { readonly type: 'project'; readonly slug: string }
+    | { readonly type: 'profile'; readonly userId: string }
+    | { readonly type: 'company'; readonly path: string }
+  );
 
 const canonicalSegments = (route: CanonicalRoute): string[] => {
   const locale = route.locale ? [route.locale] : [];
@@ -68,6 +52,7 @@ const canonicalSegments = (route: CanonicalRoute): string[] => {
   if (route.type === 'event') return [...locale, route.market, 'e', route.slug];
   if (route.type === 'organisation') return [...locale, 'o', route.slug];
   if (route.type === 'project') return [...locale, 'p', route.slug];
+  if (route.type === 'profile') return [...locale, 'u', route.userId];
   return [...locale, ...route.path.split(/[?#]/u, 1)[0].split('/')];
 };
 

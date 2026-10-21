@@ -18,6 +18,7 @@ const PRIMARY_TYPES = {
   market: 'CollectionPage',
   organisation: 'ProfilePage',
   project: 'CreativeWork',
+  profile: 'ProfilePage',
 };
 const PRIVATE_KEYS = new Set(['email', 'phone', 'hostid', 'rsvps']);
 

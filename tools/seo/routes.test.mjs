@@ -37,6 +37,8 @@ describe('telling one kind of route from another', () => {
     ['/en/o/code-club', 'organisation'],
     ['/ar/o/founders-coffee', 'organisation'],
     ['/en/p/ledger-ab12', 'project'],
+    ['/ar/u/usr_1', 'profile'],
+    ['/en/algeria/u', 'city'],
   ])('reads %s as a %s route', (path, type) => {
     expect(classifyPath(path)).toBe(type);
   });

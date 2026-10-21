@@ -80,4 +80,5 @@ export type {
   SitemapMarket,
   SitemapOrganisation,
   SitemapProject,
+  SitemapProfile,
 } from './sitemap.js';
