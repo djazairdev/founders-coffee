@@ -30,6 +30,7 @@ import { sweepProfileAssets } from './jobs/profile-asset-sweep.js';
 import { backfillCloseoutPrompts } from './jobs/closeout-prompt-backfill.js';
 import { sweepChatRetention } from './jobs/chat-retention.js';
 import { sweepExpiredHackathonReports } from './jobs/hackathon-report-retention.js';
+import { sweepHackathonTeamRetention } from './jobs/hackathon-team-retention.js';
 import {
   processHackathonInterestLaunch,
   sweepHackathonInterestLaunches,
@@ -191,6 +192,7 @@ export default {
         await sweepExpiredHackathonInterest(db);
         await sweepChatRetention(db);
         await sweepExpiredHackathonReports(db);
+        await sweepHackathonTeamRetention(db);
       }
     },
   ),

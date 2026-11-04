@@ -87,6 +87,7 @@ export * from './hackathon-judge-entries.js';
 export * from './hackathon-judge-progress.js';
 export * from './hackathon-certificates.js';
 export * from './hackathon-results.js';
+export * from './hackathon-team-retention.js';
 export * from './project-from-entry.js';
 export * from './hackathon-results-recipients.js';
 export * from './hackathon-team-feedback.js';
