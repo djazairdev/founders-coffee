@@ -107,6 +107,7 @@ export const setPullRequestStatus = async (
             eq(hackathonSubmissions.eventId, input.eventId),
             eq(hackathonSubmissions.status, 'submitted'),
             isNull(hackathons.resultsPublishedAt),
+            eq(events.status, 'published'),
             sql`${events.startsAt} <= unixepoch()`,
             sql`EXISTS (SELECT 1 FROM hackathon_submission_versions v, json_each(v.pull_request_urls) j WHERE v.submission_id = ${hackathonSubmissions.id} AND v.version = (SELECT max(version) FROM hackathon_submission_versions WHERE submission_id = v.submission_id) AND j.value = ${input.url})`,
           ),

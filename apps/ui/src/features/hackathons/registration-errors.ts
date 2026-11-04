@@ -3,6 +3,7 @@ import {
   hackathon_register_error_already,
   hackathon_register_error_closed,
   hackathon_register_error_failed,
+  hackathon_register_error_judge,
   hackathon_register_error_mode,
   hackathon_register_error_rate_limited,
   hackathon_register_need_age,
@@ -28,6 +29,8 @@ export const registrationErrorMessage = (
     case 'already_registered':
     case 'not_registered':
       return hackathon_register_error_already({}, options);
+    case 'already_judge':
+      return hackathon_register_error_judge({}, options);
     case 'withdrawal_closed':
       return hackathon_withdraw_error_closed({}, options);
     case 'captain_must_transfer':

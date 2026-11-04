@@ -98,8 +98,8 @@ const holdsPlace = (
  * Accept an invite link as the member, in one statement: the place takes their account only while
  * it is still invited, they hold no other place in it, which the unique index on the hackathon and
  * the member would otherwise refuse with an error, and they have not accepted the other role's
- * place in the same hackathon (B-HKN-25). `extra` fills the role's own columns. Returns whether
- * they accepted.
+ * place in the same hackathon (B-HKN-25). `extra` fills the role's own columns and `isAllowed` adds
+ * a role's own condition. Returns whether they accepted.
  */
 export const acceptPlaceInvite = async (
   db: Db,
@@ -113,6 +113,7 @@ export const acceptPlaceInvite = async (
       readonly officeHours: string | null;
     };
   },
+  isAllowed?: SQL,
 ): Promise<boolean> =>
   changed(
     await db
@@ -130,6 +131,7 @@ export const acceptPlaceInvite = async (
           eq(table.status, 'invited'),
           sql`NOT ${holdsPlace(table, table, input)}`,
           sql`NOT ${holdsPlace(table, other, input)}`,
+          isAllowed,
         ),
       ),
   );

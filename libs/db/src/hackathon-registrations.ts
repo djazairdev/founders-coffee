@@ -1,4 +1,4 @@
-import { and, eq, sql } from 'drizzle-orm';
+import { and, eq, inArray, sql } from 'drizzle-orm';
 
 import type {
   AttendanceMode,
@@ -8,7 +8,12 @@ import type {
 import { batch } from './atomic.js';
 import type { Db } from './db.js';
 import { bound } from './insert-select.js';
-import { events, hackathonRegistrations, hackathons } from './schema.js';
+import {
+  events,
+  hackathonJudges,
+  hackathonRegistrations,
+  hackathons,
+} from './schema.js';
 
 export type NewRegistration = {
   readonly id: string;
@@ -27,6 +32,7 @@ export type RegistrationWrite =
       readonly status: 'registered' | 'waitlisted';
     }
   | { readonly outcome: 'already_registered' }
+  | { readonly outcome: 'already_judge' }
   | { readonly outcome: 'registration_closed' };
 
 const seconds = (date: Date): number => Math.floor(date.getTime() / 1000);
@@ -40,7 +46,8 @@ const seconds = (date: Date): number => Math.floor(date.getTime() / 1000);
  * `registered` while that count is under the capacity, or always without one, `waitlisted` once it is
  * full. The count goes up in the batch's second statement, only for a row the first one wrote as
  * `registered`, so two members taking the last place serialise and one of them waits. An existing
- * registration of the member's, whatever its status, is left as it is.
+ * registration of the member's, whatever its status, is left as it is, and a member who judges the
+ * hackathon cannot take part in it (B-SAFE-04).
  */
 export const createHackathonRegistration = async (
   db: Db,
@@ -48,6 +55,7 @@ export const createHackathonRegistration = async (
 ): Promise<RegistrationWrite> => {
   const opens = hackathons.registrationOpensAt;
   const closes = hackathons.registrationClosesAt;
+  const isNotJudge = sql`NOT EXISTS (SELECT 1 FROM ${hackathonJudges} WHERE ${hackathonJudges.eventId} = ${registration.eventId} AND ${hackathonJudges.userId} = ${registration.userId} AND ${hackathonJudges.status} = 'accepted')`;
   const [inserted] = await batch(db, [
     db
       .insert(hackathonRegistrations)
@@ -89,6 +97,7 @@ export const createHackathonRegistration = async (
               eq(events.kind, 'hackathon'),
               eq(events.status, 'published'),
               sql`${opens} <= unixepoch() AND ${closes} > unixepoch()`,
+              isNotJudge,
             ),
           ),
       )
@@ -123,9 +132,39 @@ export const createHackathonRegistration = async (
       ),
     )
     .limit(1);
-  return existing
-    ? { outcome: 'already_registered' }
+  if (existing) return { outcome: 'already_registered' };
+  const [judge] = await db
+    .select({ status: hackathonJudges.status })
+    .from(hackathonJudges)
+    .where(
+      and(
+        eq(hackathonJudges.eventId, registration.eventId),
+        eq(hackathonJudges.userId, registration.userId),
+      ),
+    )
+    .limit(1);
+  return judge?.status === 'accepted'
+    ? { outcome: 'already_judge' }
     : { outcome: 'registration_closed' };
+};
+
+/** Whether a member takes part in a hackathon, or waits to: registered or on its waitlist. */
+export const holdsHackathonRegistration = async (
+  db: Db,
+  input: { readonly eventId: string; readonly userId: string },
+): Promise<boolean> => {
+  const [row] = await db
+    .select({ id: hackathonRegistrations.id })
+    .from(hackathonRegistrations)
+    .where(
+      and(
+        eq(hackathonRegistrations.eventId, input.eventId),
+        eq(hackathonRegistrations.userId, input.userId),
+        inArray(hackathonRegistrations.status, ['registered', 'waitlisted']),
+      ),
+    )
+    .limit(1);
+  return row !== undefined;
 };
 
 /** Whether a member holds a place in a hackathon: registered, not waiting, withdrawn or removed. */

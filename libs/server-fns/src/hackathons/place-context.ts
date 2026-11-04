@@ -10,6 +10,7 @@ export type PlaceHackathon = {
   readonly title: string;
   readonly slug: string;
   readonly timeline: hackathons.HackathonTimeline;
+  readonly isDraft: boolean;
   readonly isCancelled: boolean;
   readonly isResultsPublished: boolean;
 };
@@ -32,6 +33,7 @@ export const loadPlaceHackathon = async (
     marketCode: event.marketCode,
     title: event.title,
     slug: event.slug,
+    isDraft: event.status === 'draft',
     isCancelled: event.status === 'cancelled',
     isResultsPublished: hackathon.resultsPublishedAt !== null,
     timeline: {

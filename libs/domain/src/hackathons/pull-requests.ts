@@ -37,13 +37,14 @@ export type PullRequestCounts = {
 
 /**
  * Decide whether an organiser may record what maintainers did with one pull request of an
- * open-source entry (B-SUB-08): once the hackathon has begun and until its results are published,
+ * open-source entry (B-SUB-08): unless it was cancelled, once the hackathon has begun and until its results are published,
  * for an entry that was submitted and not disqualified, and a pull request in the version it last
  * submitted. Merges stay the maintainers' decision; this only records it.
  */
 export const decidePullRequestStatus = (input: {
   readonly timeline: HackathonTimeline;
   readonly now: number;
+  readonly isCancelled: boolean;
   readonly isResultsPublished: boolean;
   readonly entry: {
     readonly status: HackathonSubmissionStatus;
@@ -51,6 +52,10 @@ export const decidePullRequestStatus = (input: {
   } | null;
   readonly url: string;
 }): Result<true> => {
+  if (input.isCancelled)
+    return err(
+      new AppError('hackathon_not_editable', 'The hackathon was cancelled'),
+    );
   if (input.now < input.timeline.kickoffAt)
     return err(
       new AppError('building_not_started', 'The hackathon has not begun'),

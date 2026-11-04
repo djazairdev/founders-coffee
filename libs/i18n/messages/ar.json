@@ -1664,6 +1664,7 @@
   "hackathon_withdraw_error_captain": "سلّم قيادة الفريق لأحد أعضائه قبل الانسحاب.",
   "hackathon_register_error_rate_limited": "محاولات كثيرة. انتظر بضع دقائق ثم أعد المحاولة.",
   "hackathon_register_error_failed": "لم ينجح ذلك. أعد المحاولة.",
+  "hackathon_register_error_judge": "أنت حكم في هذا الهاكاثون، لذا لا يمكنك المشاركة فيه.",
   "hackathon_submission_ai_heading": "استخدام الذكاء الاصطناعي",
   "hackathon_submission_ai_hint_disclosed": "اذكر أدوات الذكاء الاصطناعي التي استخدمها فريقك، ووضّح ما بناه بنفسه.",
   "hackathon_submission_ai_hint_ai_native": "هذا الهاكاثون مبنيّ حول الذكاء الاصطناعي. اذكر الأدوات التي بنى بها فريقك، ووضّح ما بناه بنفسه.",

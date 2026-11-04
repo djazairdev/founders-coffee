@@ -1,0 +1,180 @@
+import { hackathons } from '@founders-coffee/domain';
+
+import { testMapProvider } from '../../events/resolver.fixtures.js';
+import { hackathonDashboardResolver } from '../dashboard.js';
+import { saveHackathonDetailsResolver } from '../details.js';
+import { hackathonDraftResolver } from '../draft-view.js';
+import { createHackathonDraftResolver } from '../draft.js';
+import { criterion, founderTrack, prize } from '../edit.fixtures.js';
+import {
+  addHackathonPrizeResolver,
+  changeHackathonPrizeResolver,
+  confirmHackathonPrizeResolver,
+  removeHackathonPrizeResolver,
+} from '../prizes.js';
+import { submitHackathonForReviewResolver } from '../review.js';
+import { saveHackathonRubricResolver } from '../rubric.js';
+import { saveHackathonTracksResolver } from '../tracks.js';
+import {
+  everyoneBut,
+  inEveryPhase,
+  ORGANISER,
+  organiserOnly,
+  type Call,
+  type Operations,
+  type Phase,
+} from './matrix.fixtures.js';
+
+const NOT_EDITABLE = 'hackathon_not_editable';
+const LOCKED = 'hackathon_field_locked';
+
+const NEVER_EDITABLE: Partial<Record<Phase, string>> = {
+  review: NOT_EDITABLE,
+  judged: NOT_EDITABLE,
+  results: NOT_EDITABLE,
+  cancelled: NOT_EDITABLE,
+};
+
+const FROZEN_ONCE_OPEN: Partial<Record<Phase, string>> = {
+  ...NEVER_EDITABLE,
+  open: LOCKED,
+  building: LOCKED,
+  judging: LOCKED,
+};
+
+const editOf = ({ world }: Call) => ({
+  eventId: world.eventId,
+  version: world.version,
+  organisationId: world.organisationId,
+});
+
+const WEIGHTS = [
+  ['Impact', 40],
+  ['Craft', 30],
+  ['Demo', 30],
+] as const;
+
+export const ORGANISER_OPERATIONS: Operations = {
+  createHackathonDraft: {
+    gate: { kind: 'organisation', resource: 'hackathon', action: 'create' },
+    run: ({ db, world, userId }) =>
+      createHackathonDraftResolver(db, testMapProvider, {
+        hostId: userId,
+        organisationId: world.organisationId,
+        basics: hackathons.hackathonBasicsSchema.parse({
+          marketCode: 'DZ',
+          cityCode: '1',
+          title: 'Another Builders Hackathon',
+          description:
+            'Two more days of building with founders across Algiers.',
+          format: 'online',
+          meetingUrl: 'https://meet.example.com/builders',
+          startsAt: Date.now() + 30 * 86_400_000,
+          endsAt: Date.now() + 32 * 86_400_000,
+          languages: ['ar', 'fr'],
+        }),
+      }),
+    cells: inEveryPhase(everyoneBut('forbidden', { organiser: 'ok' })),
+  },
+  getHackathonDraft: {
+    gate: ORGANISER,
+    run: ({ db, world }) => hackathonDraftResolver(db, world.eventId),
+    cells: organiserOnly('ok'),
+  },
+  getHackathonDashboard: {
+    gate: ORGANISER,
+    run: ({ db, world }) => hackathonDashboardResolver(db, world.eventId),
+    cells: organiserOnly('ok'),
+  },
+  saveHackathonDetails: {
+    gate: ORGANISER,
+    changesWorld: true,
+    run: (call) =>
+      saveHackathonDetailsResolver(call.db, {
+        ...editOf(call),
+        details: call.world.details,
+      }),
+    cells: organiserOnly('ok', NEVER_EDITABLE),
+  },
+  saveHackathonTracks: {
+    gate: ORGANISER,
+    changesWorld: true,
+    run: (call) =>
+      saveHackathonTracksResolver(call.db, {
+        ...editOf(call),
+        tracks: [
+          {
+            id: call.world.trackId,
+            track: founderTrack('Payments for cafés'),
+          },
+        ],
+      }),
+    cells: organiserOnly('ok', NEVER_EDITABLE),
+  },
+  saveHackathonRubric: {
+    gate: ORGANISER,
+    changesWorld: true,
+    run: (call) =>
+      saveHackathonRubricResolver(call.db, {
+        ...editOf(call),
+        criteria: WEIGHTS.map(([name, weight], index) => ({
+          id: call.world.criterionIds[index] ?? null,
+          criterion: criterion(name, weight),
+        })),
+      }),
+    cells: organiserOnly('ok', FROZEN_ONCE_OPEN),
+  },
+  addHackathonPrize: {
+    gate: ORGANISER,
+    changesWorld: true,
+    run: (call) =>
+      addHackathonPrizeResolver(call.db, {
+        ...editOf(call),
+        prize: prize({ place: 2, title: 'Second prize' }),
+      }),
+    cells: organiserOnly('ok', NEVER_EDITABLE),
+  },
+  changeHackathonPrize: {
+    gate: ORGANISER,
+    changesWorld: true,
+    run: (call) =>
+      changeHackathonPrizeResolver(call.db, {
+        ...editOf(call),
+        prizeId: call.world.prizeId,
+        prize: prize({ title: 'The first prize' }),
+      }),
+    cells: organiserOnly('ok', FROZEN_ONCE_OPEN),
+  },
+  removeHackathonPrize: {
+    gate: ORGANISER,
+    changesWorld: true,
+    run: (call) =>
+      removeHackathonPrizeResolver(call.db, {
+        ...editOf(call),
+        prizeId: call.world.prizeId,
+      }),
+    cells: organiserOnly('ok', FROZEN_ONCE_OPEN),
+  },
+  confirmHackathonPrize: {
+    gate: ORGANISER,
+    changesWorld: true,
+    run: (call) =>
+      confirmHackathonPrizeResolver(call.db, {
+        ...editOf(call),
+        prizeId: call.world.prizeId,
+        note: 'Confirmed by email with the sponsor.',
+      }),
+    cells: organiserOnly('ok', NEVER_EDITABLE),
+  },
+  submitHackathonForReview: {
+    gate: ORGANISER,
+    changesWorld: true,
+    run: (call) => submitHackathonForReviewResolver(call.db, editOf(call)),
+    cells: organiserOnly('ok', {
+      ...NEVER_EDITABLE,
+      open: 'hackathon_not_submittable',
+      building: 'hackathon_not_submittable',
+      judging: 'hackathon_not_submittable',
+    }),
+  },
+};

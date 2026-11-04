@@ -67,6 +67,7 @@ describe('decidePlaceAnswer (B-JDG-03, B-HKN-25)', () => {
       userId: 'usr_member',
       heldPlace: null,
       holdsOtherRole: false,
+      isParticipating: false,
       timeline,
       now: 3_500,
       isCancelled: false,
@@ -96,6 +97,12 @@ describe('decidePlaceAnswer (B-JDG-03, B-HKN-25)', () => {
   });
 
   it('refuses a second place of the same role', () => {
+    expect(codeOf(reply('judge', { isParticipating: true }))).toBe(
+      'already_registered',
+    );
+    expect(
+      reply('judge', { isParticipating: true, answer: 'decline' }).ok,
+    ).toBe(true);
     expect(codeOf(reply('judge', { heldPlace: 'accepted' }))).toBe(
       'already_judge',
     );

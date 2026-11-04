@@ -58,6 +58,7 @@ export const setPullRequestStatusResolver = async (
     return hackathons.decidePullRequestStatus({
       timeline: loaded.data.timeline,
       now,
+      isCancelled: loaded.data.isCancelled,
       isResultsPublished: entry?.isResultsPublished ?? false,
       entry,
       url: input.url,

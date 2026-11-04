@@ -40,6 +40,10 @@ export type PlacePorts = {
     db: Db,
     held: Held,
   ) => Promise<HackathonJudgeStatus | null>;
+  readonly isParticipating: (
+    db: Db,
+    input: { readonly eventId: string; readonly userId: string },
+  ) => Promise<boolean>;
   readonly readHeldOther: (
     db: Db,
     held: Held,
@@ -187,6 +191,7 @@ export const answerPlaceInvite = async (
       userId: input.userId,
       heldPlace: await ports.readHeld(db, held),
       holdsOtherRole: (await ports.readHeldOther(db, held)) === 'accepted',
+      isParticipating: await ports.isParticipating(db, held),
       now,
     });
     return decided.ok

@@ -45,7 +45,8 @@ const notFound = () => new AppError('event_not_found', 'Event not found');
  * conduct is the request's own condition. The write then re-checks the dates and the event in one
  * atomic batch and decides the place against the count it updates, so a hackathon filling up between
  * the read and the write puts the member on the waitlist rather than over capacity. A member already
- * registered, in any status, is told `already_registered`. A member who got a place, or a place on
+ * registered, in any status, is told `already_registered`, and one who judges it `already_judge`.
+ * A member who got a place, or a place on
  * the waitlist, is then told which (B-REG-07).
  */
 export const registerForHackathonResolver = async (
@@ -97,6 +98,8 @@ export const registerForHackathonResolver = async (
         'You are already registered for this hackathon',
       ),
     );
+  if (written.outcome === 'already_judge')
+    return err(new AppError('already_judge', 'You judge this hackathon'));
   if (written.outcome === 'registration_closed')
     return err(new AppError('registration_closed', 'Registration is not open'));
   recordHackathonMetric(metrics, 'registration_created', {

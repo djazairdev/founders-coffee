@@ -20,6 +20,7 @@ import { visibleIdentity } from './profile-access.js';
 import {
   hackathonJudges,
   hackathonMentors,
+  hackathonRegistrations,
   hackathons,
   memberProfiles,
   user,
@@ -97,7 +98,14 @@ export const readHeldJudgePlace = (
 export const acceptHackathonJudgeInvite = (
   db: Db,
   input: { readonly tokenHash: string; readonly userId: string },
-) => acceptPlaceInvite(db, hackathonJudges, hackathonMentors, input);
+) =>
+  acceptPlaceInvite(
+    db,
+    hackathonJudges,
+    hackathonMentors,
+    input,
+    sql`NOT EXISTS (SELECT 1 FROM ${hackathonRegistrations} WHERE ${hackathonRegistrations.userId} = ${input.userId} AND ${hackathonRegistrations.status} IN ('registered', 'waitlisted') AND ${hackathonRegistrations.eventId} = (SELECT invite.event_id FROM ${hackathonJudges} AS invite WHERE invite.token_hash = ${input.tokenHash}))`,
+  );
 
 /**
  * Decline a judge's invite link (B-JDG-03) while it is still invited, keeping no account, so the
