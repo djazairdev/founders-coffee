@@ -98,6 +98,7 @@ describe('hackathon prizes (B-HKN-04, real D1)', () => {
         providerName: 'Djazair Cloud',
         value: { amount_minor: 50_000_000, currency: 'DZD' },
         confirmedAt: new Date('2098-12-01T10:00:00Z'),
+        awardedSubmissionId: null,
       },
     ]);
     expect(JSON.stringify(prizes)).not.toContain('Confirmed by email');

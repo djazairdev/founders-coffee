@@ -35,6 +35,7 @@ const OWNER_PROFILE_FIELDS = [
 ] as const;
 
 const MEETUP_RECORD_FIELDS = ['attendedCount', 'hostedCount'] as const;
+const HACKATHON_FIELDS = ['hackathonRecord', 'projects'] as const;
 
 const EVENT_COLUMNS = [
   'cancellationReason',
@@ -114,7 +115,13 @@ describe('public response contract', () => {
   it('publishes exactly the profile fields the contract names', () => {
     expect(
       sorted(Object.keys(profile.publicMemberProfileSchema.shape)),
-    ).toEqual(sorted([...PUBLIC_PROFILE_FIELDS, ...MEETUP_RECORD_FIELDS]));
+    ).toEqual(
+      sorted([
+        ...PUBLIC_PROFILE_FIELDS,
+        ...MEETUP_RECORD_FIELDS,
+        ...HACKATHON_FIELDS,
+      ]),
+    );
   });
 
   it('keeps the owner projection to the published fields, less the meetup record, plus its own controls', () => {
@@ -129,6 +136,7 @@ describe('public response contract', () => {
     expect(sorted(Object.keys(owner.visibility))).toEqual(
       sorted([
         'attendedCount',
+        'hackathonRecord',
         'headline',
         'interests',
         'links',
@@ -163,7 +171,11 @@ describe('public response contract', () => {
     });
 
     expect(sorted(Object.keys(published))).toEqual(
-      sorted([...PUBLIC_PROFILE_FIELDS, ...MEETUP_RECORD_FIELDS]),
+      sorted([
+        ...PUBLIC_PROFILE_FIELDS,
+        ...MEETUP_RECORD_FIELDS,
+        ...HACKATHON_FIELDS,
+      ]),
     );
     expect(published).toMatchObject({
       memberSince: '2026-03',
@@ -178,6 +190,8 @@ describe('public response contract', () => {
       photoAssetId: owner.photoAssetId,
       interests: [],
       spokenLanguages: [],
+      hackathonRecord: [],
+      projects: [],
     });
   });
 
