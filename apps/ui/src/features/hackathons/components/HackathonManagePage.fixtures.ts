@@ -63,6 +63,12 @@ vi.mock('../results-hooks', () => ({
     refetch: vi.fn(),
   }),
   usePublishHackathonResults: () => ({ mutate: vi.fn(), reset: vi.fn() }),
+  useHackathonJudgingProgress: () => ({
+    data: undefined,
+    isError: false,
+    refetch: vi.fn(),
+  }),
+  useRemindHackathonJudges: () => ({ mutate: vi.fn() }),
 }));
 
 vi.mock('../hooks', () => ({

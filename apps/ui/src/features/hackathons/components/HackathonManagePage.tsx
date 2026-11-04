@@ -24,6 +24,7 @@ import { isHackathonMissing, isHackathonsDisabled } from '../errors';
 import { useHackathonDraft } from '../hooks';
 import { HackathonDashboard } from './HackathonDashboard';
 import { HackathonDetailsForm } from './HackathonDetailsForm';
+import { HackathonJudgingProgress } from './HackathonJudgingProgress';
 import { HackathonPrizesSection } from './HackathonPrizesSection';
 import { HackathonResultsPanel } from './HackathonResultsPanel';
 import { HackathonReviewBanner } from './HackathonReviewBanner';
@@ -132,11 +133,14 @@ export const HackathonManagePage = ({
         markets={markets}
       />
       {draft.event.status === 'published' ? (
-        <HackathonResultsPanel
-          eventId={draft.event.id}
-          locale={locale}
-          timeZone={timeZone}
-        />
+        <>
+          <HackathonJudgingProgress eventId={draft.event.id} locale={locale} />
+          <HackathonResultsPanel
+            eventId={draft.event.id}
+            locale={locale}
+            timeZone={timeZone}
+          />
+        </>
       ) : null}
       {draft.isEditable ? (
         <>

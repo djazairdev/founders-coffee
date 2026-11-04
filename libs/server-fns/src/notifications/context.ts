@@ -118,6 +118,10 @@ export const hackathonSubmitUrlFor = (
   eventId: string,
 ): string => `${notificationBaseUrl()}/${locale}/hackathon/${eventId}/submit`;
 
+/** The submissions a judge scores in a hackathon (B-JDG-06), on the same terms as `closeoutUrlFor`. */
+export const hackathonJudgeUrlFor = (locale: Locale, eventId: string): string =>
+  `${notificationBaseUrl()}/${locale}/hackathon/${eventId}/judge`;
+
 /** Who is looking for a team in a hackathon (B-TEAM-08), on the same terms as `closeoutUrlFor`. */
 export const hackathonLookingUrlFor = (
   locale: Locale,

@@ -10,6 +10,9 @@ import {
   type Event,
 } from '@founders-coffee/db';
 import {
+  ntf_email_hackathon_judge_reminder_html,
+  ntf_email_hackathon_judge_reminder_subject,
+  ntf_email_hackathon_judge_reminder_text,
   ntf_email_hackathon_team_accepted_html,
   ntf_email_hackathon_team_accepted_subject,
   ntf_email_hackathon_team_accepted_text,
@@ -31,6 +34,8 @@ import {
   ntf_email_hackathon_submission_received_html,
   ntf_email_hackathon_submission_received_subject,
   ntf_email_hackathon_submission_received_text,
+  ntf_push_hackathon_judge_reminder_body,
+  ntf_push_hackathon_judge_reminder_title,
   ntf_push_hackathon_team_accepted_body,
   ntf_push_hackathon_team_accepted_title,
   ntf_push_hackathon_team_declined_body,
@@ -50,6 +55,7 @@ import {
 
 import { channelPlanFor } from './channel-plan.js';
 import {
+  hackathonJudgeUrlFor,
   hackathonLookingUrlFor,
   hackathonSubmitUrlFor,
   hackathonTeamUrlFor,
@@ -124,6 +130,13 @@ const MESSAGES: Record<
     ntf_email_hackathon_team_disqualified_html,
     ntf_email_hackathon_team_disqualified_text,
   ],
+  hackathon_judge_reminder: [
+    ntf_push_hackathon_judge_reminder_title,
+    ntf_push_hackathon_judge_reminder_body,
+    ntf_email_hackathon_judge_reminder_subject,
+    ntf_email_hackathon_judge_reminder_html,
+    ntf_email_hackathon_judge_reminder_text,
+  ],
 };
 
 const URLS: Partial<
@@ -131,6 +144,7 @@ const URLS: Partial<
 > = {
   hackathon_team_declined: hackathonLookingUrlFor,
   hackathon_submission_received: hackathonSubmitUrlFor,
+  hackathon_judge_reminder: hackathonJudgeUrlFor,
 };
 
 /** The push and email forms of a team notice, in the reader's language. */
@@ -166,7 +180,8 @@ export const hackathonTeamMessage = async (
  * Tell members of a hackathon what changed in a team (B-TEAM-09): a request to join it, the answer
  * to one, a member who joined, or one who is no longer in it; or that its project was submitted,
  * the receipt every member gets (B-SUB-07); or that an administrator disqualified it, with the reason
- * they gave (B-SAFE-02).
+ * they gave (B-SAFE-02). An organiser's reminder to judges (B-JDG-08) goes the same way, to the
+ * judge's list.
  *
  * Each notice is written in its reader's language and follows their Hackathons category, push
  * first with email behind it; the category's switch is honoured again at send time. A declined
