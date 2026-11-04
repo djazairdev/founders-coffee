@@ -1,3 +1,4 @@
+import { inArray } from 'drizzle-orm';
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import {
@@ -9,14 +10,22 @@ import {
   user,
   type Db,
 } from '@founders-coffee/db';
+import { hackathons } from '@founders-coffee/domain';
 
 import {
   captain,
   judgeOf,
   member,
   submitted,
+  unwrap,
 } from '../hackathons/judging.fixtures.js';
 import { setHackathons } from '../hackathons/registration.fixtures.js';
+import {
+  judgingEnded,
+  judgingTwoEntries,
+  scoreBoth,
+} from '../hackathons/results.fixtures.js';
+import { publishHackathonResultsResolver } from '../hackathons/results.js';
 import { setupDb } from '../rsvps/resolver.fixtures.js';
 import { enqueueResultsNoticeBatch } from './hackathon-results-notices.js';
 
@@ -52,6 +61,10 @@ describe('telling a hackathon its results are out (B-JDG-11, real D1)', () => {
   beforeEach(async () => {
     db = await setupDb();
     await setHackathons(db, true);
+    await db
+      .delete(accountPreferences)
+      .where(eq(accountPreferences.userId, member));
+    await db.update(user).set({ localePref: null }).where(eq(user.id, captain));
   });
 
   it('tells every registered participant and accepted judge, once', async () => {
@@ -116,6 +129,52 @@ describe('telling a hackathon its results are out (B-JDG-11, real D1)', () => {
     expect(payload.pushTitle).toContain('نُشرت النتائج');
     expect(payload.pushUrl).toContain('/ar/');
     expect(payload.pushUrl).toContain('/e/');
+  });
+
+  it('tells a team that was scored its feedback is ready, and links to its team page', async () => {
+    const setup = await judgingTwoEntries(db);
+    await scoreBoth(db, setup);
+    await judgingEnded(db, setup.eventId);
+    unwrap(
+      await publishHackathonResultsResolver(db, null, {
+        ...hackathons.publishResultsSchema.parse({ eventId: setup.eventId }),
+        actorUserId: setup.judge.userId,
+      }),
+    );
+
+    await enqueueResultsNoticeBatch(db, {
+      eventId: setup.eventId,
+      afterUserId: null,
+      limit: 50,
+    });
+
+    const notices = await db
+      .select({
+        userId: scheduledNotifications.userId,
+        templateKey: scheduledNotifications.templateKey,
+        payload: scheduledNotifications.payload,
+      })
+      .from(scheduledNotifications)
+      .where(
+        and(
+          eq(scheduledNotifications.eventId, setup.eventId),
+          inArray(scheduledNotifications.templateKey, [
+            'hackathon_results_feedback',
+            'hackathon_results_published',
+          ]),
+        ),
+      );
+    const keyOf = (userId: string) =>
+      notices.find((row) => row.userId === userId)?.templateKey;
+    expect(keyOf(captain)).toBe('hackathon_results_feedback');
+    expect(keyOf(member)).toBe('hackathon_results_feedback');
+    expect(keyOf(setup.judge.userId)).toBe('hackathon_results_published');
+    const read = notices.find((row) => row.userId === captain)?.payload as {
+      pushUrl: string;
+      pushBody: string;
+    };
+    expect(read.pushUrl).toContain(`/hackathon/${setup.eventId}/team`);
+    expect(read.pushBody).toContain('ملاحظات الحكام');
   });
 
   it('writes nothing while the results are not out', async () => {
