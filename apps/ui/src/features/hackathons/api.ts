@@ -12,6 +12,7 @@ import {
   getHackathonSubmissionPage,
   confirmHackathonProject,
   createHackathonProject,
+  getHackathonCertificatePage,
   getHackathonTeamPage,
   publishHackathonProject,
   joinHackathonTeam,
@@ -55,6 +56,7 @@ import {
   submitHackathonForReview,
   withdrawFromHackathon,
   type AddHackathonPrizeRequest,
+  type CertificatePage,
   type ChangeHackathonPrizeRequest,
   type ConfirmHackathonPrizeRequest,
   type CreateHackathonDraftRequest,
@@ -114,6 +116,10 @@ export const registrationApi = {
 type EventScoped = { readonly eventId: string };
 type TeamMemberRequest = EventScoped & { readonly memberId: string };
 type TeamRequestAnswer = EventScoped & { readonly requestId: string };
+
+export const certificatesApi = {
+  page: (code: string) => getHackathonCertificatePage({ data: { code } }),
+};
 
 export const teamsApi = {
   page: (eventId: string) => getHackathonTeamPage({ data: { eventId } }),
@@ -205,6 +211,7 @@ export const judgingApi = {
 
 export type {
   AddHackathonPrizeRequest,
+  CertificatePage,
   HackathonResultsEntry,
   HackathonResultsView,
   JudgeCriterionView,

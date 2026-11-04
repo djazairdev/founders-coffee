@@ -56,7 +56,7 @@ export const withIndexationHeaders = (
 };
 
 const PRIVATE_SCREEN =
-  /^\/(?:[^/]+\/)?(?:closeout|edit|feedback|login|onboarding|profile|u\/[^/]+)(?:\/|$)/iu;
+  /^\/(?:[^/]+\/)?(?:c\/[^/]+|closeout|edit|feedback|login|onboarding|profile|u\/[^/]+)(?:\/|$)/iu;
 const LEGACY_PRIVATE_ADDRESS = /^\/(?:account|activity|preferences)(?:\/|$)/iu;
 const HOST_WIZARD = /^\/(?:[^/]+\/){1,2}host\/create(?:\/|$)/iu;
 const HACKATHON_SCREEN =
