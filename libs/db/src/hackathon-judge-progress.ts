@@ -1,4 +1,4 @@
-import { and, eq, sql } from 'drizzle-orm';
+import { and, eq, gte, sql } from 'drizzle-orm';
 
 import type { Db } from './db.js';
 import { lastSubmittedVersion } from './hackathon-submitted-version.js';
@@ -9,6 +9,7 @@ import {
   hackathonSubmissionVersions,
   hackathonTeams,
   hackathonTracks,
+  scheduledNotifications,
 } from './schema.js';
 
 export type JudgeProgressRow = {
@@ -72,4 +73,23 @@ export const listJudgeProgress = async (
     ...row,
     isRecused: recusedBy !== null,
   }));
+};
+
+/** The members a hackathon's judges reminder went to since a moment (B-JDG-08). */
+export const listJudgesRemindedSince = async (
+  db: Db,
+  eventId: string,
+  since: Date,
+): Promise<readonly string[]> => {
+  const rows = await db
+    .selectDistinct({ userId: scheduledNotifications.userId })
+    .from(scheduledNotifications)
+    .where(
+      and(
+        eq(scheduledNotifications.eventId, eventId),
+        eq(scheduledNotifications.templateKey, 'hackathon_judge_reminder'),
+        gte(scheduledNotifications.createdAt, since),
+      ),
+    );
+  return rows.map((row) => row.userId);
 };

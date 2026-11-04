@@ -60,6 +60,7 @@ export const NOTIFICATION_TEMPLATE_KEYS = [
   'hackathon_team_left',
   'hackathon_submission_received',
   'hackathon_team_disqualified',
+  'hackathon_judge_reminder',
 ] as const;
 export type NotificationTemplateKey =
   (typeof NOTIFICATION_TEMPLATE_KEYS)[number];
@@ -90,6 +91,7 @@ export const HACKATHON_TEAM_TEMPLATE_KEYS = [
   'hackathon_team_left',
   'hackathon_submission_received',
   'hackathon_team_disqualified',
+  'hackathon_judge_reminder',
 ] as const satisfies readonly NotificationTemplateKey[];
 export type HackathonTeamTemplateKey =
   (typeof HACKATHON_TEAM_TEMPLATE_KEYS)[number];

@@ -6,6 +6,7 @@ import {
   createHackathonTeamInvite,
   getHackathonJudgeEntryPage,
   getHackathonJudgePage,
+  getHackathonJudgingProgress,
   getHackathonLookingForTeam,
   getHackathonResults,
   getHackathonSubmissionPage,
@@ -20,6 +21,7 @@ import {
   saveHackathonSubmissionDraft,
   submitHackathonSubmission,
   recuseFromHackathonEntry,
+  remindHackathonJudges,
   saveHackathonScores,
   type HackathonResultsEntry,
   type HackathonResultsView,
@@ -27,6 +29,8 @@ import {
   type JudgeEntryPageView,
   type JudgePageEntry,
   type JudgePageView,
+  type JudgingProgressJudge,
+  type JudgingProgressView,
   type LookingForTeamView,
   type SubmissionDraftSaved,
   type SubmissionPageView,
@@ -172,6 +176,9 @@ export const submissionsApi = {
 };
 
 export const hackathonResultsApi = {
+  judges: (eventId: string) =>
+    getHackathonJudgingProgress({ data: { eventId } }),
+  remind: (eventId: string) => remindHackathonJudges({ data: { eventId } }),
   results: (eventId: string) => getHackathonResults({ data: { eventId } }),
   publish: (data: Parameters<typeof publishHackathonResults>[0]['data']) =>
     publishHackathonResults({ data }),
@@ -195,6 +202,8 @@ export type {
   JudgeEntryPageView,
   JudgePageEntry,
   JudgePageView,
+  JudgingProgressJudge,
+  JudgingProgressView,
   LookingForTeamView,
   SubmissionDraftSaved,
   SubmissionPageView,

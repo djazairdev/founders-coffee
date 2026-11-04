@@ -119,3 +119,11 @@ export {
 } from './review-rpc.js';
 export { getHackathonResults, publishHackathonResults } from './results-rpc.js';
 export type { HackathonResultsEntry, HackathonResultsView } from './results.js';
+export {
+  getHackathonJudgingProgress,
+  remindHackathonJudges,
+} from './judging-progress-rpc.js';
+export type {
+  JudgingProgressJudge,
+  JudgingProgressView,
+} from './judging-progress.js';
