@@ -8,6 +8,7 @@ import {
   hackathon_project_create_note,
   hackathon_project_heading,
   hackathon_project_listed,
+  hackathon_project_manage,
   hackathon_project_needs_confirmation,
   hackathon_project_publish,
   hackathon_project_status_draft,
@@ -18,7 +19,10 @@ import {
 } from '@founders-coffee/i18n';
 import { Button, StatusMessage } from '@founders-coffee/ui';
 
-import { localizedProject } from '../../../lib/locale-routing';
+import {
+  localizedProject,
+  localizedProjectEdit,
+} from '../../../lib/locale-routing';
 import type { TeamPageView } from '../api';
 import { teamErrorMessage } from '../team-errors';
 import {
@@ -82,6 +86,14 @@ export const HackathonTeamProject = ({
               className="link mt-1 inline-block text-body-sm"
             >
               {hackathon_project_view({}, options)}
+            </Link>
+          ) : null}
+          {project.isOnProject ? (
+            <Link
+              {...localizedProjectEdit(locale, project.slug)}
+              className="link mt-1 block w-fit text-body-sm"
+            >
+              {hackathon_project_manage({}, options)}
             </Link>
           ) : null}
           {project.teammates > 0 ? (

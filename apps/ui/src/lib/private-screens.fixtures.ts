@@ -23,6 +23,7 @@ export const LOCALE_ONLY_PRIVATE_SCREENS = [
   'o/apply',
   'o/invitations/inv_1',
   'o/acme/manage',
+  'p/ledger/edit',
 ];
 
 export const PRIVATE_SCREENS_IN_EVERY_LANGUAGE = LOCALES.flatMap((locale) =>

@@ -1,3 +1,11 @@
+import { eq, projects as projectRows, type Db } from '@founders-coffee/db';
+import { projects } from '@founders-coffee/domain';
+
+import {
+  leaveProjectResolver,
+  projectEditorResolver,
+  updateProjectResolver,
+} from '../../projects/edit.js';
 import {
   confirmProjectListingResolver,
   createProjectFromEntryResolver,
@@ -17,6 +25,16 @@ import {
   type Operations,
 } from './matrix.fixtures.js';
 import { entryDraft } from './seeds.fixtures.js';
+
+/** A project's edit screen is reached by its slug, which the matrix's world does not hold. */
+const projectSlugOf = async (db: Db, projectId: string): Promise<string> => {
+  const [row] = await db
+    .select({ slug: projectRows.slug })
+    .from(projectRows)
+    .where(eq(projectRows.id, projectId))
+    .limit(1);
+  return row?.slug ?? '';
+};
 
 const captainWhileBuilding: Cells = {
   ...whilePublished(everyone('deadline_passed')),
@@ -71,6 +89,54 @@ export const SUBMISSION_OPERATIONS: Operations = {
         projectId: world.projectId,
         userId,
       }),
+    cells: inEveryPhase(everyone('project_not_found'), {
+      results: everyoneBut('project_not_found', {
+        captain: 'ok',
+        member: 'ok',
+      }),
+    }),
+  },
+  getProjectEditor: {
+    gate: may('team', 'join'),
+    needs: 'project',
+    run: async ({ db, world, userId }) =>
+      projectEditorResolver(db, {
+        slug: await projectSlugOf(db, world.projectId),
+        userId,
+      }),
+    cells: inEveryPhase(everyone('project_not_found'), {
+      results: everyoneBut('project_not_found', {
+        captain: 'ok',
+        member: 'ok',
+      }),
+    }),
+  },
+  updateProject: {
+    gate: may('team', 'join'),
+    changesWorld: true,
+    needs: 'project',
+    run: ({ db, world, userId }) =>
+      updateProjectResolver(db, {
+        ...projects.projectEditSchema.parse({
+          projectId: world.projectId,
+          expectedVersion: 1,
+          stage: 'launched',
+        }),
+        userId,
+      }),
+    cells: inEveryPhase(everyone('project_not_found'), {
+      results: everyoneBut('project_not_found', {
+        captain: 'ok',
+        member: 'not_project_owner',
+      }),
+    }),
+  },
+  leaveProjectPage: {
+    gate: may('team', 'join'),
+    changesWorld: true,
+    needs: 'project',
+    run: ({ db, world, userId }) =>
+      leaveProjectResolver(db, { projectId: world.projectId, userId }),
     cells: inEveryPhase(everyone('project_not_found'), {
       results: everyoneBut('project_not_found', {
         captain: 'ok',
