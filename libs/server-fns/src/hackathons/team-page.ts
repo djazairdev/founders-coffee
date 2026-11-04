@@ -4,6 +4,7 @@ import {
   type Result,
 } from '@founders-coffee/core';
 import {
+  listOwnCertificates,
   listOwnTeamRequests,
   listTeamPrizes,
   readHackathonRecordOffer,
@@ -20,6 +21,7 @@ import {
   teamProjectViewOf,
   type TeamProjectView,
 } from '../projects/from-entry.js';
+import type { OwnCertificate } from './certificate-page.js';
 import { loadTeamHackathon } from './team-context.js';
 
 export type TeamPageView = {
@@ -59,6 +61,7 @@ export type TeamPageView = {
   readonly feedback: hackathons.TeamFeedback | null;
   readonly project: TeamProjectView | null;
   readonly recordOffer: { readonly isShown: boolean } | null;
+  readonly certificates: readonly OwnCertificate[];
   readonly prizes: readonly {
     readonly prizeId: string;
     readonly title: string;
@@ -89,17 +92,23 @@ export const teamPageResolver = async (
     membership && resultsPublishedAt
       ? { eventId: input.eventId, teamId: membership.teamId }
       : null;
-  const [team, ownRequests, feedback, entry, recordOffer, prizes] =
-    await Promise.all([
-      membership
-        ? readTeamPageTeam(db, membership.teamId, new Date(now))
-        : null,
-      membership ? [] : listOwnTeamRequests(db, input),
-      results ? readTeamFeedback(db, results) : null,
-      results ? readTeamEntryProject(db, results) : null,
-      resultsPublishedAt ? readHackathonRecordOffer(db, input) : null,
-      results ? listTeamPrizes(db, results) : [],
-    ]);
+  const [
+    team,
+    ownRequests,
+    feedback,
+    entry,
+    recordOffer,
+    prizes,
+    certificates,
+  ] = await Promise.all([
+    membership ? readTeamPageTeam(db, membership.teamId, new Date(now)) : null,
+    membership ? [] : listOwnTeamRequests(db, input),
+    results ? readTeamFeedback(db, results) : null,
+    results ? readTeamEntryProject(db, results) : null,
+    resultsPublishedAt ? readHackathonRecordOffer(db, input) : null,
+    results ? listTeamPrizes(db, results) : [],
+    resultsPublishedAt ? listOwnCertificates(db, input) : [],
+  ]);
   const isCaptain = membership?.isCaptain ?? false;
   return ok({
     event: {
@@ -147,6 +156,7 @@ export const teamPageResolver = async (
       isCaptain,
     }),
     recordOffer,
+    certificates,
     prizes: prizes.map(({ prizeId, title, status }) => ({
       prizeId,
       title,

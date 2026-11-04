@@ -5,6 +5,7 @@ import {
   listHackathonCriteria,
   listJudgeProgress,
   listJudgeScores,
+  listOwnCertificates,
   readHackathonRecordOffer,
   readJudgeEntry,
   readJudgePlace,
@@ -12,6 +13,7 @@ import {
 } from '@founders-coffee/db';
 import { hackathons } from '@founders-coffee/domain';
 
+import type { OwnCertificate } from './certificate-page.js';
 import type { JudgeEntryView } from './judge-entries.js';
 import { hackathonNotFound } from './edit-context.js';
 import { loadPlaceHackathon, type PlaceHackathon } from './place-context.js';
@@ -41,6 +43,7 @@ export type JudgePageView = JudgingStanding & {
   readonly entries: readonly JudgePageEntry[];
   readonly progress: hackathons.JudgeProgress;
   readonly recordOffer: { readonly isShown: boolean } | null;
+  readonly certificates: readonly OwnCertificate[];
 };
 
 export type JudgeCriterionView = {
@@ -126,6 +129,10 @@ export const judgePageResolver = async (
       isJudge && hackathon.isResultsPublished
         ? await readHackathonRecordOffer(db, input)
         : null,
+    certificates:
+      isJudge && hackathon.isResultsPublished
+        ? await listOwnCertificates(db, input)
+        : [],
   });
 };
 

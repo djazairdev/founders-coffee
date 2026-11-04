@@ -2,6 +2,7 @@ import { sql } from 'drizzle-orm';
 
 import type { Db } from './db.js';
 import {
+  hackathonCertificates,
   hackathonJudges,
   hackathonRegistrations,
   hackathonResults,
@@ -12,7 +13,7 @@ import {
  * The next members to tell a hackathon's results are out (B-JDG-11), in a stable order to page by:
  * everyone holding a place and every judge who accepted, each once. A member whose team was given
  * scores also has feedback to read (B-JDG-12), and a member of a team still in the results gets the
- * follow-ups (B-OPS-03).
+ * follow-ups (B-OPS-03). Each comes with their strongest standing certificate, if any (B-CRT-03).
  */
 export const listResultsNoticeRecipients = async (
   db: Db,
@@ -26,12 +27,14 @@ export const listResultsNoticeRecipients = async (
     readonly userId: string;
     readonly hasFeedback: boolean;
     readonly isOnEntry: boolean;
+    readonly certificateCode: string | null;
   }[]
 > => {
   const rows = await db.all<{
     userId: string;
     hasFeedback: number;
     isOnEntry: number;
+    certificateCode: string | null;
   }>(sql`
     SELECT recipient.user_id AS userId, EXISTS (
       SELECT 1 FROM ${hackathonTeamMembers}
@@ -45,7 +48,14 @@ export const listResultsNoticeRecipients = async (
       WHERE ${hackathonTeamMembers.eventId} = ${input.eventId}
         AND ${hackathonTeamMembers.userId} = recipient.user_id
         AND ${hackathonResults.disqualifiedAt} IS NULL
-    ) AS isOnEntry FROM (
+    ) AS isOnEntry, (
+      SELECT ${hackathonCertificates.verificationCode} FROM ${hackathonCertificates}
+      WHERE ${hackathonCertificates.eventId} = ${input.eventId}
+        AND ${hackathonCertificates.userId} = recipient.user_id
+        AND ${hackathonCertificates.revokedAt} IS NULL
+      ORDER BY CASE ${hackathonCertificates.kind} WHEN 'winner' THEN 0 WHEN 'judge' THEN 1 ELSE 2 END
+      LIMIT 1
+    ) AS certificateCode FROM (
       SELECT ${hackathonRegistrations.userId} AS user_id FROM ${hackathonRegistrations}
       WHERE ${hackathonRegistrations.eventId} = ${input.eventId}
         AND ${hackathonRegistrations.status} = 'registered'
@@ -63,5 +73,6 @@ export const listResultsNoticeRecipients = async (
     userId: row.userId,
     hasFeedback: row.hasFeedback === 1,
     isOnEntry: row.isOnEntry === 1,
+    certificateCode: row.certificateCode,
   }));
 };

@@ -55,6 +55,7 @@ afterEach(() => {
 
 const judgeView = (changes: Partial<JudgePageView> = {}): JudgePageView => ({
   recordOffer: null,
+  certificates: [],
   event: {
     id: EVENT_ID,
     title: 'Algiers Builders Weekend',

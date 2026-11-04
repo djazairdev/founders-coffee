@@ -22,7 +22,10 @@ export type { ProjectEditor } from './projects/edit.js';
 export * from './projects/page-rpc.js';
 export type { ProjectPage } from './projects/page.js';
 export * from './hackathons/certificate-page-rpc.js';
-export type { CertificatePage } from './hackathons/certificate-page.js';
+export type {
+  CertificatePage,
+  OwnCertificate,
+} from './hackathons/certificate-page.js';
 export type { TeamProjectView } from './projects/from-entry.js';
 export * from './organisations/index.js';
 export * from './push/index.js';

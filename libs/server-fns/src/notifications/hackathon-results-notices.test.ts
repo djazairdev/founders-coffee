@@ -5,6 +5,7 @@ import {
   accountPreferences,
   and,
   eq,
+  hackathonCertificates,
   hackathons as hackathonRows,
   scheduledNotifications,
   user,
@@ -26,10 +27,12 @@ import {
   scoreBoth,
 } from '../hackathons/results.fixtures.js';
 import { publishHackathonResultsResolver } from '../hackathons/results.js';
-import { setupDb } from '../rsvps/resolver.fixtures.js';
+import { members, setupDb } from '../rsvps/resolver.fixtures.js';
 import { enqueueResultsNoticeBatch } from './hackathon-results-notices.js';
 
 let db: Db;
+
+const operator = members[3]?.id ?? '';
 
 const published = async () => {
   const { eventId } = await submitted(db);
@@ -188,5 +191,82 @@ describe('telling a hackathon its results are out (B-JDG-11, real D1)', () => {
       }),
     ).toEqual({ written: 0, next: null });
     expect(await noticesOf(eventId)).toEqual([]);
+  });
+
+  it('links each member’s own certificate in the email, not in the push (B-CRT-03)', async () => {
+    const setup = await judgingTwoEntries(db);
+    await scoreBoth(db, setup);
+    await judgingEnded(db, setup.eventId);
+    unwrap(
+      await publishHackathonResultsResolver(db, null, {
+        ...hackathons.publishResultsSchema.parse({ eventId: setup.eventId }),
+        actorUserId: operator,
+      }),
+    );
+    await enqueueResultsNoticeBatch(db, {
+      eventId: setup.eventId,
+      afterUserId: null,
+      limit: 50,
+    });
+
+    const rows = await db
+      .select({
+        userId: scheduledNotifications.userId,
+        templateKey: scheduledNotifications.templateKey,
+        payload: scheduledNotifications.payload,
+      })
+      .from(scheduledNotifications)
+      .where(eq(scheduledNotifications.eventId, setup.eventId));
+    const told = rows.filter(({ templateKey }) =>
+      ['hackathon_results_feedback', 'hackathon_results_published'].includes(
+        templateKey,
+      ),
+    );
+    const certificates = await db
+      .select()
+      .from(hackathonCertificates)
+      .where(eq(hackathonCertificates.eventId, setup.eventId));
+    expect(certificates.length).toBeGreaterThan(1);
+    expect(told.length).toBeGreaterThan(1);
+
+    for (const { userId, payload } of told) {
+      const own = certificates.find((row) => row.userId === userId);
+      const fields = payload as Record<string, string>;
+      if (!own) continue;
+      expect(fields.html).toContain(`/c/${own.verificationCode}`);
+      expect(fields.text).toContain(`/c/${own.verificationCode}`);
+      expect(fields.pushUrl).not.toContain('/c/');
+      for (const other of certificates.filter((row) => row.userId !== userId))
+        expect(fields.html).not.toContain(other.verificationCode);
+    }
+  });
+
+  it('adds no certificate line once it is revoked', async () => {
+    const setup = await judgingTwoEntries(db);
+    await scoreBoth(db, setup);
+    await judgingEnded(db, setup.eventId);
+    unwrap(
+      await publishHackathonResultsResolver(db, null, {
+        ...hackathons.publishResultsSchema.parse({ eventId: setup.eventId }),
+        actorUserId: operator,
+      }),
+    );
+    await db
+      .update(hackathonCertificates)
+      .set({ revokedAt: new Date() })
+      .where(eq(hackathonCertificates.eventId, setup.eventId));
+    await enqueueResultsNoticeBatch(db, {
+      eventId: setup.eventId,
+      afterUserId: null,
+      limit: 50,
+    });
+
+    const rows = await db
+      .select({ payload: scheduledNotifications.payload })
+      .from(scheduledNotifications)
+      .where(eq(scheduledNotifications.eventId, setup.eventId));
+    expect(rows.length).toBeGreaterThan(0);
+    for (const { payload } of rows)
+      expect(JSON.stringify(payload)).not.toContain('/c/');
   });
 });

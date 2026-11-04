@@ -9,7 +9,11 @@ import {
   type Db,
   type Event,
 } from '@founders-coffee/db';
-import { ntf_team_member_unnamed } from '@founders-coffee/i18n';
+import {
+  ntf_email_hackathon_results_certificate_html,
+  ntf_email_hackathon_results_certificate_text,
+  ntf_team_member_unnamed,
+} from '@founders-coffee/i18n';
 
 import { channelPlanFor } from './channel-plan.js';
 import {
@@ -34,11 +38,15 @@ const URLS: Partial<
   hackathon_judge_accepted: hackathonJudgeUrlFor,
 };
 
-/** The push and email forms of a team notice, in the reader's language. */
+/**
+ * The push and email forms of a team notice, in the reader's language. A certificate's address adds
+ * a line to the email only (B-CRT-03): a push opens one page, and that stays the notice's own.
+ */
 export const hackathonTeamMessage = async (
   templateKey: HackathonTeamTemplateKey,
   values: TeamValues,
   locale: Locale,
+  certificateUrl: string | null = null,
 ) => {
   const [pushTitle, pushBody, subject, html, text] = MESSAGES[templateKey];
   const options = { locale };
@@ -57,8 +65,12 @@ export const hackathonTeamMessage = async (
     ...(await renderNotificationEmail(
       locale,
       subject(values, options),
-      html(safe, options),
-      text(values, options),
+      certificateUrl
+        ? `${html(safe, options)}${ntf_email_hackathon_results_certificate_html({ url: escapeHtml(certificateUrl) }, options)}`
+        : html(safe, options),
+      certificateUrl
+        ? `${text(values, options)}\n\n${ntf_email_hackathon_results_certificate_text({ url: certificateUrl }, options)}`
+        : text(values, options),
     )),
   };
 };

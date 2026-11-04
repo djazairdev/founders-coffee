@@ -5,6 +5,12 @@ import {
 } from '@founders-coffee/core';
 import { readCertificatePage, type Db } from '@founders-coffee/db';
 
+export type OwnCertificate = {
+  readonly code: string;
+  readonly kind: HackathonCertificateKind;
+  readonly placement: string | null;
+};
+
 export type CertificatePage =
   | { readonly status: 'unknown' | 'revoked' }
   | {

@@ -12,6 +12,7 @@ import { channelPlanFor } from './channel-plan.js';
 import { operations } from '@founders-coffee/domain';
 
 import {
+  certificateUrlFor,
   feedbackUrlFor,
   hackathonTeamUrlFor,
   resolveNotificationContext,
@@ -28,6 +29,7 @@ import { armNotificationSchedule } from './schedule.js';
  * Write one batch of the notice that a hackathon's results are out (B-JDG-11), one row per member in
  * their language, following their Hackathons category. A member whose team was scored is told their
  * feedback is ready and sent to their team page (B-JDG-12); everyone else, to the hackathon's page.
+ * The email links the member's own certificate if they hold one (B-CRT-03).
  * A member of a team still in the results also gets the follow-ups, written now and sent a week and a
  * month after the results (B-OPS-03): how it went, if the market collects feedback, and whether the
  * team is still building. Each row's id is fixed by the hackathon and
@@ -52,7 +54,12 @@ export const enqueueResultsNoticeBatch = async (
   const messages = new Map<string, Record<string, string>>();
   let written = 0;
   let firstFollowUp: Date | null = null;
-  for (const { userId, hasFeedback, isOnEntry } of recipients) {
+  for (const {
+    userId,
+    hasFeedback,
+    isOnEntry,
+    certificateCode,
+  } of recipients) {
     const contact = await getNotificationContact(db, userId);
     if (!contact) continue;
     const context = await resolveNotificationContext(db, {
@@ -72,10 +79,11 @@ export const enqueueResultsNoticeBatch = async (
       readonly templateKey: HackathonTeamTemplateKey;
       readonly url: string;
       readonly sendAt: Date;
+      readonly certificateUrl?: string;
     }): Promise<boolean> => {
       const plan = channelPlanFor(contact, notice.templateKey);
       if (!plan) return false;
-      const messageKey = `${notice.templateKey}:${context.locale}`;
+      const messageKey = `${notice.templateKey}:${context.locale}:${notice.certificateUrl ?? ''}`;
       const message =
         messages.get(messageKey) ??
         (await hackathonTeamMessage(
@@ -89,6 +97,7 @@ export const enqueueResultsNoticeBatch = async (
             url: notice.url,
           },
           context.locale,
+          notice.certificateUrl ?? null,
         ));
       messages.set(messageKey, message);
       const payload = { ...base, ...message };
@@ -114,6 +123,9 @@ export const enqueueResultsNoticeBatch = async (
         : 'hackathon_results_published',
       url: hasFeedback ? teamUrl : valuesFor(base, context, true).url,
       sendAt,
+      ...(certificateCode
+        ? { certificateUrl: certificateUrlFor(context.locale, certificateCode) }
+        : {}),
     });
     if (isToldNow) written += 1;
     if (!isOnEntry) continue;
