@@ -50,6 +50,24 @@ export const isEventOrganiser = async (
   return row !== undefined;
 };
 
+/** The organisation that leads this event, or `null` for an event no organisation leads. */
+export const readEventLeadOrganisation = async (
+  db: Db,
+  eventId: string,
+): Promise<string | null> => {
+  const [row] = await db
+    .select({ organisationId: eventOrganisers.organisationId })
+    .from(eventOrganisers)
+    .where(
+      and(
+        eq(eventOrganisers.eventId, eventId),
+        eq(eventOrganisers.role, 'lead'),
+      ),
+    )
+    .limit(1);
+  return row?.organisationId ?? null;
+};
+
 /**
  * The approved organisations that organise the events matching `which`, each with its kind and
  * role, ordered by event and then by name. A pending, rejected or suspended organisation is left
