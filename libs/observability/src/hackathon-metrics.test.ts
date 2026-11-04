@@ -16,6 +16,8 @@ describe('Stage B metric names', () => {
       'submission_submitted',
       'judging_completed',
       'results_published',
+      'project_created',
+      'project_published',
     ]);
   });
 });

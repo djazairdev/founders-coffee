@@ -103,3 +103,21 @@ export const useRemoveTeamMember = (eventId: string) =>
   useTeamChange(eventId, (memberId: string) =>
     teamsApi.removeMember({ eventId, memberId }),
   );
+
+/** Make a draft project from the captain's team's entry (B-PRJ-02). */
+export const useCreateProject = (eventId: string) =>
+  useTeamChange<void, unknown>(eventId, () =>
+    teamsApi.createProject({ eventId }),
+  );
+
+/** List the member on their team's project. */
+export const useConfirmProject = (eventId: string) =>
+  useTeamChange(eventId, (projectId: string) =>
+    teamsApi.confirmProject(projectId),
+  );
+
+/** Publish the team's draft project, as its owner. */
+export const usePublishProject = (eventId: string) =>
+  useTeamChange(eventId, (projectId: string) =>
+    teamsApi.publishProject(projectId),
+  );

@@ -1,5 +1,6 @@
 import { appErrorCode } from '@founders-coffee/core';
 import {
+  hackathon_project_needs_confirmation,
   hackathon_team_error_changed,
   hackathon_team_error_failed,
   hackathon_team_error_full,
@@ -38,7 +39,14 @@ export const teamErrorMessage = (error: unknown, locale: Locale): string => {
     case 'team_request_not_found':
     case 'team_request_exists':
     case 'captain_must_transfer':
+    case 'project_not_available':
+    case 'project_exists':
+    case 'project_not_found':
+    case 'not_project_owner':
+    case 'invalid_project_transition':
       return hackathon_team_error_changed({}, options);
+    case 'project_needs_confirmation':
+      return hackathon_project_needs_confirmation({}, options);
     case 'rate_limited':
       return hackathon_team_error_rate_limited({}, options);
     default:
