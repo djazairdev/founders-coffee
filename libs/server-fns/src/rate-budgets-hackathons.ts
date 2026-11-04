@@ -66,6 +66,11 @@ export const HACKATHON_RATE_BUDGETS = {
     limit: 20,
     windowMs: 10 * MINUTE_MS,
   },
+  projectFromEntry: {
+    action: 'change_project_from_entry',
+    limit: 20,
+    windowMs: 10 * MINUTE_MS,
+  },
   hackathonSubmissionSave: {
     action: 'save_hackathon_submission',
     limit: 60,

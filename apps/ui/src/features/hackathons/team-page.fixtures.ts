@@ -46,6 +46,7 @@ export const teamView = (
         },
   ownRequests: [],
   feedback: null,
+  project: null,
   ...changes,
 });
 

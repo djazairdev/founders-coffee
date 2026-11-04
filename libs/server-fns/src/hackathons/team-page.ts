@@ -7,12 +7,17 @@ import {
   listOwnTeamRequests,
   readParticipantStanding,
   readTeamFeedback,
+  readTeamEntryProject,
   readTeamPageTeam,
   type Db,
   type TeamPageMember,
 } from '@founders-coffee/db';
 import { hackathons } from '@founders-coffee/domain';
 
+import {
+  teamProjectViewOf,
+  type TeamProjectView,
+} from '../projects/from-entry.js';
 import { loadTeamHackathon } from './team-context.js';
 
 export type TeamPageView = {
@@ -50,6 +55,7 @@ export type TeamPageView = {
     readonly createdAt: number;
   }[];
   readonly feedback: hackathons.TeamFeedback | null;
+  readonly project: TeamProjectView | null;
 };
 
 /**
@@ -58,7 +64,8 @@ export type TeamPageView = {
  * hackathon's dates. Only the captain is given the requests waiting for an answer and when the
  * team's invite link stops working; a member in no team is given their own requests instead. Once
  * the results are published, a member also reads the judges' feedback on their own team's entry
- * (B-JDG-12): the team comes from the reader's own membership, so nobody can ask for another's.
+ * and where the project made from it stands (B-JDG-12, B-PRJ-02): the team comes from the reader's
+ * own membership, so nobody can ask for another's.
  */
 export const teamPageResolver = async (
   db: Db,
@@ -70,15 +77,15 @@ export const teamPageResolver = async (
   const { event, timeline, teamMin, teamMax, resultsPublishedAt } = loaded.data;
   const standing = await readParticipantStanding(db, input);
   const membership = standing.membership;
-  const [team, ownRequests, feedback] = await Promise.all([
+  const results =
+    membership && resultsPublishedAt
+      ? { eventId: input.eventId, teamId: membership.teamId }
+      : null;
+  const [team, ownRequests, feedback, entry] = await Promise.all([
     membership ? readTeamPageTeam(db, membership.teamId, new Date(now)) : null,
     membership ? [] : listOwnTeamRequests(db, input),
-    membership && resultsPublishedAt
-      ? readTeamFeedback(db, {
-          eventId: input.eventId,
-          teamId: membership.teamId,
-        })
-      : null,
+    results ? readTeamFeedback(db, results) : null,
+    results ? readTeamEntryProject(db, results) : null,
   ]);
   const isCaptain = membership?.isCaptain ?? false;
   return ok({
@@ -122,5 +129,9 @@ export const teamPageResolver = async (
         feedback.criteria,
         feedback.scores,
       ),
+    project: teamProjectViewOf(entry, {
+      userId: input.userId,
+      isCaptain,
+    }),
   });
 };

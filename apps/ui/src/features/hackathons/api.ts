@@ -10,7 +10,10 @@ import {
   getHackathonLookingForTeam,
   getHackathonResults,
   getHackathonSubmissionPage,
+  confirmHackathonProject,
+  createHackathonProject,
   getHackathonTeamPage,
+  publishHackathonProject,
   joinHackathonTeam,
   leaveHackathonTeam,
   passHackathonTeamCaptaincy,
@@ -114,6 +117,12 @@ type TeamRequestAnswer = EventScoped & { readonly requestId: string };
 
 export const teamsApi = {
   page: (eventId: string) => getHackathonTeamPage({ data: { eventId } }),
+  createProject: (request: EventScoped) =>
+    createHackathonProject({ data: request }),
+  confirmProject: (projectId: string) =>
+    confirmHackathonProject({ data: { projectId } }),
+  publishProject: (projectId: string) =>
+    publishHackathonProject({ data: { projectId } }),
   looking: (eventId: string) =>
     getHackathonLookingForTeam({ data: { eventId } }),
   create: (request: {

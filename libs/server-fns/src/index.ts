@@ -15,6 +15,8 @@ export * from './maps/index.js';
 export * from './rsvps/index.js';
 export * from './waitlist/index.js';
 export * from './hackathons/index.js';
+export * from './projects/from-entry-rpc.js';
+export type { TeamProjectView } from './projects/from-entry.js';
 export * from './organisations/index.js';
 export * from './push/index.js';
 export * from './chat/index.js';
