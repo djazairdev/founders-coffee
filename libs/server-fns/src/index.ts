@@ -16,6 +16,8 @@ export * from './rsvps/index.js';
 export * from './waitlist/index.js';
 export * from './hackathons/index.js';
 export * from './projects/from-entry-rpc.js';
+export * from './projects/page-rpc.js';
+export type { ProjectPage } from './projects/page.js';
 export * from './hackathons/certificate-page-rpc.js';
 export type { CertificatePage } from './hackathons/certificate-page.js';
 export type { TeamProjectView } from './projects/from-entry.js';
@@ -71,4 +73,5 @@ export type {
   SitemapEvent,
   SitemapMarket,
   SitemapOrganisation,
+  SitemapProject,
 } from './sitemap.js';

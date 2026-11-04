@@ -171,6 +171,12 @@ export const localizedOrganisation = (locale: Locale, slug: string) => ({
   params: { locale, slug },
 });
 
+/** A published project's public page (B-PRJ-03). */
+export const localizedProject = (locale: Locale, slug: string) => ({
+  to: '/$locale/p/$slug' as const,
+  params: { locale, slug },
+});
+
 /** The page where a member sees their own organisation and its members (B-ORG-09). */
 export const localizedMyOrganisation = (locale: Locale, slug: string) => ({
   to: '/$locale/o/$slug/manage' as const,

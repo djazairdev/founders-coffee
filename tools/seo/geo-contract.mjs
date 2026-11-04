@@ -17,6 +17,7 @@ const PRIMARY_TYPES = {
   event: 'Event',
   market: 'CollectionPage',
   organisation: 'ProfilePage',
+  project: 'CreativeWork',
 };
 const PRIVATE_KEYS = new Set(['email', 'phone', 'hostid', 'rsvps']);
 

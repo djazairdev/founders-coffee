@@ -15,6 +15,9 @@ const data: SitemapData = {
     },
   ],
   organisations: [{ slug: 'code-club' }],
+  projects: [
+    { slug: 'ledger-ab12', updatedAt: new Date('2099-01-02T00:00:00Z') },
+  ],
 };
 
 describe('sitemap', () => {
@@ -22,7 +25,7 @@ describe('sitemap', () => {
     const items = sitemapItems(data);
     const paths = items.map(({ path }) => path);
 
-    expect(paths).toHaveLength(39);
+    expect(paths).toHaveLength(42);
     expect(paths).toContain('/ar/community');
     expect(paths).toContain('/ar/faq');
     expect(paths).toContain('/fr/faq');
@@ -33,6 +36,7 @@ describe('sitemap', () => {
     expect(paths).toContain('/ar/o/code-club');
     expect(paths).toContain('/fr/o/code-club');
     expect(paths).toContain('/en/o/code-club');
+    expect(paths).toContain('/fr/p/ledger-ab12');
     expect(new Set(paths).size).toBe(paths.length);
   });
 

@@ -81,6 +81,7 @@ export const PUBLIC_PAGES_NAMING_A_SCREEN = [
   '/ar/algeria/%70rofile',
   '/en/e/%66eedback',
   '/en/o/acme',
+  '/en/p/ledger-ab12',
   '/ar/o/apply-club',
   '/fr/algeria/e/hackathon',
   '/en/e/o',

@@ -10,6 +10,7 @@ const PREVIEW_ORIGIN =
   'https://founders-coffee-ui-staging.yagoub-2-amine.workers.dev';
 
 const data: SitemapData = {
+  projects: [],
   markets: [{ slug: 'algeria' }],
   cities: [{ market: 'algeria', city: 'algiers' }],
   events: [
