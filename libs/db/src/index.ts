@@ -15,6 +15,7 @@ export * from './hackathons.js';
 export * from './hackathon-tracks.js';
 export * from './hackathon-prizes.js';
 export * from './hackathon-criteria.js';
+export * from './hackathon-prize-delivery.js';
 export * from './hackathon-record.js';
 export * from './hackathon-registrations.js';
 export * from './project-page.js';

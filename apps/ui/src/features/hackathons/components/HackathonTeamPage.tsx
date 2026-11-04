@@ -33,6 +33,7 @@ import { HackathonTeamInviteLink } from './HackathonTeamInviteLink';
 import { HackathonTeamJoin } from './HackathonTeamJoin';
 import { HackathonTeamMembers } from './HackathonTeamMembers';
 import { HackathonTeamOwnRequests } from './HackathonTeamOwnRequests';
+import { HackathonTeamPrizes } from './HackathonTeamPrizes';
 import { HackathonTeamProject } from './HackathonTeamProject';
 import { HackathonParticipantQueryStatus } from './HackathonParticipantQueryStatus';
 import { HackathonTeamRequests } from './HackathonTeamRequests';
@@ -224,6 +225,7 @@ export const HackathonTeamPage = ({
       {view.feedback ? (
         <HackathonTeamFeedback feedback={view.feedback} locale={locale} />
       ) : null}
+      <HackathonTeamPrizes prizes={view.prizes} locale={locale} />
       {view.project ? (
         <HackathonTeamProject
           eventId={view.event.id}

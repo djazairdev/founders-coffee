@@ -33,7 +33,8 @@ export const HackathonRecordOffer = ({
           : hackathon_record_offer_note({}, options)}
       </p>
       <Button
-        className={`mt-3 btn-xs sm:btn-sm md:btn-md ${isShown ? 'btn-outline' : 'btn-primary'}`}
+        variant={isShown ? 'outline' : 'primary'}
+        className="mt-3"
         disabled={change.isPending}
         onClick={() => change.mutate(!isShown)}
       >

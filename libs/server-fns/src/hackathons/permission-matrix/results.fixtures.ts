@@ -31,6 +31,11 @@ import {
   organiserOnly,
   type Operations,
 } from './matrix.fixtures.js';
+import {
+  assignPrizeResolver,
+  prizeDeliveryResolver,
+  setPrizeDeliveryResolver,
+} from '../prize-delivery.js';
 import { PULL_REQUEST_URL } from './world.fixtures.js';
 
 export const RESULTS_OPERATIONS: Operations = {
@@ -90,6 +95,40 @@ export const RESULTS_OPERATIONS: Operations = {
       review: 'hackathon_not_editable',
       judged: 'ok',
       results: 'results_already_published',
+      cancelled: 'hackathon_not_editable',
+    }),
+  },
+  getHackathonPrizeDelivery: {
+    gate: ORGANISER,
+    run: ({ db, world }) => prizeDeliveryResolver(db, world.eventId),
+    cells: organiserOnly('ok'),
+  },
+  assignHackathonPrize: {
+    gate: ORGANISER,
+    changesWorld: true,
+    run: ({ db, world }) =>
+      assignPrizeResolver(db, {
+        eventId: world.eventId,
+        prizeId: world.prizeId,
+        submissionId: world.submissionId,
+      }),
+    cells: organiserOnly('results_not_published', {
+      results: 'hackathon_prize_not_found',
+      cancelled: 'hackathon_not_editable',
+    }),
+  },
+  setHackathonPrizeDelivery: {
+    gate: ORGANISER,
+    changesWorld: true,
+    run: ({ db, world }) =>
+      setPrizeDeliveryResolver(db, {
+        eventId: world.eventId,
+        prizeId: world.prizeId,
+        status: 'sent',
+        note: null,
+      }),
+    cells: organiserOnly('results_not_published', {
+      results: 'prize_not_awarded',
       cancelled: 'hackathon_not_editable',
     }),
   },

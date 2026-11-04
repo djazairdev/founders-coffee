@@ -57,6 +57,15 @@ vi.mock('@tanstack/react-router', () => ({
 }));
 
 vi.mock('../results-hooks', () => ({
+  usePrizeDelivery: () => ({
+    data: { isOpen: false, prizes: [], entries: [] },
+  }),
+  useAssignPrize: () => ({ mutate: vi.fn(), isPending: false, error: null }),
+  useSetPrizeDelivery: () => ({
+    mutate: vi.fn(),
+    isPending: false,
+    error: null,
+  }),
   useHackathonResults: () => ({
     data: undefined,
     isError: false,

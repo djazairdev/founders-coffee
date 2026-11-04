@@ -5,6 +5,7 @@ import {
 } from '@founders-coffee/core';
 import {
   listOwnTeamRequests,
+  listTeamPrizes,
   readHackathonRecordOffer,
   readParticipantStanding,
   readTeamFeedback,
@@ -58,6 +59,11 @@ export type TeamPageView = {
   readonly feedback: hackathons.TeamFeedback | null;
   readonly project: TeamProjectView | null;
   readonly recordOffer: { readonly isShown: boolean } | null;
+  readonly prizes: readonly {
+    readonly prizeId: string;
+    readonly title: string;
+    readonly isDelivered: boolean;
+  }[];
 };
 
 /**
@@ -83,13 +89,17 @@ export const teamPageResolver = async (
     membership && resultsPublishedAt
       ? { eventId: input.eventId, teamId: membership.teamId }
       : null;
-  const [team, ownRequests, feedback, entry, recordOffer] = await Promise.all([
-    membership ? readTeamPageTeam(db, membership.teamId, new Date(now)) : null,
-    membership ? [] : listOwnTeamRequests(db, input),
-    results ? readTeamFeedback(db, results) : null,
-    results ? readTeamEntryProject(db, results) : null,
-    resultsPublishedAt ? readHackathonRecordOffer(db, input) : null,
-  ]);
+  const [team, ownRequests, feedback, entry, recordOffer, prizes] =
+    await Promise.all([
+      membership
+        ? readTeamPageTeam(db, membership.teamId, new Date(now))
+        : null,
+      membership ? [] : listOwnTeamRequests(db, input),
+      results ? readTeamFeedback(db, results) : null,
+      results ? readTeamEntryProject(db, results) : null,
+      resultsPublishedAt ? readHackathonRecordOffer(db, input) : null,
+      results ? listTeamPrizes(db, results) : [],
+    ]);
   const isCaptain = membership?.isCaptain ?? false;
   return ok({
     event: {
@@ -137,5 +147,10 @@ export const teamPageResolver = async (
       isCaptain,
     }),
     recordOffer,
+    prizes: prizes.map(({ prizeId, title, status }) => ({
+      prizeId,
+      title,
+      isDelivered: status === 'received',
+    })),
   });
 };

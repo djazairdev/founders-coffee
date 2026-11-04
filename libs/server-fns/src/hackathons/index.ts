@@ -117,6 +117,12 @@ export {
   submitHackathonForReview,
   type SubmitHackathonForReviewRequest,
 } from './review-rpc.js';
+export {
+  assignHackathonPrize,
+  getHackathonPrizeDelivery,
+  setHackathonPrizeDelivery,
+} from './prize-delivery-rpc.js';
+export type { PrizeDeliveryView } from './prize-delivery.js';
 export { getHackathonResults, publishHackathonResults } from './results-rpc.js';
 export type { HackathonResultsEntry, HackathonResultsView } from './results.js';
 export {

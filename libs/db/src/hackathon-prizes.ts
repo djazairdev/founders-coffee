@@ -5,7 +5,12 @@ import type { Money } from '@founders-coffee/core';
 import type { Db } from './db.js';
 import { hackathonAtVersion } from './hackathon-edits.js';
 import { bound } from './insert-select.js';
-import { hackathonPrizes, hackathons, hackathonTracks } from './schema.js';
+import {
+  hackathonPrizeAwards,
+  hackathonPrizes,
+  hackathons,
+  hackathonTracks,
+} from './schema.js';
 
 export type HackathonPrizeFields = {
   readonly trackId: string | null;
@@ -78,9 +83,14 @@ export const publicHackathonPrizesQuery = (db: Db, eventId: string | SQL) =>
       valueAmountMinor: hackathonPrizes.valueAmountMinor,
       valueCurrency: hackathonPrizes.valueCurrency,
       confirmedAt: hackathonPrizes.confirmedAt,
+      awardedSubmissionId: hackathonPrizeAwards.submissionId,
     })
     .from(hackathonPrizes)
     .leftJoin(hackathonTracks, eq(hackathonTracks.id, hackathonPrizes.trackId))
+    .leftJoin(
+      hackathonPrizeAwards,
+      eq(hackathonPrizeAwards.prizeId, hackathonPrizes.id),
+    )
     .where(
       and(
         eq(hackathonPrizes.eventId, eventId),

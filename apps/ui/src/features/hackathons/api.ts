@@ -1,5 +1,6 @@
 import {
   addHackathonPrize,
+  assignHackathonPrize,
   answerHackathonTeamRequest,
   cancelHackathonTeamRequest,
   createHackathonTeam,
@@ -7,6 +8,7 @@ import {
   getHackathonJudgeEntryPage,
   getHackathonJudgePage,
   getHackathonJudgingProgress,
+  getHackathonPrizeDelivery,
   getHackathonLookingForTeam,
   getHackathonResults,
   getHackathonSubmissionPage,
@@ -27,6 +29,7 @@ import {
   recuseFromHackathonEntry,
   remindHackathonJudges,
   saveHackathonScores,
+  setHackathonPrizeDelivery,
   setHackathonRecordShown,
   type HackathonResultsEntry,
   type HackathonResultsView,
@@ -58,6 +61,7 @@ import {
   withdrawFromHackathon,
   type AddHackathonPrizeRequest,
   type CertificatePage,
+  type PrizeDeliveryView,
   type ChangeHackathonPrizeRequest,
   type ConfirmHackathonPrizeRequest,
   type CreateHackathonDraftRequest,
@@ -198,6 +202,13 @@ export const hackathonResultsApi = {
     getHackathonJudgingProgress({ data: { eventId } }),
   remind: (eventId: string) => remindHackathonJudges({ data: { eventId } }),
   results: (eventId: string) => getHackathonResults({ data: { eventId } }),
+  prizeDelivery: (eventId: string) =>
+    getHackathonPrizeDelivery({ data: { eventId } }),
+  assignPrize: (data: Parameters<typeof assignHackathonPrize>[0]['data']) =>
+    assignHackathonPrize({ data }),
+  setPrizeDelivery: (
+    data: Parameters<typeof setHackathonPrizeDelivery>[0]['data'],
+  ) => setHackathonPrizeDelivery({ data }),
   publish: (data: Parameters<typeof publishHackathonResults>[0]['data']) =>
     publishHackathonResults({ data }),
 };
@@ -215,6 +226,7 @@ export const judgingApi = {
 export type {
   AddHackathonPrizeRequest,
   CertificatePage,
+  PrizeDeliveryView,
   HackathonResultsEntry,
   HackathonResultsView,
   JudgeCriterionView,
