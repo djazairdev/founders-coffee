@@ -15,6 +15,7 @@ export * from './maps/index.js';
 export * from './rsvps/index.js';
 export * from './waitlist/index.js';
 export * from './hackathons/index.js';
+export * from './profile/hackathon-record-rpc.js';
 export * from './projects/from-entry-rpc.js';
 export * from './projects/page-rpc.js';
 export type { ProjectPage } from './projects/page.js';

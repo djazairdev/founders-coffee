@@ -5,6 +5,7 @@ import {
 } from '@founders-coffee/core';
 import {
   listOwnTeamRequests,
+  readHackathonRecordOffer,
   readParticipantStanding,
   readTeamFeedback,
   readTeamEntryProject,
@@ -56,6 +57,7 @@ export type TeamPageView = {
   }[];
   readonly feedback: hackathons.TeamFeedback | null;
   readonly project: TeamProjectView | null;
+  readonly recordOffer: { readonly isShown: boolean } | null;
 };
 
 /**
@@ -81,11 +83,12 @@ export const teamPageResolver = async (
     membership && resultsPublishedAt
       ? { eventId: input.eventId, teamId: membership.teamId }
       : null;
-  const [team, ownRequests, feedback, entry] = await Promise.all([
+  const [team, ownRequests, feedback, entry, recordOffer] = await Promise.all([
     membership ? readTeamPageTeam(db, membership.teamId, new Date(now)) : null,
     membership ? [] : listOwnTeamRequests(db, input),
     results ? readTeamFeedback(db, results) : null,
     results ? readTeamEntryProject(db, results) : null,
+    resultsPublishedAt ? readHackathonRecordOffer(db, input) : null,
   ]);
   const isCaptain = membership?.isCaptain ?? false;
   return ok({
@@ -133,5 +136,6 @@ export const teamPageResolver = async (
       userId: input.userId,
       isCaptain,
     }),
+    recordOffer,
   });
 };

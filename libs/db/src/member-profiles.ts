@@ -31,6 +31,7 @@ export type MemberProfileChanges = Pick<
   | 'publishSkills'
   | 'publishLinks'
   | 'publishOpenTo'
+  | 'publishHackathonRecord'
   | 'publishAttendedCount'
 >;
 
@@ -203,6 +204,7 @@ export const updateMemberProfile = async (
         publishSkills: changes.publishSkills,
         publishLinks: changes.publishLinks,
         publishOpenTo: changes.publishOpenTo,
+        publishHackathonRecord: changes.publishHackathonRecord,
         publishAttendedCount: changes.publishAttendedCount,
         revision: sql`${memberProfiles.revision} + 1`,
         updatedAt: now,

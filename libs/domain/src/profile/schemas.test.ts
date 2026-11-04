@@ -68,6 +68,7 @@ describe('profile contracts', () => {
         skills: false,
         links: false,
         openTo: false,
+        hackathonRecord: false,
         attendedCount: false,
       },
     });
@@ -140,6 +141,7 @@ describe('profile contracts', () => {
       skills: true,
       links: true,
       openTo: true,
+      hackathonRecord: true,
       attendedCount: true,
     };
     expect(
@@ -153,6 +155,7 @@ describe('profile contracts', () => {
       skills: false,
       links: false,
       openTo: false,
+      hackathonRecord: true,
       attendedCount: true,
     });
     const value = updateProfileSchema.parse({

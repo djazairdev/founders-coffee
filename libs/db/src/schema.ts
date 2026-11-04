@@ -2107,6 +2107,11 @@ export const memberProfiles = sqliteTable(
     publishOpenTo: integer('publish_open_to', { mode: 'boolean' })
       .notNull()
       .default(false),
+    publishHackathonRecord: integer('publish_hackathon_record', {
+      mode: 'boolean',
+    })
+      .notNull()
+      .default(false),
     revision: integer('revision').notNull().default(0),
     createdAt: integer('created_at', { mode: 'timestamp' })
       .notNull()

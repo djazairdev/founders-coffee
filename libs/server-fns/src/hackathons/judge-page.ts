@@ -5,6 +5,7 @@ import {
   listHackathonCriteria,
   listJudgeProgress,
   listJudgeScores,
+  readHackathonRecordOffer,
   readJudgeEntry,
   readJudgePlace,
   type Db,
@@ -39,6 +40,7 @@ type JudgingStanding = {
 export type JudgePageView = JudgingStanding & {
   readonly entries: readonly JudgePageEntry[];
   readonly progress: hackathons.JudgeProgress;
+  readonly recordOffer: { readonly isShown: boolean } | null;
 };
 
 export type JudgeCriterionView = {
@@ -120,6 +122,10 @@ export const judgePageResolver = async (
     ...standingOf(input.eventId, hackathon, stage, isJudge),
     entries,
     progress: hackathons.judgeProgressOf(entries.map((entry) => entry.state)),
+    recordOffer:
+      isJudge && hackathon.isResultsPublished
+        ? await readHackathonRecordOffer(db, input)
+        : null,
   });
 };
 

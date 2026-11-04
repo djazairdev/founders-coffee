@@ -26,6 +26,7 @@ import type { TeamPageView } from '../api';
 import { scheduleMoment } from '../schedule';
 import { useTeamPage } from '../team-hooks';
 import { HackathonTeamCreateForm } from './HackathonTeamCreateForm';
+import { HackathonRecordOffer } from './HackathonRecordOffer';
 import { HackathonTeamFeedback } from './HackathonTeamFeedback';
 import { HackathonParticipantFrame } from './HackathonParticipantFrame';
 import { HackathonTeamInviteLink } from './HackathonTeamInviteLink';
@@ -227,6 +228,13 @@ export const HackathonTeamPage = ({
         <HackathonTeamProject
           eventId={view.event.id}
           project={view.project}
+          locale={locale}
+        />
+      ) : null}
+      {view.recordOffer ? (
+        <HackathonRecordOffer
+          eventId={view.event.id}
+          isShown={view.recordOffer.isShown}
           locale={locale}
         />
       ) : null}

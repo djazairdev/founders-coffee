@@ -27,6 +27,7 @@ export const profileChanges: MemberProfileChanges = {
   publishSkills: false,
   publishLinks: false,
   publishOpenTo: false,
+  publishHackathonRecord: false,
 };
 
 export const preferenceChanges: AccountPreferenceChanges = {

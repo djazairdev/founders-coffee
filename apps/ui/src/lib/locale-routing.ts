@@ -171,6 +171,12 @@ export const localizedOrganisation = (locale: Locale, slug: string) => ({
   params: { locale, slug },
 });
 
+/** The page that proves a certificate (B-CRT-02). */
+export const localizedCertificate = (locale: Locale, code: string) => ({
+  to: '/$locale/c/$code' as const,
+  params: { locale, code },
+});
+
 /** A published project's public page (B-PRJ-03). */
 export const localizedProject = (locale: Locale, slug: string) => ({
   to: '/$locale/p/$slug' as const,

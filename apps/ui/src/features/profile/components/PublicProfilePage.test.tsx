@@ -47,6 +47,7 @@ const publicProfile: PublicProfile = {
   openTo: [],
   hostedCount: 0,
   attendedCount: null,
+  hackathonRecord: [],
 };
 
 const markets: readonly RootMarket[] = [

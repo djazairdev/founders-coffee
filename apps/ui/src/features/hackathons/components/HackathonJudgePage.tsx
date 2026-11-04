@@ -14,6 +14,7 @@ import { HackathonJudgeEntries } from './HackathonJudgeEntries';
 import { HackathonJudgingNotice } from './HackathonJudgingNotice';
 import { HackathonParticipantFrame } from './HackathonParticipantFrame';
 import { HackathonParticipantQueryStatus } from './HackathonParticipantQueryStatus';
+import { HackathonRecordOffer } from './HackathonRecordOffer';
 
 const Judging = ({
   view,
@@ -68,7 +69,16 @@ export const HackathonJudgePage = ({
       event={view?.event ?? null}
     >
       {view ? (
-        <Judging view={view} locale={locale} timeZone={timeZone} />
+        <>
+          <Judging view={view} locale={locale} timeZone={timeZone} />
+          {view.recordOffer ? (
+            <HackathonRecordOffer
+              eventId={eventId}
+              isShown={view.recordOffer.isShown}
+              locale={locale}
+            />
+          ) : null}
+        </>
       ) : (
         <HackathonParticipantQueryStatus
           isError={query.isError}

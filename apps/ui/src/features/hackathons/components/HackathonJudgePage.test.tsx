@@ -35,6 +35,14 @@ vi.mock('../judging-hooks', () => ({
   useJudgePage: () => mocks.page,
 }));
 
+vi.mock('../team-hooks', () => ({
+  useSetRecordShown: () => ({
+    mutate: vi.fn(),
+    isPending: false,
+    isError: false,
+  }),
+}));
+
 afterEach(() => {
   cleanup();
   mocks.page = {
@@ -46,6 +54,7 @@ afterEach(() => {
 });
 
 const judgeView = (changes: Partial<JudgePageView> = {}): JudgePageView => ({
+  recordOffer: null,
   event: {
     id: EVENT_ID,
     title: 'Algiers Builders Weekend',
@@ -159,6 +168,20 @@ describe('HackathonJudgePage (B-JDG-06)', () => {
       screen.getByText('Judging has closed, so scores can no longer change.'),
     ).toBeTruthy();
     expect(screen.queryByRole('list')).toBeNull();
+  });
+
+  it('offers a judge to show the hackathon on their profile once results are out', () => {
+    renderPage(
+      judgeView({
+        stage: 'closed',
+        entries: [],
+        recordOffer: { isShown: false },
+      }),
+    );
+
+    expect(
+      screen.getByRole('heading', { name: 'Show this on your profile?' }),
+    ).toBeTruthy();
   });
 
   it('reads in Arabic', () => {
