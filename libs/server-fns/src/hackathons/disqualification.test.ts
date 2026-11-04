@@ -219,6 +219,7 @@ describe('what disqualification changes (B-SAFE-03, real D1)', () => {
             verificationCode: id('cod'),
           },
         ],
+        awards: [],
         metadata: {},
       }),
     ).toBe(true);

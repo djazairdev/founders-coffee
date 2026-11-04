@@ -72,5 +72,6 @@
   "0070_hackathon_results": "compatible",
   "0071_hackathon_certificates": "compatible",
   "0072_hackathon_results_disqualified": "compatible",
-  "0073_hackathon_retention_indexes": "compatible"
+  "0073_hackathon_retention_indexes": "compatible",
+  "0074_hackathon_prize_awards": "compatible"
 }

@@ -107,6 +107,15 @@ export const HACKATHON_SCORE_COMMENT_MAX = 1000;
 export const HACKATHON_RESULTS_REASON_MAX = 1000;
 export const HACKATHON_TIE_ORDER_MAX = 500;
 
+export const HACKATHON_PRIZE_DELIVERY_STATUSES = [
+  'pending',
+  'sent',
+  'received',
+] as const;
+export type HackathonPrizeDeliveryStatus =
+  (typeof HACKATHON_PRIZE_DELIVERY_STATUSES)[number];
+export const HACKATHON_PRIZE_NOTE_MAX = 500;
+
 export const HACKATHON_CERTIFICATE_KINDS = [
   'participant',
   'winner',
