@@ -112,6 +112,10 @@ export const organisationInvitationUrlFor = (
 export const hackathonTeamUrlFor = (locale: Locale, eventId: string): string =>
   `${notificationBaseUrl()}/${locale}/hackathon/${eventId}/team`;
 
+/** A certificate's own page (B-CRT-03), in the language of the message carrying it. */
+export const certificateUrlFor = (locale: Locale, code: string): string =>
+  `${notificationBaseUrl()}/${locale}/c/${encodeURIComponent(code)}`;
+
 /** The team's project in a hackathon (B-SUB-05), on the same terms as `closeoutUrlFor`. */
 export const hackathonSubmitUrlFor = (
   locale: Locale,

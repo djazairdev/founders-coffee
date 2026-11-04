@@ -61,6 +61,7 @@ import {
   withdrawFromHackathon,
   type AddHackathonPrizeRequest,
   type CertificatePage,
+  type OwnCertificate,
   type PrizeDeliveryView,
   type ChangeHackathonPrizeRequest,
   type ConfirmHackathonPrizeRequest,
@@ -226,6 +227,7 @@ export const judgingApi = {
 export type {
   AddHackathonPrizeRequest,
   CertificatePage,
+  OwnCertificate,
   PrizeDeliveryView,
   HackathonResultsEntry,
   HackathonResultsView,

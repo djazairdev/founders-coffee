@@ -189,3 +189,30 @@ export const readCertificatePage = async (db: Db, code: string) => {
       .map((organiser) => organiser.name),
   };
 };
+
+/**
+ * A member's own standing certificates from one hackathon (B-CRT-03), the strongest first: a winner's
+ * before a judge's before taking part.
+ */
+export const listOwnCertificates = (
+  db: Db,
+  input: { readonly eventId: string; readonly userId: string },
+) =>
+  db
+    .select({
+      code: hackathonCertificates.verificationCode,
+      kind: hackathonCertificates.kind,
+      placement: hackathonCertificates.placement,
+    })
+    .from(hackathonCertificates)
+    .where(
+      and(
+        eq(hackathonCertificates.eventId, input.eventId),
+        eq(hackathonCertificates.userId, input.userId),
+        isNull(hackathonCertificates.revokedAt),
+      ),
+    )
+    .orderBy(
+      sql`CASE ${hackathonCertificates.kind} WHEN 'winner' THEN 0 WHEN 'judge' THEN 1 ELSE 2 END`,
+      hackathonCertificates.verificationCode,
+    );
