@@ -512,6 +512,13 @@
       "when": 1793815292126,
       "tag": "0072_hackathon_results_disqualified",
       "breakpoints": true
+    },
+    {
+      "idx": 73,
+      "version": "6",
+      "when": 1793815643139,
+      "tag": "0073_hackathon_retention_indexes",
+      "breakpoints": true
     }
   ]
 }

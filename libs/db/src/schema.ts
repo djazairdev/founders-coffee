@@ -453,6 +453,9 @@ export const events = sqliteTable(
       table.slug,
     ),
     index('events_host_id_index').on(table.hostId),
+    index('events_hackathon_ends_index')
+      .on(table.endsAt)
+      .where(sql`kind = 'hackathon'`),
   ],
 );
 
@@ -768,6 +771,9 @@ export const hackathonRegistrations = sqliteTable(
       table.createdAt,
     ),
     index('hackathon_registrations_user_index').on(table.userId),
+    index('hackathon_registrations_skills_index')
+      .on(table.eventId)
+      .where(sql`skills IS NOT NULL`),
     check(
       'hackathon_registrations_skills_check',
       sql`${table.skills} IS NULL OR length(${table.skills}) <= ${sql.raw(String(HACKATHON_REGISTRATION_SKILLS_MAX))}`,
