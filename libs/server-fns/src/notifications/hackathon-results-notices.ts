@@ -1,4 +1,6 @@
+import type { HackathonTeamTemplateKey } from '@founders-coffee/core';
 import {
+  communityOperationsEnabled,
   enqueueNotificationIfAbsent,
   getHackathon,
   getNotificationContact,
@@ -7,7 +9,13 @@ import {
 } from '@founders-coffee/db';
 
 import { channelPlanFor } from './channel-plan.js';
-import { hackathonTeamUrlFor, resolveNotificationContext } from './context.js';
+import { operations } from '@founders-coffee/domain';
+
+import {
+  feedbackUrlFor,
+  hackathonTeamUrlFor,
+  resolveNotificationContext,
+} from './context.js';
 import { hackathonTeamMessage } from './hackathon-team.js';
 import {
   validPayload,
@@ -19,7 +27,10 @@ import { armNotificationSchedule } from './schedule.js';
 /**
  * Write one batch of the notice that a hackathon's results are out (B-JDG-11), one row per member in
  * their language, following their Hackathons category. A member whose team was scored is told their
- * feedback is ready and sent to their team page (B-JDG-12); everyone else, to the hackathon's page. Each row's id is fixed by the hackathon and
+ * feedback is ready and sent to their team page (B-JDG-12); everyone else, to the hackathon's page.
+ * A member of a team still in the results also gets the follow-ups, written now and sent a week and a
+ * month after the results (B-OPS-03): how it went, if the market collects feedback, and whether the
+ * team is still building. Each row's id is fixed by the hackathon and
  * the member, so a queue message delivered twice writes nothing new. Answers where the next batch
  * starts, `null` once the list is done.
  */
@@ -36,15 +47,14 @@ export const enqueueResultsNoticeBatch = async (
   const { event } = found;
   const recipients = await listResultsNoticeRecipients(db, input);
   const sendAt = new Date();
+  const publishedAt = found.hackathon.resultsPublishedAt.getTime();
+  const canAskFeedback = await communityOperationsEnabled(db, event.marketCode);
   const messages = new Map<string, Record<string, string>>();
   let written = 0;
-  for (const { userId, hasFeedback } of recipients) {
-    const templateKey = hasFeedback
-      ? 'hackathon_results_feedback'
-      : 'hackathon_results_published';
+  let firstFollowUp: Date | null = null;
+  for (const { userId, hasFeedback, isOnEntry } of recipients) {
     const contact = await getNotificationContact(db, userId);
-    const plan = contact && channelPlanFor(contact, templateKey);
-    if (!contact || !plan) continue;
+    if (!contact) continue;
     const context = await resolveNotificationContext(db, {
       preferred: contact.localePref,
       marketCode: event.marketCode,
@@ -57,40 +67,79 @@ export const enqueueResultsNoticeBatch = async (
       startsAt: event.startsAt.toISOString(),
       locale: context.locale,
     };
-    const messageKey = `${templateKey}:${context.locale}`;
-    const message =
-      messages.get(messageKey) ??
-      (await hackathonTeamMessage(
-        templateKey,
-        {
-          title: event.title,
-          team: '',
-          name: '',
-          project: '',
-          reason: '',
-          url: hasFeedback
-            ? hackathonTeamUrlFor(context.locale, event.id)
-            : valuesFor(base, context, true).url,
-        },
-        context.locale,
-      ));
-    messages.set(messageKey, message);
-    const payload = { ...base, ...message };
-    const queued = await enqueueNotificationIfAbsent(db, {
+    const queue = async (notice: {
+      readonly id: string;
+      readonly templateKey: HackathonTeamTemplateKey;
+      readonly url: string;
+      readonly sendAt: Date;
+    }): Promise<boolean> => {
+      const plan = channelPlanFor(contact, notice.templateKey);
+      if (!plan) return false;
+      const messageKey = `${notice.templateKey}:${context.locale}`;
+      const message =
+        messages.get(messageKey) ??
+        (await hackathonTeamMessage(
+          notice.templateKey,
+          {
+            title: event.title,
+            team: '',
+            name: '',
+            project: '',
+            reason: '',
+            url: notice.url,
+          },
+          context.locale,
+        ));
+      messages.set(messageKey, message);
+      const payload = { ...base, ...message };
+      const queued = await enqueueNotificationIfAbsent(db, {
+        id: notice.id,
+        eventId: event.id,
+        userId,
+        channel: plan.primary,
+        templateKey: notice.templateKey,
+        payload: plan.fallback
+          ? validPayload(plan.fallback, validPayload(plan.primary, payload))
+          : validPayload(plan.primary, payload),
+        sendAt: notice.sendAt,
+        fallbackChannel: plan.fallback ?? undefined,
+      });
+      return queued.written;
+    };
+    const teamUrl = hackathonTeamUrlFor(context.locale, event.id);
+    const isToldNow = await queue({
       id: `ntf_results_${event.id}_${userId}`,
-      eventId: event.id,
-      userId,
-      channel: plan.primary,
-      templateKey,
-      payload: plan.fallback
-        ? validPayload(plan.fallback, validPayload(plan.primary, payload))
-        : validPayload(plan.primary, payload),
+      templateKey: hasFeedback
+        ? 'hackathon_results_feedback'
+        : 'hackathon_results_published',
+      url: hasFeedback ? teamUrl : valuesFor(base, context, true).url,
       sendAt,
-      fallbackChannel: plan.fallback ?? undefined,
     });
-    if (queued.written) written += 1;
+    if (isToldNow) written += 1;
+    if (!isOnEntry) continue;
+    const weekAt = new Date(
+      publishedAt + operations.FOLLOW_UP_WEEK_AFTER_RESULTS_MS,
+    );
+    if (canAskFeedback)
+      await queue({
+        id: `ntf_followup_week_${event.id}_${userId}`,
+        templateKey: 'hackathon_followup_week',
+        url: feedbackUrlFor(context.locale, event.id),
+        sendAt: weekAt,
+      });
+    await queue({
+      id: `ntf_followup_month_${event.id}_${userId}`,
+      templateKey: 'hackathon_followup_month',
+      url: teamUrl,
+      sendAt: new Date(
+        publishedAt + operations.FOLLOW_UP_MONTH_AFTER_RESULTS_MS,
+      ),
+    });
+    firstFollowUp = weekAt;
   }
   if (written > 0) await armNotificationSchedule(event.id, sendAt);
+  else if (firstFollowUp)
+    await armNotificationSchedule(event.id, firstFollowUp);
   return {
     written,
     next:

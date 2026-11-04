@@ -11,6 +11,8 @@ export const CLOSEOUT_PROMPT_BACKFILL_WINDOW_MS = 14 * DAY_MS;
 export const DID_NOT_HAPPEN_BACKFILL_WINDOW_MS = 3 * DAY_MS;
 export const FEEDBACK_INVITE_WITHIN_MS = 7 * DAY_MS;
 export const FEEDBACK_CLOSES_AFTER_MS = 14 * DAY_MS;
+export const FOLLOW_UP_WEEK_AFTER_RESULTS_MS = 7 * DAY_MS;
+export const FOLLOW_UP_MONTH_AFTER_RESULTS_MS = 30 * DAY_MS;
 
 export type EventTiming = {
   readonly endsAt: number | null;

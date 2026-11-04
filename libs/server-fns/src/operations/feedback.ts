@@ -20,6 +20,7 @@ import { geo, type operations } from '@founders-coffee/domain';
 
 export interface FeedbackView {
   readonly eventId: string;
+  readonly isHackathon: boolean;
   readonly title: string;
   readonly venue: string | null;
   readonly slug: string;
@@ -84,6 +85,7 @@ export const readFeedback = async (
       : undefined;
   return ok({
     eventId: event.id,
+    isHackathon: event.kind === 'hackathon',
     title: event.title,
     venue: event.venue,
     slug: event.slug,

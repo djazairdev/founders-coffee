@@ -9,64 +9,7 @@ import {
   type Db,
   type Event,
 } from '@founders-coffee/db';
-import {
-  ntf_email_hackathon_judge_accepted_html,
-  ntf_email_hackathon_judge_accepted_subject,
-  ntf_email_hackathon_judge_accepted_text,
-  ntf_email_hackathon_judge_reminder_html,
-  ntf_email_hackathon_judge_reminder_subject,
-  ntf_email_hackathon_judge_reminder_text,
-  ntf_email_hackathon_results_feedback_html,
-  ntf_email_hackathon_results_feedback_subject,
-  ntf_email_hackathon_results_feedback_text,
-  ntf_email_hackathon_results_published_html,
-  ntf_email_hackathon_results_published_subject,
-  ntf_email_hackathon_results_published_text,
-  ntf_email_hackathon_team_accepted_html,
-  ntf_email_hackathon_team_accepted_subject,
-  ntf_email_hackathon_team_accepted_text,
-  ntf_email_hackathon_team_declined_html,
-  ntf_email_hackathon_team_declined_subject,
-  ntf_email_hackathon_team_declined_text,
-  ntf_email_hackathon_team_disqualified_html,
-  ntf_email_hackathon_team_disqualified_subject,
-  ntf_email_hackathon_team_disqualified_text,
-  ntf_email_hackathon_team_joined_html,
-  ntf_email_hackathon_team_joined_subject,
-  ntf_email_hackathon_team_joined_text,
-  ntf_email_hackathon_team_left_html,
-  ntf_email_hackathon_team_left_subject,
-  ntf_email_hackathon_team_left_text,
-  ntf_email_hackathon_team_request_html,
-  ntf_email_hackathon_team_request_subject,
-  ntf_email_hackathon_team_request_text,
-  ntf_email_hackathon_submission_received_html,
-  ntf_email_hackathon_submission_received_subject,
-  ntf_email_hackathon_submission_received_text,
-  ntf_push_hackathon_judge_accepted_body,
-  ntf_push_hackathon_judge_accepted_title,
-  ntf_push_hackathon_judge_reminder_body,
-  ntf_push_hackathon_judge_reminder_title,
-  ntf_push_hackathon_results_feedback_body,
-  ntf_push_hackathon_results_feedback_title,
-  ntf_push_hackathon_results_published_body,
-  ntf_push_hackathon_results_published_title,
-  ntf_push_hackathon_team_accepted_body,
-  ntf_push_hackathon_team_accepted_title,
-  ntf_push_hackathon_team_declined_body,
-  ntf_push_hackathon_team_declined_title,
-  ntf_push_hackathon_team_disqualified_body,
-  ntf_push_hackathon_team_disqualified_title,
-  ntf_push_hackathon_team_joined_body,
-  ntf_push_hackathon_team_joined_title,
-  ntf_push_hackathon_team_left_body,
-  ntf_push_hackathon_team_left_title,
-  ntf_push_hackathon_team_request_body,
-  ntf_push_hackathon_team_request_title,
-  ntf_push_hackathon_submission_received_body,
-  ntf_push_hackathon_submission_received_title,
-  ntf_team_member_unnamed,
-} from '@founders-coffee/i18n';
+import { ntf_team_member_unnamed } from '@founders-coffee/i18n';
 
 import { channelPlanFor } from './channel-plan.js';
 import {
@@ -77,103 +20,10 @@ import {
   resolveNotificationContext,
 } from './context.js';
 import { renderNotificationEmail } from './email-templates.js';
+import { MESSAGES, type TeamValues } from './hackathon-team-messages.js';
 import { validPayload, type NotificationPayload } from './producer.js';
 import { armNotificationSchedule } from './schedule.js';
 import { escapeHtml } from './templates.js';
-
-type TeamValues = {
-  readonly title: string;
-  readonly team: string;
-  readonly name: string;
-  readonly project: string;
-  readonly reason: string;
-  readonly url: string;
-};
-
-type Message = (values: TeamValues, options: { locale: Locale }) => string;
-
-const MESSAGES: Record<
-  HackathonTeamTemplateKey,
-  readonly [Message, Message, Message, Message, Message]
-> = {
-  hackathon_team_request: [
-    ntf_push_hackathon_team_request_title,
-    ntf_push_hackathon_team_request_body,
-    ntf_email_hackathon_team_request_subject,
-    ntf_email_hackathon_team_request_html,
-    ntf_email_hackathon_team_request_text,
-  ],
-  hackathon_team_accepted: [
-    ntf_push_hackathon_team_accepted_title,
-    ntf_push_hackathon_team_accepted_body,
-    ntf_email_hackathon_team_accepted_subject,
-    ntf_email_hackathon_team_accepted_html,
-    ntf_email_hackathon_team_accepted_text,
-  ],
-  hackathon_team_declined: [
-    ntf_push_hackathon_team_declined_title,
-    ntf_push_hackathon_team_declined_body,
-    ntf_email_hackathon_team_declined_subject,
-    ntf_email_hackathon_team_declined_html,
-    ntf_email_hackathon_team_declined_text,
-  ],
-  hackathon_team_joined: [
-    ntf_push_hackathon_team_joined_title,
-    ntf_push_hackathon_team_joined_body,
-    ntf_email_hackathon_team_joined_subject,
-    ntf_email_hackathon_team_joined_html,
-    ntf_email_hackathon_team_joined_text,
-  ],
-  hackathon_team_left: [
-    ntf_push_hackathon_team_left_title,
-    ntf_push_hackathon_team_left_body,
-    ntf_email_hackathon_team_left_subject,
-    ntf_email_hackathon_team_left_html,
-    ntf_email_hackathon_team_left_text,
-  ],
-  hackathon_submission_received: [
-    ntf_push_hackathon_submission_received_title,
-    ntf_push_hackathon_submission_received_body,
-    ntf_email_hackathon_submission_received_subject,
-    ntf_email_hackathon_submission_received_html,
-    ntf_email_hackathon_submission_received_text,
-  ],
-  hackathon_team_disqualified: [
-    ntf_push_hackathon_team_disqualified_title,
-    ntf_push_hackathon_team_disqualified_body,
-    ntf_email_hackathon_team_disqualified_subject,
-    ntf_email_hackathon_team_disqualified_html,
-    ntf_email_hackathon_team_disqualified_text,
-  ],
-  hackathon_judge_reminder: [
-    ntf_push_hackathon_judge_reminder_title,
-    ntf_push_hackathon_judge_reminder_body,
-    ntf_email_hackathon_judge_reminder_subject,
-    ntf_email_hackathon_judge_reminder_html,
-    ntf_email_hackathon_judge_reminder_text,
-  ],
-  hackathon_judge_accepted: [
-    ntf_push_hackathon_judge_accepted_title,
-    ntf_push_hackathon_judge_accepted_body,
-    ntf_email_hackathon_judge_accepted_subject,
-    ntf_email_hackathon_judge_accepted_html,
-    ntf_email_hackathon_judge_accepted_text,
-  ],
-  hackathon_results_published: [
-    ntf_push_hackathon_results_published_title,
-    ntf_push_hackathon_results_published_body,
-    ntf_email_hackathon_results_published_subject,
-    ntf_email_hackathon_results_published_html,
-    ntf_email_hackathon_results_published_text,
-  ],
-  hackathon_results_feedback: [
-    ntf_push_hackathon_results_feedback_title,
-    ntf_push_hackathon_results_feedback_body,
-    ntf_email_hackathon_results_feedback_subject,
-    ntf_email_hackathon_results_feedback_html,
-    ntf_email_hackathon_results_feedback_text,
-  ],
-};
 
 const URLS: Partial<
   Record<HackathonTeamTemplateKey, (locale: Locale, eventId: string) => string>
