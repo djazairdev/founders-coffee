@@ -1,6 +1,7 @@
 import { isLocale, type Locale } from '@founders-coffee/i18n';
 
 const LOCALE_DIRECT = new Set([
+  'c',
   'closeout',
   'edit',
   'feedback',

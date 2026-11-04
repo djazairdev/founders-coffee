@@ -14,9 +14,14 @@ import type { HackathonCertificateKind } from '@founders-coffee/core';
 import type { Db } from './db.js';
 import { bound } from './insert-select.js';
 import {
+  eventOrganisers,
+  events,
   hackathonCertificates,
   hackathonResults,
   hackathonTeamMembers,
+  markets,
+  organization,
+  user,
 } from './schema.js';
 
 export type NewCertificate = {
@@ -144,3 +149,43 @@ export const listEventTeamMembers = (db: Db, eventId: string) =>
     })
     .from(hackathonTeamMembers)
     .where(eq(hackathonTeamMembers.eventId, eventId));
+
+/**
+ * What a certificate's public page shows (B-CRT-02), by its verification code: the member, the
+ * hackathon and what it was for. `null` for a code that was never issued.
+ */
+export const readCertificatePage = async (db: Db, code: string) => {
+  const [row] = await db
+    .select({
+      eventId: hackathonCertificates.eventId,
+      kind: hackathonCertificates.kind,
+      placement: hackathonCertificates.placement,
+      revokedAt: hackathonCertificates.revokedAt,
+      memberName: user.name,
+      hackathonTitle: events.title,
+      startsAt: events.startsAt,
+      endsAt: events.endsAt,
+      timeZone: markets.timezone,
+    })
+    .from(hackathonCertificates)
+    .innerJoin(user, eq(user.id, hackathonCertificates.userId))
+    .innerJoin(events, eq(events.id, hackathonCertificates.eventId))
+    .innerJoin(markets, eq(markets.code, events.marketCode))
+    .where(eq(hackathonCertificates.verificationCode, code))
+    .limit(1);
+  if (!row) return null;
+  const organisers = await db
+    .select({ name: organization.name, role: eventOrganisers.role })
+    .from(eventOrganisers)
+    .innerJoin(
+      organization,
+      eq(organization.id, eventOrganisers.organisationId),
+    )
+    .where(eq(eventOrganisers.eventId, row.eventId));
+  return {
+    ...row,
+    organisers: [...organisers]
+      .sort((a, b) => Number(b.role === 'lead') - Number(a.role === 'lead'))
+      .map((organiser) => organiser.name),
+  };
+};
