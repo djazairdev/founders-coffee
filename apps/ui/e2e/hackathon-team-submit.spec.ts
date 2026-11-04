@@ -1,6 +1,7 @@
 import { expect, test, type Browser, type Page } from '@playwright/test';
 
-import { cleanupRun, d1 } from './support/d1';
+import { d1 } from './support/d1';
+import { cleanupHackathon, turnOnHackathons } from './support/hackathons';
 import { t, type E2eLocale } from './support/messages';
 import { signInBackTo } from './support/profile-auth';
 import { newId, RUN_ID } from './support/run';
@@ -26,12 +27,6 @@ const hackathonFor = (locale: E2eLocale) => ({
 type Hackathon = ReturnType<typeof hackathonFor>;
 
 const nowSeconds = (): number => Math.floor(Date.now() / 1000);
-
-const setHackathons = (isOn: boolean): void => {
-  d1(
-    `UPDATE markets SET feature_flags = json_set(feature_flags, '$.hackathons', json('${isOn ? 'true' : 'false'}')) WHERE code = 'DZ'`,
-  );
-};
 
 /**
  * A published in-person hackathon in Algiers whose registration is open: it starts tomorrow, takes
@@ -59,31 +54,6 @@ const startBuilding = (hackathon: Hackathon): void => {
     `UPDATE hackathons SET registration_closes_at = ${now - 2 * HOUR_SECONDS} WHERE event_id = '${hackathon.eventId}'; ` +
       `UPDATE events SET starts_at = ${now - HOUR_SECONDS} WHERE id = '${hackathon.eventId}';`,
   );
-};
-
-const HACKATHON_TABLES = [
-  'hackathon_submissions',
-  'hackathon_team_requests',
-  'hackathon_team_members',
-  'hackathon_teams',
-  'hackathon_registrations',
-  'hackathon_tracks',
-  'scheduled_notifications',
-  'hackathons',
-];
-
-/** Remove what {@link seed} and the run wrote, event by event, then its members. */
-const cleanup = (hackathon: Hackathon): void => {
-  d1(
-    `DELETE FROM hackathon_submission_versions WHERE submission_id IN (SELECT id FROM hackathon_submissions WHERE event_id = '${hackathon.eventId}'); ` +
-      `DELETE FROM hackathon_team_invites WHERE team_id IN (SELECT id FROM hackathon_teams WHERE event_id = '${hackathon.eventId}');`,
-  );
-  for (const table of HACKATHON_TABLES)
-    d1(`DELETE FROM ${table} WHERE event_id = '${hackathon.eventId}'`);
-  cleanupRun({
-    eventIds: [hackathon.eventId],
-    emails: [hackathon.hostEmail, hackathon.captainEmail, hackathon.mateEmail],
-  });
 };
 
 /** Where the run stands in D1: the members' registrations, the team's size and its entry. */
@@ -140,18 +110,13 @@ const pageIn = async (
   return context.newPage();
 };
 
-let wasOn = false;
+let restoreFlag: () => void = () => undefined;
 
-/** Turn hackathons on in Algeria for the run, remembering whether they were, to put it back. */
 test.beforeAll(() => {
-  wasOn =
-    d1<{ isOn: number | null }>(
-      `SELECT json_extract(feature_flags, '$.hackathons') AS isOn FROM markets WHERE code = 'DZ'`,
-    )[0]?.isOn === 1;
-  setHackathons(true);
+  restoreFlag = turnOnHackathons();
 });
 
-test.afterAll(() => setHackathons(wasOn));
+test.afterAll(() => restoreFlag());
 
 for (const locale of LOCALES) {
   test.describe(`register, form a team and submit (B-LCH-03, ${locale})`, () => {
@@ -162,7 +127,13 @@ for (const locale of LOCALES) {
 
     test.beforeAll(() => seed(hackathon));
 
-    test.afterAll(() => cleanup(hackathon));
+    test.afterAll(() =>
+      cleanupHackathon(hackathon.eventId, [
+        hackathon.hostEmail,
+        hackathon.captainEmail,
+        hackathon.mateEmail,
+      ]),
+    );
 
     test('two members register, one invites the other, and the captain submits before the deadline', async ({
       browser,
