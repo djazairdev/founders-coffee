@@ -96,6 +96,16 @@ export const accountId = (email) =>
 const HOST_EMAIL = 'dev-host@dev.invalid';
 const MEMBER_EMAIL = 'dev-member@dev.invalid';
 const SECOND_MEMBER_EMAIL = 'dev-member-two@dev.invalid';
+const TEAMMATE_EMAIL = 'dev-teammate@dev.invalid';
+const RIVAL_EMAIL = 'dev-rival@dev.invalid';
+
+export const HACKATHON_ACCOUNT_EMAILS = {
+  organiser: HOST_EMAIL,
+  captain: MEMBER_EMAIL,
+  judge: SECOND_MEMBER_EMAIL,
+  teammate: TEAMMATE_EMAIL,
+  rival: RIVAL_EMAIL,
+};
 
 export const ACCOUNT_ROWS = [
   {
@@ -116,6 +126,20 @@ export const ACCOUNT_ROWS = [
     id: accountId(SECOND_MEMBER_EMAIL),
     name: 'Yasmine Toumi',
     email: SECOND_MEMBER_EMAIL,
+    email_verified: 1,
+    role: 'member',
+  },
+  {
+    id: accountId(TEAMMATE_EMAIL),
+    name: 'Sofiane Meziane',
+    email: TEAMMATE_EMAIL,
+    email_verified: 1,
+    role: 'member',
+  },
+  {
+    id: accountId(RIVAL_EMAIL),
+    name: 'Lina Cherif',
+    email: RIVAL_EMAIL,
     email_verified: 1,
     role: 'member',
   },
