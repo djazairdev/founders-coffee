@@ -34,6 +34,7 @@ export const ownerProfileProjection = (
       skills: row?.publishSkills ?? false,
       links: row?.publishLinks ?? false,
       openTo: row?.publishOpenTo ?? false,
+      hackathonRecord: row?.publishHackathonRecord ?? false,
       attendedCount: row?.publishAttendedCount ?? false,
     },
   });
@@ -62,12 +63,13 @@ export const ownerProfileOf = (
 export const publicProfileOf = (
   owner: profile.OwnerProfile,
   record: profile.MeetupRecord,
+  hackathonRecord: readonly profile.HackathonRecordEntry[] = [],
 ): Result<profile.PublicMemberProfile> => {
   if (!owner.displayName)
     return err(new AppError('not_found', 'Profile not found'));
   return ok(
     profile.publicMemberProfileSchema.parse(
-      profile.projectPublicProfile(owner, record),
+      profile.projectPublicProfile(owner, record, hackathonRecord),
     ),
   );
 };
@@ -89,5 +91,6 @@ export const profileChanges = (input: profile.UpdateProfileInput) => ({
   publishSkills: input.visibility.skills,
   publishLinks: input.visibility.links,
   publishOpenTo: input.visibility.openTo,
+  publishHackathonRecord: input.visibility.hackathonRecord,
   publishAttendedCount: input.visibility.attendedCount,
 });

@@ -31,6 +31,7 @@ const member: PublicProfile = {
   openTo: [],
   hostedCount: 0,
   attendedCount: null,
+  hackathonRecord: [],
 };
 
 const published: PublicProfile = {

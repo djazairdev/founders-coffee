@@ -21,6 +21,7 @@ const member: PublicProfile = {
   openTo: [],
   hostedCount: 0,
   attendedCount: null,
+  hackathonRecord: [],
 };
 
 const items = (window: string) =>

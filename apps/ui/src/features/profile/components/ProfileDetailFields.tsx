@@ -4,6 +4,8 @@ import type { ProfileLinkKind } from '@founders-coffee/core';
 import {
   profile_attended_hint,
   profile_attended_label,
+  profile_hackathon_record_hint,
+  profile_hackathon_record_label,
   profile_interests_hint,
   profile_interests_label,
   profile_languages_label,
@@ -147,6 +149,28 @@ export const ProfileDetailFields = ({
           onChange={(isPublic) =>
             onChange({
               visibility: { ...draft.visibility, attendedCount: isPublic },
+            })
+          }
+        />
+      </div>
+      <div className="flex flex-col gap-1.5">
+        <div className="flex items-baseline justify-between gap-2">
+          <span className="text-body-sm font-medium">
+            {profile_hackathon_record_label({}, { locale })}
+          </span>
+          <OptionalChip locale={locale} />
+        </div>
+        <p className="text-body-sm text-neutral">
+          {profile_hackathon_record_hint({}, { locale })}
+        </p>
+        <PublishToggle
+          locale={locale}
+          isPublic={draft.visibility.hackathonRecord}
+          isDisabled={isDisabled}
+          fieldLabel={profile_hackathon_record_label({}, { locale })}
+          onChange={(isPublic) =>
+            onChange({
+              visibility: { ...draft.visibility, hackathonRecord: isPublic },
             })
           }
         />

@@ -27,6 +27,7 @@ import {
   recuseFromHackathonEntry,
   remindHackathonJudges,
   saveHackathonScores,
+  setHackathonRecordShown,
   type HackathonResultsEntry,
   type HackathonResultsView,
   type JudgeCriterionView,
@@ -119,6 +120,8 @@ type TeamRequestAnswer = EventScoped & { readonly requestId: string };
 
 export const certificatesApi = {
   page: (code: string) => getHackathonCertificatePage({ data: { code } }),
+  setRecordShown: (isShown: boolean) =>
+    setHackathonRecordShown({ data: { isShown } }),
 };
 
 export const teamsApi = {

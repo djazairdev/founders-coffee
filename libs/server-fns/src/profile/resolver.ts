@@ -4,7 +4,10 @@ import {
   countHostedMeetups,
   getMemberProfile,
   getProfileIdentity,
+  hackathonsEnabled,
   initializeMemberProfile,
+  listHackathonRecordCertificates,
+  listHackathonRecordProjects,
   updateMemberProfile,
   type Db,
 } from '@founders-coffee/db';
@@ -60,6 +63,23 @@ export const readOwnerProfile = (
     return ownerProfileOf(userId, identity, stored);
   });
 
+/** A member's hackathon record, leaving out the markets that have since turned hackathons off. */
+const readHackathonRecord = async (
+  db: Db,
+  userId: string,
+): Promise<readonly profile.HackathonRecordEntry[]> => {
+  const certificates = await listHackathonRecordCertificates(db, userId);
+  const marketCodes = [...new Set(certificates.map((row) => row.marketCode))];
+  const switchedOn = await Promise.all(
+    marketCodes.map((code) => hackathonsEnabled(db, code)),
+  );
+  const openMarkets = marketCodes.filter((_, index) => switchedOn[index]);
+  return profile.hackathonRecordOf(
+    certificates.filter((row) => openMarkets.includes(row.marketCode)),
+    await listHackathonRecordProjects(db, userId),
+  );
+};
+
 /** Anonymous reads are intentionally public but contain only the opt-in field projection. */
 export const readPublicProfile = (
   db: Db,
@@ -73,7 +93,13 @@ export const readPublicProfile = (
       countHostedMeetups(db, userId, now),
       countAttendedMeetups(db, userId, now),
     ]);
-    return publicProfileOf(result.data, { hosted, attended });
+    return publicProfileOf(
+      result.data,
+      { hosted, attended },
+      result.data.visibility.hackathonRecord
+        ? await readHackathonRecord(db, userId)
+        : [],
+    );
   });
 
 /** Save the validated owner command under a revision without allowing identity field assignment. */

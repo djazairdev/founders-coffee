@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import {
+  certificatesApi,
   teamsApi,
   type LookingForTeamView,
   type TeamInviteCreated,
@@ -121,3 +122,18 @@ export const usePublishProject = (eventId: string) =>
   useTeamChange(eventId, (projectId: string) =>
     teamsApi.publishProject(projectId),
   );
+
+/** Show or hide the member's hackathons on their profile, from the offer made with the results. */
+export const useSetRecordShown = (eventId: string) => {
+  const cache = useQueryClient();
+  return useMutation<{ readonly isShown: boolean }, Error, boolean>({
+    mutationFn: certificatesApi.setRecordShown,
+    onSettled: () =>
+      Promise.all([
+        cache.invalidateQueries({ queryKey: [...TEAM, eventId] }),
+        cache.invalidateQueries({
+          queryKey: ['hackathons', 'judging', eventId],
+        }),
+      ]),
+  });
+};

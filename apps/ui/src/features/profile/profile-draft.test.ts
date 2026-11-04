@@ -31,6 +31,7 @@ const saved: UserProfile = {
     skills: false,
     links: false,
     openTo: false,
+    hackathonRecord: false,
     attendedCount: false,
   },
 };

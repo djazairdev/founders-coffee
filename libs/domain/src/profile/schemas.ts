@@ -155,6 +155,7 @@ export const profileVisibilitySchema = z.strictObject({
   skills: z.boolean().default(false),
   links: z.boolean().default(false),
   openTo: z.boolean().default(false),
+  hackathonRecord: z.boolean().default(false),
   attendedCount: z.boolean().default(false),
 });
 

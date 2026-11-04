@@ -526,6 +526,13 @@
       "when": 1793815752727,
       "tag": "0074_hackathon_prize_awards",
       "breakpoints": true
+    },
+    {
+      "idx": 75,
+      "version": "6",
+      "when": 1793818246917,
+      "tag": "0075_member_profiles_hackathon_record",
+      "breakpoints": true
     }
   ]
 }
