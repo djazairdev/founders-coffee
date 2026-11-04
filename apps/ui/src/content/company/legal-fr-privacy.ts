@@ -1,3 +1,4 @@
+import { privacyHackathonsFrench } from './legal-fr-privacy-hackathons';
 import {
   list,
   section,
@@ -97,6 +98,7 @@ export const privacyFrench: CompanyPageContent = translatedPage(
         'Cet e-mail ne sert qu’à cela : un seul message, à l’ouverture des inscriptions. Il n’est ajouté à aucune liste marketing et n’est utilisé pour rien d’autre que ce que vous avez demandé.',
       ),
     ]),
+    privacyHackathonsFrench,
     section('Base juridique du traitement', [
       ...text('Chaque traitement repose sur un fondement prévu par la loi :'),
       list([
@@ -173,6 +175,30 @@ export const privacyFrench: CompanyPageContent = translatedPage(
             'Jusqu’à l’ouverture des inscriptions et l’envoi du message, puis **12 mois**, ou suppression immédiate sur demande',
           ],
           [
+            'Inscriptions aux hackathons et places dans les équipes ou comme mentor',
+            'Tant que le compte existe, puis suppression dans les **30 jours** suivant sa fermeture',
+          ],
+          [
+            'Compétences indiquées à l’inscription à un hackathon',
+            'Effacées **12 mois** après la fin du hackathon',
+          ],
+          [
+            'Liens d’invitation d’équipe et demandes pour rejoindre une équipe',
+            'Supprimés **30 jours** après la fin du hackathon',
+          ],
+          [
+            'Dépôts, notes et résultats publiés',
+            'Font partie de l’historique du hackathon, au nom de l’équipe ; votre nom en disparaît à la fermeture de votre compte',
+          ],
+          [
+            'Attestations',
+            'Tant que le compte existe, puis suppression dans les **30 jours** suivant sa fermeture',
+          ],
+          [
+            'Projets et organisations',
+            'Tant qu’ils existent ; votre nom en disparaît à la fermeture de votre compte',
+          ],
+          [
             'Messages et signalements de modération',
             '**24 mois** après la clôture de la demande, ou après la décision du modérateur sur un message signalé',
           ],
@@ -244,5 +270,5 @@ export const privacyFrench: CompanyPageContent = translatedPage(
       ),
     ),
   ],
-  '22 octobre 2026',
+  '4 novembre 2026',
 );

@@ -1,3 +1,4 @@
+import { privacyHackathonsEnglish } from './legal-en-privacy-hackathons';
 import {
   list,
   section,
@@ -96,6 +97,7 @@ export const privacyEnglish: CompanyPageContent = translatedPage(
         'This email is used for that purpose only: one message when registration opens. It is not added to a marketing list or used for anything you did not ask for.',
       ),
     ]),
+    privacyHackathonsEnglish,
     section('Legal basis for processing', [
       ...text('Each processing activity relies on a basis the law recognises:'),
       list([
@@ -172,6 +174,30 @@ export const privacyEnglish: CompanyPageContent = translatedPage(
             'Until registration opens and the message is sent, then **12 months**, or immediately on request',
           ],
           [
+            'Hackathon registrations and places on teams or as a mentor',
+            'While the account exists, then deleted within **30 days** of closure',
+          ],
+          [
+            'Skills entered when registering for a hackathon',
+            'Cleared **12 months** after the hackathon ends',
+          ],
+          [
+            'Team invite links and requests to join',
+            'Deleted **30 days** after the hackathon ends',
+          ],
+          [
+            'Submissions, scores and published results',
+            'Part of the hackathon’s record, under the team’s name; your name leaves them when your account closes',
+          ],
+          [
+            'Certificates',
+            'While the account exists, then deleted within **30 days** of closure',
+          ],
+          [
+            'Projects and organisations',
+            'While they exist; your name leaves them when your account closes',
+          ],
+          [
             'Messages and moderation reports',
             '**24 months** after the request closes, or after the moderator’s decision on a reported message',
           ],
@@ -243,5 +269,5 @@ export const privacyEnglish: CompanyPageContent = translatedPage(
       ),
     ),
   ],
-  '22 October 2026',
+  '4 November 2026',
 );
