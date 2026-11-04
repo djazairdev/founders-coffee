@@ -16,6 +16,7 @@ import {
   type PublicHackathonMentor,
   type PublicHackathonPrize,
 } from '@founders-coffee/db';
+import { hackathons } from '@founders-coffee/domain';
 import { reportError } from '@founders-coffee/observability';
 
 import { resolveMarket } from '../markets/resolver.js';
@@ -76,6 +77,7 @@ export interface EventPage {
   readonly prizes: readonly PublicHackathonPrizeView[];
   readonly mentors: readonly PublicHackathonMentor[];
   readonly workshops: readonly HackathonWorkshop[];
+  readonly results: hackathons.PublicResults | null;
   readonly organisations: readonly HackathonOrganisation[];
   readonly registration: HackathonRegistrationView | null;
 }
@@ -178,7 +180,7 @@ const hostCard = (
  * hackathon's schedule and current phase come back with it, read in the same batch (B-HKN-17), with
  * its rules, eligibility, AI policy and licence (B-HKN-19), and
  * so do the judges who accepted (B-JDG-03), its tracks and confirmed prizes (B-HKN-18), and its
- * mentors and its organisers' workshops before kickoff (B-HKN-26), and the organisations that run
+ * mentors and its organisers' workshops before kickoff (B-HKN-26), its frozen results (B-JDG-10), and the organisations that run
  * it, for its structured data (B-HKN-24), and what its registration card needs, with the
  * reader's own registration read once the reader is known (B-REG-06), none for a meetup.
  */
@@ -222,6 +224,16 @@ export const readEventPage = async (
     prizes: isHackathon ? rows.data.prizes.map(publicPrizeOf) : [],
     mentors: isHackathon ? rows.data.mentors : [],
     workshops: isHackathon ? rows.data.workshops : [],
+    results: isHackathon
+      ? hackathons.publicResultsOf({
+          results: rows.data.results.map((result) => ({
+            ...result,
+            pullRequestUrls: result.pullRequestUrls ?? [],
+          })),
+          prizes: rows.data.prizes,
+          pullRequests: rows.data.resultPullRequests,
+        })
+      : null,
     organisations: isHackathon ? organisationsOf(rows.data.organisers) : [],
     registration,
   });

@@ -1,4 +1,4 @@
-import { and, asc, eq, sql } from 'drizzle-orm';
+import { and, asc, eq, sql, type SQL } from 'drizzle-orm';
 
 import type { Db } from './db.js';
 import { batch } from './atomic.js';
@@ -8,6 +8,7 @@ import { auditStatement } from './operations-audit.js';
 import {
   events,
   hackathonJudges,
+  hackathonPullRequests,
   hackathonRecusals,
   hackathonResults,
   hackathons,
@@ -203,3 +204,56 @@ export const listHackathonResults = (
       asc(hackathonResults.rank),
       asc(hackathonResults.submissionId),
     );
+
+/**
+ * A hackathon's frozen results as its page shows them (B-JDG-10), with the pull requests of the
+ * version each entry was judged on: gone only if the entry itself was deleted. `eventId` may be a
+ * subquery, for the page's batch.
+ */
+export const publicHackathonResultsQuery = (db: Db, eventId: string | SQL) =>
+  db
+    .select({
+      submissionId: hackathonResults.submissionId,
+      teamName: hackathonResults.teamName,
+      title: hackathonResults.title,
+      trackId: hackathonResults.trackId,
+      trackTitle: hackathonResults.trackTitle,
+      total: hackathonResults.total,
+      rank: hackathonResults.rank,
+      trackRank: hackathonResults.trackRank,
+      tieNote: hackathonResults.tieNote,
+      criteria: hackathonResults.criteria,
+      pullRequestUrls: hackathonSubmissionVersions.pullRequestUrls,
+    })
+    .from(hackathonResults)
+    .leftJoin(
+      hackathonSubmissionVersions,
+      and(
+        eq(
+          hackathonSubmissionVersions.submissionId,
+          hackathonResults.submissionId,
+        ),
+        eq(hackathonSubmissionVersions.version, hackathonResults.version),
+      ),
+    )
+    .where(eq(hackathonResults.eventId, eventId))
+    .orderBy(
+      sql`${hackathonResults.rank} IS NULL`,
+      asc(hackathonResults.rank),
+      asc(hackathonResults.submissionId),
+    );
+
+/** What organisers recorded about the pull requests of a hackathon's frozen results (B-JDG-10). */
+export const publicResultPullRequestsQuery = (db: Db, eventId: string | SQL) =>
+  db
+    .select({
+      submissionId: hackathonPullRequests.submissionId,
+      url: hackathonPullRequests.url,
+      status: hackathonPullRequests.status,
+    })
+    .from(hackathonPullRequests)
+    .innerJoin(
+      hackathonResults,
+      eq(hackathonResults.submissionId, hackathonPullRequests.submissionId),
+    )
+    .where(eq(hackathonResults.eventId, eventId));

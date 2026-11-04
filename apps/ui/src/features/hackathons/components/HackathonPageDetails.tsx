@@ -5,6 +5,7 @@ import type { HackathonPageDetails as Details } from '../api';
 import { HackathonJudges } from './HackathonJudges';
 import { HackathonMentors } from './HackathonMentors';
 import { HackathonOffer } from './HackathonOffer';
+import { HackathonResults } from './HackathonResults';
 import { HackathonRules } from './HackathonRules';
 import { HackathonWorkshops } from './HackathonWorkshops';
 
@@ -18,6 +19,9 @@ export const HackathonPageDetails = ({
   locale: Locale;
 }) => (
   <>
+    {details.results ? (
+      <HackathonResults results={details.results} locale={locale} />
+    ) : null}
     <HackathonRules rules={details.rules} locale={locale} />
     <HackathonOffer offer={details} locale={locale} />
     {details.judges.length > 0 ? (

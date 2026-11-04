@@ -35,6 +35,7 @@ vi.mock('@tanstack/react-router', () => ({
 const details = (changes: Partial<Details> = {}): Details => ({
   tracks: [],
   prizes: [],
+  results: null,
   rules: {
     rules: 'Build during the weekend.\nShip something that runs.',
     minimumAge: 18,

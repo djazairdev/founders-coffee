@@ -9,6 +9,10 @@ import {
   publicHackathonPrizesOf,
   publicHackathonPrizesQuery,
 } from './hackathon-prizes.js';
+import {
+  publicHackathonResultsQuery,
+  publicResultPullRequestsQuery,
+} from './hackathon-results.js';
 import { publicHackathonTracksQuery } from './hackathon-tracks.js';
 import { hackathonWorkshopsQuery } from './hackathon-workshops.js';
 import { memberProfileQuery, profileIdentityQuery } from './member-profiles.js';
@@ -32,7 +36,8 @@ import { events, hackathons } from './schema.js';
  * organisations that run the meetup come back in the same batch, found by the same address, and so
  * do a hackathon's dates and rules (B-HKN-17, B-HKN-19), `null` for any other kind of event, the
  * judges who accepted (B-JDG-03), its tracks and confirmed prizes (B-HKN-18), and its mentors who
- * accepted and its organisers' workshops before kickoff (B-HKN-26), none for a meetup.
+ * accepted and its organisers' workshops before kickoff (B-HKN-26), and its frozen results once
+ * published (B-JDG-10), none for a meetup.
  */
 export const readEventPageRows = async (
   db: Db,
@@ -66,6 +71,8 @@ export const readEventPageRows = async (
     prizeRows,
     mentorRows,
     workshopRows,
+    resultRows,
+    pullRequestRows,
   ] = await db.batch([
     db
       .select()
@@ -108,6 +115,8 @@ export const readEventPageRows = async (
     publicHackathonPrizesQuery(db, eventId),
     acceptedHackathonMentorsQuery(db, eventId),
     hackathonWorkshopsQuery(db, eventId),
+    publicHackathonResultsQuery(db, eventId),
+    publicResultPullRequestsQuery(db, eventId),
   ]);
   return {
     event: eventRows[0],
@@ -124,5 +133,7 @@ export const readEventPageRows = async (
     prizes: publicHackathonPrizesOf(prizeRows),
     mentors: mentorRows,
     workshops: workshopRows,
+    results: resultRows,
+    resultPullRequests: pullRequestRows,
   };
 };
