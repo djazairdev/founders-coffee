@@ -201,6 +201,22 @@ export const localizedHackathonSubmit = (locale: Locale, eventId: string) => ({
   params: { locale, eventId },
 });
 
+/** The submissions a judge scores in a hackathon (B-JDG-06). */
+export const localizedHackathonJudge = (locale: Locale, eventId: string) => ({
+  to: '/$locale/hackathon/$eventId/judge' as const,
+  params: { locale, eventId },
+});
+
+/** One submission as a judge scores it (B-JDG-07). */
+export const localizedHackathonJudgeEntry = (
+  locale: Locale,
+  eventId: string,
+  submissionId: string,
+) => ({
+  to: '/$locale/hackathon/$eventId/judge/$submissionId' as const,
+  params: { locale, eventId, submissionId },
+});
+
 /** The teams and participants looking for each other in a hackathon (B-TEAM-08). */
 export const localizedHackathonLooking = (locale: Locale, eventId: string) => ({
   to: '/$locale/hackathon/$eventId/looking' as const,

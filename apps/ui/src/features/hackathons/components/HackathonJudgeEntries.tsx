@@ -1,3 +1,5 @@
+import { Link } from '@tanstack/react-router';
+
 import {
   formatNumber,
   hackathon_judging_empty,
@@ -10,6 +12,7 @@ import {
   type Locale,
 } from '@founders-coffee/i18n';
 
+import { localizedHackathonJudgeEntry } from '../../../lib/locale-routing';
 import type { JudgePageEntry, JudgePageView } from '../api';
 
 const HEADING_ID = 'hackathon-judging-entries-heading';
@@ -29,10 +32,12 @@ const stateLabel = (state: JudgePageEntry['state'], locale: Locale) => {
 };
 
 export const HackathonJudgeEntries = ({
+  eventId,
   entries,
   progress,
   locale,
 }: {
+  eventId: string;
   entries: JudgePageView['entries'];
   progress: JudgePageView['progress'];
   locale: Locale;
@@ -82,7 +87,20 @@ export const HackathonJudgeEntries = ({
               >
                 <div className="grid min-w-0 gap-1">
                   <h3 className="font-medium">
-                    <bdi className="break-words">{entry.title}</bdi>
+                    {entry.state === 'recused' ? (
+                      <bdi className="break-words">{entry.title}</bdi>
+                    ) : (
+                      <Link
+                        {...localizedHackathonJudgeEntry(
+                          locale,
+                          eventId,
+                          entry.submissionId,
+                        )}
+                        className="link link-hover"
+                      >
+                        <bdi className="break-words">{entry.title}</bdi>
+                      </Link>
+                    )}
                   </h3>
                   <p className="text-body-sm text-neutral">
                     <bdi className="break-words">{entry.teamName}</bdi>
