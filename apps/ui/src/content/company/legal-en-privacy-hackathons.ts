@@ -19,7 +19,7 @@ export const privacyHackathonsEnglish = section(
     ),
     subheading('Projects'),
     ...text(
-      'A team can turn its submission into a project page: its title, the problem it addresses, a description, its stage and its links. You are named on it only if you confirm.',
+      'A team can turn its submission into a project page: its title, the problem it addresses, a description, its stage and its links. You are named on it, and it appears on your public profile, only if you confirm.',
     ),
     subheading('Certificates'),
     ...text(

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { idSchema } from '@founders-coffee/core';
+import { idSchema, projectStageSchema } from '@founders-coffee/core';
 
 import {
   hackathonRecordEntrySchema,
@@ -21,6 +21,17 @@ import {
   type OwnerProfile,
 } from './schemas.js';
 
+export const publicProfileProjectSchema = z.strictObject({
+  slug: z.string(),
+  title: z.string(),
+  stage: projectStageSchema,
+  hackathonTitle: z.string().nullable(),
+  rank: z.number().int().positive().nullable(),
+  trackRank: z.number().int().positive().nullable(),
+});
+
+export type PublicProfileProject = z.infer<typeof publicProfileProjectSchema>;
+
 export const publicMemberProfileSchema = z.strictObject({
   userId: profileIdentitySchema,
   displayName: displayNameSchema,
@@ -37,6 +48,7 @@ export const publicMemberProfileSchema = z.strictObject({
   hostedCount: z.number().int().nonnegative(),
   attendedCount: z.number().int().nonnegative().nullable(),
   hackathonRecord: z.array(hackathonRecordEntrySchema),
+  projects: z.array(publicProfileProjectSchema),
 });
 
 export type PublicMemberProfile = z.infer<typeof publicMemberProfileSchema>;
@@ -51,6 +63,7 @@ export const projectPublicProfile = (
   profile: OwnerProfile,
   record: MeetupRecord,
   hackathonRecord: readonly HackathonRecordEntry[] = [],
+  projects: readonly PublicProfileProject[] = [],
 ): PublicMemberProfile => ({
   userId: profile.userId,
   displayName: profile.displayName,
@@ -71,4 +84,5 @@ export const projectPublicProfile = (
   hackathonRecord: profile.visibility.hackathonRecord
     ? [...hackathonRecord]
     : [],
+  projects: [...projects],
 });
