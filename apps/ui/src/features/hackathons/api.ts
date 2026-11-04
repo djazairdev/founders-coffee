@@ -7,11 +7,13 @@ import {
   getHackathonJudgeEntryPage,
   getHackathonJudgePage,
   getHackathonLookingForTeam,
+  getHackathonResults,
   getHackathonSubmissionPage,
   getHackathonTeamPage,
   joinHackathonTeam,
   leaveHackathonTeam,
   passHackathonTeamCaptaincy,
+  publishHackathonResults,
   removeHackathonTeamMember,
   requestToJoinHackathonTeam,
   revokeHackathonTeamInvite,
@@ -19,6 +21,8 @@ import {
   submitHackathonSubmission,
   recuseFromHackathonEntry,
   saveHackathonScores,
+  type HackathonResultsEntry,
+  type HackathonResultsView,
   type JudgeCriterionView,
   type JudgeEntryPageView,
   type JudgePageEntry,
@@ -167,6 +171,12 @@ export const submissionsApi = {
     }),
 };
 
+export const hackathonResultsApi = {
+  results: (eventId: string) => getHackathonResults({ data: { eventId } }),
+  publish: (data: Parameters<typeof publishHackathonResults>[0]['data']) =>
+    publishHackathonResults({ data }),
+};
+
 export const judgingApi = {
   page: (eventId: string) => getHackathonJudgePage({ data: { eventId } }),
   entry: (data: { readonly eventId: string; readonly submissionId: string }) =>
@@ -179,6 +189,8 @@ export const judgingApi = {
 
 export type {
   AddHackathonPrizeRequest,
+  HackathonResultsEntry,
+  HackathonResultsView,
   JudgeCriterionView,
   JudgeEntryPageView,
   JudgePageEntry,

@@ -41,6 +41,7 @@ import {
   HACKATHON_REPORT_REASONS,
   HACKATHON_REPORT_STATUSES,
   HACKATHON_REPORT_TARGETS,
+  HACKATHON_RESULT_TIE_NOTES,
   HACKATHON_REVIEW_STATUSES,
   HACKATHON_SCORE_COMMENT_MAX,
   HACKATHON_SUBMISSION_AI_STATEMENT_MAX,
@@ -1253,6 +1254,46 @@ export const hackathonRecusals = sqliteTable(
 );
 
 export type HackathonRecusal = typeof hackathonRecusals.$inferSelect;
+
+export type FrozenCriterionResult = {
+  readonly criterionId: string;
+  readonly name: string;
+  readonly weight: number;
+  readonly scale: number;
+  readonly mean: number | null;
+  readonly judgeCount: number;
+};
+
+export const hackathonResults = sqliteTable(
+  'hackathon_results',
+  {
+    submissionId: text('submission_id').primaryKey(),
+    eventId: text('event_id')
+      .notNull()
+      .references(() => hackathons.eventId, { onDelete: 'cascade' }),
+    version: integer('version').notNull(),
+    teamId: text('team_id').notNull(),
+    teamName: text('team_name').notNull(),
+    title: text('title').notNull(),
+    trackId: text('track_id'),
+    trackTitle: text('track_title'),
+    total: real('total'),
+    rank: integer('rank'),
+    trackRank: integer('track_rank'),
+    tieNote: text('tie_note', { enum: [...HACKATHON_RESULT_TIE_NOTES] }),
+    criteria: text('criteria', { mode: 'json' })
+      .$type<readonly FrozenCriterionResult[]>()
+      .notNull(),
+    createdAt: integer('created_at', { mode: 'timestamp' })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => [
+    index('hackathon_results_event_rank_index').on(table.eventId, table.rank),
+  ],
+);
+
+export type HackathonResult = typeof hackathonResults.$inferSelect;
 
 /**
  * A judge's score for one criterion of one entry (B-JDG-01), with an optional comment: one per

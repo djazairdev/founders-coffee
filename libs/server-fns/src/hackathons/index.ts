@@ -117,3 +117,5 @@ export {
   submitHackathonForReview,
   type SubmitHackathonForReviewRequest,
 } from './review-rpc.js';
+export { getHackathonResults, publishHackathonResults } from './results-rpc.js';
+export type { HackathonResultsEntry, HackathonResultsView } from './results.js';
