@@ -16,6 +16,7 @@ const result = (
   rank,
   trackRank: null,
   tieNote: null,
+  disqualifiedAt: null,
   criteria: [],
   pullRequestUrls: [],
   ...changes,
@@ -64,6 +65,7 @@ describe('publicResultsOf (B-JDG-10)', () => {
         trackTitle: null,
         title: 'sub_a',
         teamName: 'sub_a team',
+        isDisqualified: false,
       },
       {
         prizeId: 'prz_track',
@@ -72,6 +74,7 @@ describe('publicResultsOf (B-JDG-10)', () => {
         trackTitle: 'trk_2 title',
         title: 'sub_c',
         teamName: 'sub_c team',
+        isDisqualified: false,
       },
     ]);
   });
@@ -135,5 +138,31 @@ describe('publicResultsOf (B-JDG-10)', () => {
       { url: 'https://g.example/1', status: 'submitted' },
       { url: 'https://g.example/2', status: 'merged' },
     ]);
+  });
+
+  it('keeps an entry disqualified after the results in its place, marked, with any prize it held', () => {
+    const shown = publicResultsOf({
+      results: [
+        result('sub_a', 1, { disqualifiedAt: new Date('2026-12-01') }),
+        result('sub_b', 2),
+      ],
+      prizes: [{ id: 'prz_first', title: 'First', place: 1, trackId: null }],
+      pullRequests: [],
+    });
+
+    expect(
+      shown?.overall.map((entry) => [
+        entry.submissionId,
+        entry.rank,
+        entry.isDisqualified,
+      ]),
+    ).toEqual([
+      ['sub_a', 1, true],
+      ['sub_b', 2, false],
+    ]);
+    expect(shown?.winners[0]).toMatchObject({
+      teamName: 'sub_a team',
+      isDisqualified: true,
+    });
   });
 });

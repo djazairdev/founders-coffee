@@ -1915,6 +1915,8 @@
   "hackathon_project_listed": "Vous figurez sur cette page.",
   "hackathon_project_publish": "Publier",
   "hackathon_project_needs_confirmation": "Pour publier, au moins un membre doit confirmer.",
+  "hackathon_results_page_disqualified": "Disqualifié après les résultats.",
+  "hackathon_results_panel_disqualified_prize": "C’est à vous de décider de son éventuel prix.",
   "hackathon_results_page_winners": "Lauréats",
   "hackathon_results_page_overall": "Classement général",
   "hackathon_results_page_tracks": "Classement par parcours",

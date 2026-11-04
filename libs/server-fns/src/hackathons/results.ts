@@ -36,6 +36,7 @@ export type HackathonResultsEntry = {
   readonly trackRank: number | null;
   readonly isTied: boolean;
   readonly tieNote: HackathonResultTieNote | null;
+  readonly isDisqualified: boolean;
 };
 
 export type HackathonResultsView = {
@@ -118,6 +119,7 @@ export const hackathonResultsResolver = async (
         trackRank: result.trackRank,
         isTied: false,
         tieNote: result.tieNote,
+        isDisqualified: result.disqualifiedAt !== null,
       })),
     });
   }
@@ -144,6 +146,7 @@ export const hackathonResultsResolver = async (
               trackRank: place.trackRank,
               isTied: place.isTieUnresolved,
               tieNote: null,
+              isDisqualified: false,
             },
           ]
         : [];

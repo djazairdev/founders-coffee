@@ -1,5 +1,7 @@
 import {
   formatNumber,
+  hackathon_results_page_disqualified,
+  hackathon_results_panel_disqualified_prize,
   hackathon_results_panel_rank,
   hackathon_results_panel_tie_settled,
   hackathon_results_panel_tied,
@@ -60,6 +62,12 @@ export const HackathonResultsList = ({
             {entry.tieNote ? (
               <p className="text-caption text-neutral">
                 {hackathon_results_panel_tie_settled({}, options)}
+              </p>
+            ) : null}
+            {entry.isDisqualified ? (
+              <p className="text-caption font-medium">
+                {hackathon_results_page_disqualified({}, options)}{' '}
+                {hackathon_results_panel_disqualified_prize({}, options)}
               </p>
             ) : null}
           </div>

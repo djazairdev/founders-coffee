@@ -1789,6 +1789,8 @@
   "hackathon_project_listed": "اسمك مدرج في هذه الصفحة.",
   "hackathon_project_publish": "نشر",
   "hackathon_project_needs_confirmation": "يتطلب النشر تأكيد عضو واحد على الأقل.",
+  "hackathon_results_page_disqualified": "استُبعد بعد النتائج.",
+  "hackathon_results_panel_disqualified_prize": "القرار في جائزته، إن وُجدت، يعود إليك.",
   "hackathon_results_page_winners": "الفائزون",
   "hackathon_results_page_overall": "الترتيب العام",
   "hackathon_results_page_tracks": "الترتيب حسب المسار",

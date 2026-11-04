@@ -4,6 +4,7 @@ import type { Db } from './db.js';
 import { batch } from './atomic.js';
 import {
   issueCertificatesStatement,
+  revokeDisqualifiedCertificatesStatement,
   type NewCertificate,
 } from './hackathon-certificates.js';
 import { lastSubmittedVersion } from './hackathon-submitted-version.js';
@@ -129,8 +130,9 @@ export const readJudgingRecord = async (db: Db, eventId: string) => {
 /**
  * Publish a hackathon's results (B-JDG-09), in one batch: its results are marked published, the
  * audit entry follows that write's `changes()`, and each frozen row and the certificates (B-CRT-01)
- * follow the audit entry, so nothing lands when judging has not ended or another organiser published first. Returns whether
- * this call published them.
+ * follow the audit entry. An entry disqualified since it was read is marked as it freezes, and what
+ * its team earned revoked (B-SAFE-03). Nothing lands when judging has not ended or another organiser
+ * published first. Returns whether this call published them.
  */
 export const publishResults = async (
   db: Db,
@@ -189,6 +191,10 @@ export const publishResults = async (
             rank: bound(result.rank, 'rank'),
             trackRank: bound(result.trackRank, 'track_rank'),
             tieNote: bound(result.tieNote, 'tie_note'),
+            disqualifiedAt:
+              sql<Date | null>`(SELECT CASE ${hackathonSubmissions.status} WHEN 'disqualified' THEN unixepoch() END FROM ${hackathonSubmissions} WHERE ${hackathonSubmissions.id} = ${result.submissionId})`.as(
+                'disqualified_at',
+              ),
             criteria: bound(JSON.stringify(result.criteria), 'criteria'),
             createdAt: sql`unixepoch()`.as('created_at'),
           })
@@ -201,6 +207,11 @@ export const publishResults = async (
       certificates: input.certificates,
       issuedAt: input.publishedAt,
       isIssued: isThisPublication,
+    }),
+    revokeDisqualifiedCertificatesStatement(db, {
+      eventId: input.eventId,
+      revokedAt: input.publishedAt,
+      isRevoked: isThisPublication,
     }),
   ]);
   return (published as readonly unknown[]).length > 0;
@@ -238,6 +249,7 @@ export const publicHackathonResultsQuery = (db: Db, eventId: string | SQL) =>
       rank: hackathonResults.rank,
       trackRank: hackathonResults.trackRank,
       tieNote: hackathonResults.tieNote,
+      disqualifiedAt: hackathonResults.disqualifiedAt,
       criteria: hackathonResults.criteria,
       pullRequestUrls: hackathonSubmissionVersions.pullRequestUrls,
     })

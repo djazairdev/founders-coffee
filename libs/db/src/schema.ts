@@ -1282,6 +1282,7 @@ export const hackathonResults = sqliteTable(
     rank: integer('rank'),
     trackRank: integer('track_rank'),
     tieNote: text('tie_note', { enum: [...HACKATHON_RESULT_TIE_NOTES] }),
+    disqualifiedAt: integer('disqualified_at', { mode: 'timestamp' }),
     criteria: text('criteria', { mode: 'json' })
       .$type<readonly FrozenCriterionResult[]>()
       .notNull(),

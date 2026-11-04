@@ -2,6 +2,7 @@ import {
   formatNumber,
   hackathon_prize_overall,
   hackathon_prize_place_value,
+  hackathon_results_page_disqualified,
   hackathon_results_page_overall,
   hackathon_results_page_tracks,
   hackathon_results_page_winners,
@@ -56,6 +57,11 @@ export const HackathonResults = ({
                   {' · '}
                   <bdi className="break-words">{winner.teamName}</bdi>
                 </p>
+                {winner.isDisqualified ? (
+                  <p className="text-caption font-medium">
+                    {hackathon_results_page_disqualified({}, options)}
+                  </p>
+                ) : null}
               </li>
             ))}
           </ul>

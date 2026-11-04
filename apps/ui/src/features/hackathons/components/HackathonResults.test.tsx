@@ -22,6 +22,7 @@ const entry = (
   rank,
   trackRank: rank,
   tieNote: null,
+  isDisqualified: false,
   criteria: [
     {
       criterionId: 'crt_impact',
@@ -50,6 +51,7 @@ const shown: HackathonPublicResults = {
       trackTitle: null,
       title: 'Ledger',
       teamName: 'Ledger team',
+      isDisqualified: false,
     },
     {
       prizeId: 'prz_track',
@@ -58,6 +60,7 @@ const shown: HackathonPublicResults = {
       trackTitle: 'Payments',
       title: 'Ledger',
       teamName: 'Ledger team',
+      isDisqualified: false,
     },
   ],
   overall: [ledger, entry('Souk', null)],
@@ -137,5 +140,30 @@ describe('HackathonResults (B-JDG-10)', () => {
 
     expect(screen.getByRole('heading', { name: 'الفائزون' })).toBeTruthy();
     expect(screen.getByRole('heading', { name: 'الترتيب العام' })).toBeTruthy();
+  });
+
+  it('marks an entry disqualified after the results, in the ranking and among the winners', () => {
+    const marked = { ...ledger, isDisqualified: true };
+    render(
+      <HackathonResults
+        locale="en"
+        results={{
+          ...shown,
+          winners: [
+            {
+              ...(shown.winners[0] as (typeof shown.winners)[number]),
+              isDisqualified: true,
+            },
+          ],
+          overall: [marked],
+          tracks: [],
+        }}
+      />,
+    );
+
+    expect(screen.getAllByText('Disqualified after the results.')).toHaveLength(
+      2,
+    );
+    expect(screen.getByText('Rank 1')).toBeTruthy();
   });
 });

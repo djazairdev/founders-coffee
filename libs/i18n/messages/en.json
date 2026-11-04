@@ -1722,6 +1722,8 @@
   "hackathon_project_listed": "You are listed on this page.",
   "hackathon_project_publish": "Publish",
   "hackathon_project_needs_confirmation": "Publishing needs at least one teammate to confirm.",
+  "hackathon_results_page_disqualified": "Disqualified after the results.",
+  "hackathon_results_panel_disqualified_prize": "Any prize it held is yours to decide.",
   "hackathon_results_page_winners": "Winners",
   "hackathon_results_page_overall": "Overall ranking",
   "hackathon_results_page_tracks": "Ranking by track",
