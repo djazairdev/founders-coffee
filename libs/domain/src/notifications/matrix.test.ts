@@ -79,6 +79,8 @@ describe('notification channel matrix', () => {
       'hackathon_registration_confirmed',
       'hackathon_results_published',
       'hackathon_results_feedback',
+      'hackathon_followup_week',
+      'hackathon_followup_month',
     ]) {
       expect(isHackathonTemplate(template)).toBe(true);
       expect(notificationCategoryForTemplate(template)).toBe(

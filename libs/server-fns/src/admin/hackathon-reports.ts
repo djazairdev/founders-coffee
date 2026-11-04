@@ -1,5 +1,13 @@
-import { AppError, err, id, ok, type Result } from '@founders-coffee/core';
 import {
+  AppError,
+  err,
+  HACKATHON_FOLLOW_UP_KEYS,
+  id,
+  ok,
+  type Result,
+} from '@founders-coffee/core';
+import {
+  cancelNotificationsByUserTemplate,
   disqualifyReportedTeam,
   dismissReportTarget,
   getHackathon,
@@ -95,6 +103,12 @@ const noticeDisqualified = async (
     }),
   ]);
   if (!found || !parties) return;
+  for (const member of parties.members)
+    await cancelNotificationsByUserTemplate(db, {
+      eventId: input.eventId,
+      userId: member.userId,
+      templateKeys: HACKATHON_FOLLOW_UP_KEYS,
+    });
   await enqueueHackathonTeamNotices(db, {
     templateKey: 'hackathon_team_disqualified',
     event: found.event,
