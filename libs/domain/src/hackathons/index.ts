@@ -228,6 +228,11 @@ export {
   type SettledResult,
 } from './results.js';
 export {
+  certificateGrantsOf,
+  type CertificateGrant,
+} from './certificates.js';
+export {
+  prizeHolderOf,
   publicResultsOf,
   type PublicPullRequest,
   type PublicResult,

@@ -3,6 +3,7 @@ import type { BatchItem } from 'drizzle-orm/batch';
 
 import type { Db } from './db.js';
 import {
+  hackathonCertificates,
   hackathonMentors,
   hackathonRegistrations,
   hackathons,
@@ -20,7 +21,8 @@ import {
  * left without a captain; both are looked for only in the hackathons they were registered for, and
  * a team never stays empty otherwise (B-TEAM-06). Then their registrations go, and the places the
  * registered ones held go back to their hackathons, and their mentor places go with what they wrote
- * on them (B-HKN-25). Invite links they made stay with their teams.
+ * on them (B-HKN-25). Their certificates go too, since each one shows their name to anyone with the
+ * link (B-CRT-01). Invite links they made stay with their teams.
  */
 export const hackathonErasure = (
   db: Db,
@@ -85,5 +87,8 @@ export const hackathonErasure = (
     db
       .delete(hackathonMentors)
       .where(and(eq(hackathonMentors.userId, userId), stillClosing)),
+    db
+      .delete(hackathonCertificates)
+      .where(and(eq(hackathonCertificates.userId, userId), stillClosing)),
   ];
 };

@@ -23,6 +23,7 @@ const ERASED: readonly string[] = [
   'hackathon_registrations.user_id',
   'project_members.user_id',
   'hackathon_mentors.user_id',
+  'hackathon_certificates.user_id',
 ];
 
 const KEPT: Readonly<Record<string, string>> = {

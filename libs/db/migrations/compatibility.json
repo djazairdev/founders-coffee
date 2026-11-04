@@ -69,5 +69,6 @@
   "0067_hackathon_pull_requests": "compatible",
   "0068_hackathon_reports": "compatible",
   "0069_hackathon_report_decisions": "compatible",
-  "0070_hackathon_results": "compatible"
+  "0070_hackathon_results": "compatible",
+  "0071_hackathon_certificates": "compatible"
 }
