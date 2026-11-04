@@ -26,6 +26,10 @@ const REPEAT_TEMPLATE: RepeatEventTemplate = {
   longitude: 3.0588,
   languages: ['ar'],
   kind: 'meetup',
+  format: 'in_person',
+  meetingUrl: null,
+  tags: [],
+  organisationId: null,
 };
 
 describe('HostCreatePage EC-07 state', () => {

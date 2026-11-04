@@ -2,14 +2,17 @@ import {
   AppError,
   err,
   eventLanguages,
-  hasVenue,
   ok,
+  type EventFormat,
   type Result,
+  type Topic,
 } from '@founders-coffee/core';
 import {
   communityOperationsEnabled,
   getCloseout,
   getEvent,
+  isEventOrganiser,
+  readEventLeadOrganisation,
   type Db,
 } from '@founders-coffee/db';
 import { events as eventsDomain } from '@founders-coffee/domain';
@@ -20,12 +23,16 @@ export interface RepeatEventTemplate {
   readonly cityCode: string;
   readonly title: string;
   readonly description: string;
-  readonly venue: string;
+  readonly venue: string | null;
   readonly venueAddress: string | null;
   readonly latitude: number | null;
   readonly longitude: number | null;
   readonly languages: readonly string[];
   readonly kind: eventsDomain.MemberEventKind;
+  readonly format: EventFormat;
+  readonly meetingUrl: string | null;
+  readonly tags: readonly Topic[];
+  readonly organisationId: string | null;
 }
 
 const ineligible = (): Result<RepeatEventTemplate> =>
@@ -42,7 +49,10 @@ export const readRepeatEventTemplate = async (
 ): Promise<Result<RepeatEventTemplate>> => {
   const event = await getEvent(db, opts.eventId);
   if (!event) return err(new AppError('event_not_found', 'Event not found'));
-  if (event.hostId !== opts.actorId) {
+  const mayRepeat =
+    event.hostId === opts.actorId ||
+    (await isEventOrganiser(db, { eventId: event.id, userId: opts.actorId }));
+  if (!mayRepeat) {
     return err(
       new AppError(
         'repeat_event_not_host',
@@ -59,7 +69,6 @@ export const readRepeatEventTemplate = async (
     );
   }
   if (
-    !hasVenue(event) ||
     event.status === 'cancelled' ||
     event.endsAt === null ||
     event.endsAt.getTime() > Date.now()
@@ -68,7 +77,10 @@ export const readRepeatEventTemplate = async (
   }
   const kind = eventsDomain.memberEventKindSchema.safeParse(event.kind);
   if (!kind.success) return ineligible();
-  const closeout = await getCloseout(db, event.id);
+  const [closeout, organisationId] = await Promise.all([
+    getCloseout(db, event.id),
+    readEventLeadOrganisation(db, event.id),
+  ]);
   if (closeout?.outcome !== 'held') return ineligible();
 
   return ok({
@@ -83,5 +95,9 @@ export const readRepeatEventTemplate = async (
     longitude: event.longitude,
     languages: eventLanguages(event),
     kind: kind.data,
+    format: event.format,
+    meetingUrl: event.meetingUrl,
+    tags: event.tags,
+    organisationId,
   });
 };
