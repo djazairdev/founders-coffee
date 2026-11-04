@@ -49,6 +49,23 @@ export type PublicResults = {
   readonly tracks: readonly PublicTrackResults[];
 };
 
+/** The entry a prize goes to: the one holding its place, in its track or overall. */
+export const prizeHolderOf = <
+  Entry extends {
+    readonly trackId: string | null;
+    readonly rank: number | null;
+    readonly trackRank: number | null;
+  },
+>(
+  entries: readonly Entry[],
+  prize: { readonly place: number; readonly trackId: string | null },
+): Entry | undefined =>
+  entries.find((entry) =>
+    prize.trackId
+      ? entry.trackId === prize.trackId && entry.trackRank === prize.place
+      : entry.rank === prize.place,
+  );
+
 /**
  * What a hackathon's page shows of its frozen results (B-JDG-10): the entries ranked overall, the
  * unranked last; the ranks within each track; and the winner of each confirmed prize, the entry
@@ -102,11 +119,7 @@ export const publicResultsOf = (input: {
       };
     }),
     winners: input.prizes.flatMap((prize) => {
-      const holder = overall.find((result) =>
-        prize.trackId
-          ? result.trackId === prize.trackId && result.trackRank === prize.place
-          : result.rank === prize.place,
-      );
+      const holder = prizeHolderOf(overall, prize);
       return holder
         ? [
             {

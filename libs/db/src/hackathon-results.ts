@@ -2,6 +2,10 @@ import { and, asc, eq, sql, type SQL } from 'drizzle-orm';
 
 import type { Db } from './db.js';
 import { batch } from './atomic.js';
+import {
+  issueCertificatesStatement,
+  type NewCertificate,
+} from './hackathon-certificates.js';
 import { lastSubmittedVersion } from './hackathon-submitted-version.js';
 import { bound } from './insert-select.js';
 import { auditStatement } from './operations-audit.js';
@@ -90,7 +94,7 @@ export const readJudgingRecord = async (db: Db, eventId: string) => {
   );
   const [judges, scores, recusals] = await Promise.all([
     db
-      .select({ id: hackathonJudges.id })
+      .select({ id: hackathonJudges.id, userId: hackathonJudges.userId })
       .from(hackathonJudges)
       .where(isAccepted),
     db
@@ -114,13 +118,18 @@ export const readJudgingRecord = async (db: Db, eventId: string) => {
       .from(hackathonRecusals)
       .where(eq(hackathonRecusals.eventId, eventId)),
   ]);
-  return { judgeIds: judges.map((judge) => judge.id), scores, recusals };
+  return {
+    judges,
+    judgeIds: judges.map((judge) => judge.id),
+    scores,
+    recusals,
+  };
 };
 
 /**
  * Publish a hackathon's results (B-JDG-09), in one batch: its results are marked published, the
- * audit entry follows that write's `changes()` and each frozen row follows the audit entry, so
- * nothing lands when judging has not ended or another organiser published first. Returns whether
+ * audit entry follows that write's `changes()`, and each frozen row and the certificates (B-CRT-01)
+ * follow the audit entry, so nothing lands when judging has not ended or another organiser published first. Returns whether
  * this call published them.
  */
 export const publishResults = async (
@@ -131,6 +140,7 @@ export const publishResults = async (
     readonly auditId: string;
     readonly publishedAt: Date;
     readonly results: readonly FrozenResult[];
+    readonly certificates: readonly NewCertificate[];
     readonly metadata: Record<string, unknown>;
   },
 ): Promise<boolean> => {
@@ -186,6 +196,12 @@ export const publishResults = async (
           .where(and(eq(hackathons.eventId, input.eventId), isThisPublication)),
       ),
     ),
+    issueCertificatesStatement(db, {
+      eventId: input.eventId,
+      certificates: input.certificates,
+      issuedAt: input.publishedAt,
+      isIssued: isThisPublication,
+    }),
   ]);
   return (published as readonly unknown[]).length > 0;
 };

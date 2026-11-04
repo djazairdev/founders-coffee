@@ -41,6 +41,7 @@ import {
   HACKATHON_REPORT_REASONS,
   HACKATHON_REPORT_STATUSES,
   HACKATHON_REPORT_TARGETS,
+  HACKATHON_CERTIFICATE_KINDS,
   HACKATHON_RESULT_TIE_NOTES,
   HACKATHON_REVIEW_STATUSES,
   HACKATHON_SCORE_COMMENT_MAX,
@@ -1294,6 +1295,35 @@ export const hackathonResults = sqliteTable(
 );
 
 export type HackathonResult = typeof hackathonResults.$inferSelect;
+
+/**
+ * What a member earned from a hackathon whose results are out (B-CRT-01): taking part, a prize, or
+ * finishing the judging. The random code is what its public page goes by, and a certificate is never
+ * deleted to take it back: `revoked_at` is set, so the page can say so.
+ */
+export const hackathonCertificates = sqliteTable(
+  'hackathon_certificates',
+  {
+    id: text('id').primaryKey(),
+    eventId: text('event_id')
+      .notNull()
+      .references(() => hackathons.eventId, { onDelete: 'cascade' }),
+    userId: text('user_id')
+      .notNull()
+      .references(() => user.id, { onDelete: 'cascade' }),
+    kind: text('kind', { enum: [...HACKATHON_CERTIFICATE_KINDS] }).notNull(),
+    placement: text('placement'),
+    verificationCode: text('verification_code').notNull().unique(),
+    issuedAt: integer('issued_at', { mode: 'timestamp' }).notNull(),
+    revokedAt: integer('revoked_at', { mode: 'timestamp' }),
+  },
+  (table) => [
+    index('hackathon_certificates_user_index').on(table.userId, table.eventId),
+    index('hackathon_certificates_event_index').on(table.eventId),
+  ],
+);
+
+export type HackathonCertificate = typeof hackathonCertificates.$inferSelect;
 
 /**
  * A judge's score for one criterion of one entry (B-JDG-01), with an optional comment: one per

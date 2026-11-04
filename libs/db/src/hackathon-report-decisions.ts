@@ -2,6 +2,7 @@ import { and, eq, inArray, or, sql, type SQL } from 'drizzle-orm';
 
 import { batch } from './atomic.js';
 import type { Db } from './db.js';
+import { revokeTeamCertificatesStatement } from './hackathon-certificates.js';
 import type { ReportedTarget } from './hackathon-report-review.js';
 import { auditStatement } from './operations-audit.js';
 import { events, hackathonReports, hackathonSubmissions } from './schema.js';
@@ -64,7 +65,8 @@ export const dismissReportTarget = async (
 /**
  * Disqualify the team behind a reported entry or team (B-SAFE-02), in one batch: the target's open
  * reports are decided with the reason and evidence and audited, then every other open report about
- * the team or its entry is decided the same way and the entry it submitted is marked disqualified.
+ * the team or its entry is decided the same way, the entry it submitted is marked disqualified and
+ * what its members earned from the hackathon is revoked (B-CRT-01).
  * Only the first statement checks that the target is still open; the audit follows its `changes()`
  * and the rest the row it wrote, read by its reviewer and second, so nothing lands when another
  * administrator decided first.
@@ -144,6 +146,12 @@ export const disqualifyReportedTeam = async (
         ),
       )
       .returning({ id: hackathonSubmissions.id }),
+    revokeTeamCertificatesStatement(db, {
+      eventId: input.eventId,
+      teamId: input.teamId,
+      revokedAt: decision.reviewedAt,
+      isRevoked: isThisDecision,
+    }),
   ]);
   const count = (rows: unknown) => (rows as readonly unknown[]).length;
   const decided = count(target);

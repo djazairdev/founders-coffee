@@ -498,6 +498,13 @@
       "when": 1793811982480,
       "tag": "0070_hackathon_results",
       "breakpoints": true
+    },
+    {
+      "idx": 71,
+      "version": "6",
+      "when": 1793814662566,
+      "tag": "0071_hackathon_certificates",
+      "breakpoints": true
     }
   ]
 }

@@ -107,6 +107,14 @@ export const HACKATHON_SCORE_COMMENT_MAX = 1000;
 export const HACKATHON_RESULTS_REASON_MAX = 1000;
 export const HACKATHON_TIE_ORDER_MAX = 500;
 
+export const HACKATHON_CERTIFICATE_KINDS = [
+  'participant',
+  'winner',
+  'judge',
+] as const;
+export type HackathonCertificateKind =
+  (typeof HACKATHON_CERTIFICATE_KINDS)[number];
+
 export const HACKATHON_RESULT_TIE_NOTES = ['organiser_pick'] as const;
 export type HackathonResultTieNote =
   (typeof HACKATHON_RESULT_TIE_NOTES)[number];

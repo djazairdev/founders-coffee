@@ -3,13 +3,16 @@ import {
   err,
   id,
   ok,
+  shortId,
   type HackathonResultTieNote,
   type Result,
 } from '@founders-coffee/core';
 import {
   getHackathon,
+  listEventTeamMembers,
   listHackathonCriteria,
   listHackathonResults,
+  listPublicHackathonPrizes,
   listResultsEntries,
   publishResults,
   readJudgingRecord,
@@ -63,6 +66,7 @@ const loadRanking = async (db: Db, eventId: string) => {
   return {
     entries,
     criteria,
+    record,
     ranked,
     missingEntries: hackathons.entriesMissingScores({
       entries: rankingEntries,
@@ -148,8 +152,9 @@ export const hackathonResultsResolver = async (
 };
 
 /**
- * Publish a hackathon's results and freeze them (B-JDG-09). Later changes to teams, entries,
- * criteria or scores never reach the frozen rows, which carry their own copy of what they show.
+ * Publish a hackathon's results and freeze them (B-JDG-09), and issue what members earned from them
+ * (B-CRT-01). Later changes to teams, entries, criteria or scores never reach the frozen rows, which
+ * carry their own copy of what they show.
  */
 export const publishHackathonResultsResolver = async (
   db: Db,
@@ -162,10 +167,8 @@ export const publishHackathonResultsResolver = async (
   const { event, hackathon } = found;
   const disabled = await requireHackathonsEnabled(db, event.marketCode);
   if (disabled) return err(disabled);
-  const { entries, criteria, ranked, missingEntries } = await loadRanking(
-    db,
-    input.eventId,
-  );
+  const { entries, criteria, record, ranked, missingEntries } =
+    await loadRanking(db, input.eventId);
   const decided = hackathons.decidePublishResults({
     isPublic: event.status === 'published',
     isPublished: hackathon.resultsPublishedAt !== null,
@@ -204,12 +207,32 @@ export const publishHackathonResultsResolver = async (
         ]
       : [];
   });
+  const [teamMembers, prizes] = await Promise.all([
+    listEventTeamMembers(db, input.eventId),
+    listPublicHackathonPrizes(db, input.eventId),
+  ]);
+  const certificates = hackathons
+    .certificateGrantsOf({
+      entries: results,
+      teamMembers,
+      prizes,
+      judges: record.judges,
+      criteriaCount: criteria.length,
+      scores: record.scores,
+      recusals: record.recusals,
+    })
+    .map((grant) => ({
+      ...grant,
+      id: id('cer'),
+      verificationCode: shortId(id('cer')),
+    }));
   const isPublished = await publishResults(db, {
     eventId: input.eventId,
     actorUserId: input.actorUserId,
     auditId: id('aud'),
     publishedAt: new Date(now),
     results,
+    certificates,
     metadata: {
       entries: results.length,
       missingEntries: missingEntries.length,
