@@ -10,6 +10,7 @@ import {
   hackathonJudges,
   hackathonPullRequests,
   hackathonRecusals,
+  hackathonRegistrations,
   hackathonResults,
   hackathons,
   hackathonScores,
@@ -257,3 +258,33 @@ export const publicResultPullRequestsQuery = (db: Db, eventId: string | SQL) =>
       eq(hackathonResults.submissionId, hackathonPullRequests.submissionId),
     )
     .where(eq(hackathonResults.eventId, eventId));
+
+/**
+ * The next members to tell a hackathon's results are out (B-JDG-11), in a stable order to page by:
+ * everyone holding a place and every judge who accepted, each once.
+ */
+export const listResultsNoticeRecipients = async (
+  db: Db,
+  input: {
+    readonly eventId: string;
+    readonly afterUserId: string | null;
+    readonly limit: number;
+  },
+): Promise<readonly string[]> => {
+  const rows = await db.all<{ userId: string }>(sql`
+    SELECT user_id AS userId FROM (
+      SELECT ${hackathonRegistrations.userId} AS user_id FROM ${hackathonRegistrations}
+      WHERE ${hackathonRegistrations.eventId} = ${input.eventId}
+        AND ${hackathonRegistrations.status} = 'registered'
+      UNION
+      SELECT ${hackathonJudges.userId} AS user_id FROM ${hackathonJudges}
+      WHERE ${hackathonJudges.eventId} = ${input.eventId}
+        AND ${hackathonJudges.status} = 'accepted'
+        AND ${hackathonJudges.userId} IS NOT NULL
+    )
+    WHERE user_id > ${input.afterUserId ?? ''}
+    ORDER BY user_id
+    LIMIT ${input.limit}
+  `);
+  return rows.map((row) => row.userId);
+};

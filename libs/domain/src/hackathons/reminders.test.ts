@@ -12,7 +12,7 @@ const timeline = {
 };
 
 describe('hackathon reminders (B-HKN-21)', () => {
-  it('times each reminder from the dates, for the organisers or the participants', () => {
+  it('times each reminder from the dates, for the organisers, the participants or the judges', () => {
     expect(
       hackathonReminders(timeline).map((reminder) => ({
         ...reminder,
@@ -42,6 +42,11 @@ describe('hackathon reminders (B-HKN-21)', () => {
       {
         templateKey: 'hackathon_judging_open',
         audience: 'organisers',
+        sendAt: '2099-01-16T12:00:00.000Z',
+      },
+      {
+        templateKey: 'hackathon_judge_judging_open',
+        audience: 'judges',
         sendAt: '2099-01-16T12:00:00.000Z',
       },
     ]);

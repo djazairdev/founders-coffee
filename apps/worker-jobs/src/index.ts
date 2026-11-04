@@ -34,6 +34,7 @@ import {
   processHackathonInterestLaunch,
   sweepHackathonInterestLaunches,
 } from './jobs/hackathon-interest-launch.js';
+import { processHackathonResultsNotices } from './jobs/hackathon-results-notices.js';
 import { sweepExpiredHackathonInterest } from './jobs/hackathon-interest-retention.js';
 import { backfillDidNotHappenNotices } from './jobs/did-not-happen-backfill.js';
 import { runReconcile } from './jobs/reconcile.js';
@@ -122,6 +123,8 @@ const dispatch = async (
       return processWaitlistLaunch(db, message, launchDeps(env));
     if (message.kind === 'hackathon_interest_launch_due')
       return processHackathonInterestLaunch(db, message, launchDeps(env));
+    if (message.kind === 'hackathon_results_notices_due')
+      return processHackathonResultsNotices(db, message, launchDeps(env));
     return processNotificationDue(db, message, {
       email: createCloudflareEmailProvider(env.EMAIL, env.MAIL_FROM),
       sms: createSmsProvider(env),

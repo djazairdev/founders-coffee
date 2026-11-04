@@ -61,6 +61,9 @@ export const NOTIFICATION_TEMPLATE_KEYS = [
   'hackathon_submission_received',
   'hackathon_team_disqualified',
   'hackathon_judge_reminder',
+  'hackathon_judge_accepted',
+  'hackathon_judge_judging_open',
+  'hackathon_results_published',
 ] as const;
 export type NotificationTemplateKey =
   (typeof NOTIFICATION_TEMPLATE_KEYS)[number];
@@ -92,6 +95,8 @@ export const HACKATHON_TEAM_TEMPLATE_KEYS = [
   'hackathon_submission_received',
   'hackathon_team_disqualified',
   'hackathon_judge_reminder',
+  'hackathon_judge_accepted',
+  'hackathon_results_published',
 ] as const satisfies readonly NotificationTemplateKey[];
 export type HackathonTeamTemplateKey =
   (typeof HACKATHON_TEAM_TEMPLATE_KEYS)[number];
@@ -113,8 +118,13 @@ export const HACKATHON_PARTICIPANT_REMINDER_KEYS = [
   ...HACKATHON_DEADLINE_REMINDER_KEYS,
 ] as const satisfies readonly NotificationTemplateKey[];
 
+export const HACKATHON_JUDGE_REMINDER_KEYS = [
+  'hackathon_judge_judging_open',
+] as const satisfies readonly NotificationTemplateKey[];
+
 export const HACKATHON_REMINDER_KEYS = [
   ...HACKATHON_ORGANISER_REMINDER_KEYS,
   ...HACKATHON_PARTICIPANT_REMINDER_KEYS,
+  ...HACKATHON_JUDGE_REMINDER_KEYS,
 ] as const;
 export type HackathonReminderKey = (typeof HACKATHON_REMINDER_KEYS)[number];
