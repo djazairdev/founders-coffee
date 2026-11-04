@@ -106,6 +106,16 @@ describe('publicResultsOf (B-JDG-10)', () => {
     ]);
   });
 
+  it('names the entry the organisers gave a prize to, over the one holding its place', () => {
+    const shown = publicResultsOf({
+      results: [result('first', 1), result('second', 2)],
+      prizes: [{ ...prize('gold', 1), awardedSubmissionId: 'second' }],
+      pullRequests: [],
+    });
+
+    expect(shown?.winners.map((winner) => winner.title)).toEqual(['second']);
+  });
+
   it('never gives a prize to an unranked entry', () => {
     expect(
       publicResultsOf({

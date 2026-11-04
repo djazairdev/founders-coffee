@@ -9,6 +9,7 @@ export const teamView = (
   team: Partial<NonNullable<TeamPageView['team']>> | null = {},
 ): TeamPageView => ({
   recordOffer: null,
+  prizes: [],
   event: {
     id: EVENT_ID,
     title: 'Algiers Builders Weekend',

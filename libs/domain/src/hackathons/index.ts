@@ -227,6 +227,15 @@ export {
   type PublishResultsInput,
   type SettledResult,
 } from './results.js';
+export {
+  decidePrizeAssignment,
+  decidePrizeDelivery,
+  prizeAssignmentSchema,
+  prizeDeliverySchema,
+  prizeDeliveryViewSchema,
+  type PrizeAssignment,
+  type PrizeDelivery,
+} from './prize-delivery.js';
 export { certificateGrantsOf, type CertificateGrant } from './certificates.js';
 export {
   defaultPrizeAwardsOf,

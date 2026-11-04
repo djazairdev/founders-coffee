@@ -96,8 +96,8 @@ export const defaultPrizeAwardsOf = (
 /**
  * What a hackathon's page shows of its frozen results (B-JDG-10): the entries ranked overall, the
  * unranked last; the ranks within each track; and the winner of each confirmed prize, the entry
- * holding the prize's place overall or in its track. A prize nobody holds that place for has no
- * winner. An entry disqualified after the results keeps its place, marked, until its prize is
+ * the organisers gave it to, or else the one holding its place overall or in its track (B-PRZ-02). A
+ * prize nobody holds that place for has no winner. An entry disqualified after the results keeps its place, marked, until its prize is
  * decided (B-SAFE-03). A pull request nobody reviewed stands as submitted. `null` until the results
  * are out.
  */
@@ -108,6 +108,7 @@ export const publicResultsOf = (input: {
     readonly title: string;
     readonly place: number;
     readonly trackId: string | null;
+    readonly awardedSubmissionId?: string | null;
   }[];
   readonly pullRequests: readonly (PublicPullRequest & {
     readonly submissionId: string;
@@ -151,7 +152,11 @@ export const publicResultsOf = (input: {
       };
     }),
     winners: input.prizes.flatMap((prize) => {
-      const holder = prizeHolderOf(overall, prize);
+      const holder = prize.awardedSubmissionId
+        ? overall.find(
+            (entry) => entry.submissionId === prize.awardedSubmissionId,
+          )
+        : prizeHolderOf(overall, prize);
       return holder
         ? [
             {

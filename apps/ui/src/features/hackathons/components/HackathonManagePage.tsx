@@ -25,6 +25,7 @@ import { useHackathonDraft } from '../hooks';
 import { HackathonDashboard } from './HackathonDashboard';
 import { HackathonDetailsForm } from './HackathonDetailsForm';
 import { HackathonJudgingProgress } from './HackathonJudgingProgress';
+import { HackathonPrizeDelivery } from './HackathonPrizeDelivery';
 import { HackathonPrizesSection } from './HackathonPrizesSection';
 import { HackathonResultsPanel } from './HackathonResultsPanel';
 import { HackathonReviewBanner } from './HackathonReviewBanner';
@@ -140,6 +141,7 @@ export const HackathonManagePage = ({
             locale={locale}
             timeZone={timeZone}
           />
+          <HackathonPrizeDelivery eventId={draft.event.id} locale={locale} />
         </>
       ) : null}
       {draft.isEditable ? (
