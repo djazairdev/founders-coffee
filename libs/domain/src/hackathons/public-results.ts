@@ -1,0 +1,124 @@
+import type { HackathonPullRequestStatus } from '@founders-coffee/core';
+
+export type PublicResultInput = {
+  readonly submissionId: string;
+  readonly teamName: string;
+  readonly title: string;
+  readonly trackId: string | null;
+  readonly trackTitle: string | null;
+  readonly total: number | null;
+  readonly rank: number | null;
+  readonly trackRank: number | null;
+  readonly tieNote: string | null;
+  readonly criteria: readonly {
+    readonly criterionId: string;
+    readonly name: string;
+    readonly scale: number;
+    readonly mean: number | null;
+  }[];
+  readonly pullRequestUrls: readonly string[];
+};
+
+export type PublicPullRequest = {
+  readonly url: string;
+  readonly status: HackathonPullRequestStatus;
+};
+
+export type PublicResult = Omit<PublicResultInput, 'pullRequestUrls'> & {
+  readonly pullRequests: readonly PublicPullRequest[];
+};
+
+export type PublicWinner = {
+  readonly prizeId: string;
+  readonly place: number;
+  readonly prizeTitle: string;
+  readonly trackTitle: string | null;
+  readonly title: string;
+  readonly teamName: string;
+};
+
+export type PublicTrackResults = {
+  readonly trackId: string;
+  readonly title: string;
+  readonly entries: readonly PublicResult[];
+};
+
+export type PublicResults = {
+  readonly winners: readonly PublicWinner[];
+  readonly overall: readonly PublicResult[];
+  readonly tracks: readonly PublicTrackResults[];
+};
+
+/**
+ * What a hackathon's page shows of its frozen results (B-JDG-10): the entries ranked overall, the
+ * unranked last; the ranks within each track; and the winner of each confirmed prize, the entry
+ * holding the prize's place overall or in its track. A prize nobody holds that place for has no
+ * winner. A pull request nobody reviewed stands as submitted. `null` until the results are out.
+ */
+export const publicResultsOf = (input: {
+  readonly results: readonly PublicResultInput[];
+  readonly prizes: readonly {
+    readonly id: string;
+    readonly title: string;
+    readonly place: number;
+    readonly trackId: string | null;
+  }[];
+  readonly pullRequests: readonly (PublicPullRequest & {
+    readonly submissionId: string;
+  })[];
+}): PublicResults | null => {
+  if (input.results.length === 0) return null;
+  const overall = input.results.map(({ pullRequestUrls, ...result }) => ({
+    ...result,
+    pullRequests: pullRequestUrls.map((url) => ({
+      url,
+      status:
+        input.pullRequests.find(
+          (recorded) =>
+            recorded.submissionId === result.submissionId &&
+            recorded.url === url,
+        )?.status ?? ('submitted' as const),
+    })),
+  }));
+  const trackIds = [
+    ...new Set(
+      overall.flatMap((result) =>
+        result.trackId && result.trackRank !== null ? [result.trackId] : [],
+      ),
+    ),
+  ];
+  return {
+    overall,
+    tracks: trackIds.map((trackId) => {
+      const entries = overall
+        .filter(
+          (result) => result.trackId === trackId && result.trackRank !== null,
+        )
+        .sort((a, b) => (a.trackRank ?? 0) - (b.trackRank ?? 0));
+      return {
+        trackId,
+        title: entries[0]?.trackTitle ?? '',
+        entries,
+      };
+    }),
+    winners: input.prizes.flatMap((prize) => {
+      const holder = overall.find((result) =>
+        prize.trackId
+          ? result.trackId === prize.trackId && result.trackRank === prize.place
+          : result.rank === prize.place,
+      );
+      return holder
+        ? [
+            {
+              prizeId: prize.id,
+              place: prize.place,
+              prizeTitle: prize.title,
+              trackTitle: prize.trackId ? holder.trackTitle : null,
+              title: holder.title,
+              teamName: holder.teamName,
+            },
+          ]
+        : [];
+    }),
+  };
+};

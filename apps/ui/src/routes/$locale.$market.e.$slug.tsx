@@ -42,6 +42,7 @@ const EventRoute = () => {
     judges,
     mentors,
     workshops,
+    results,
     registration,
   } = Route.useLoaderData();
   useReloadOnMemberChange();
@@ -77,6 +78,7 @@ const EventRoute = () => {
                 judges,
                 mentors,
                 workshops,
+                results,
                 registration,
               }
             : null

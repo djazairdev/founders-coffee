@@ -227,3 +227,11 @@ export {
   type PublishResultsInput,
   type SettledResult,
 } from './results.js';
+export {
+  publicResultsOf,
+  type PublicPullRequest,
+  type PublicResult,
+  type PublicResults,
+  type PublicTrackResults,
+  type PublicWinner,
+} from './public-results.js';
