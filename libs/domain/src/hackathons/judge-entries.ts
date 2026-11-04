@@ -17,6 +17,11 @@ export const judgeEntriesSchema = z.strictObject({
   eventId: idSchema,
 });
 
+export const judgeEntrySchema = z.strictObject({
+  eventId: idSchema,
+  submissionId: idSchema,
+});
+
 export const recusalSchema = z.strictObject({
   eventId: idSchema,
   submissionId: idSchema,

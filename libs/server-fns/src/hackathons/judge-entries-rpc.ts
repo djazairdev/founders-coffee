@@ -13,7 +13,7 @@ import {
   listJudgeEntriesResolver,
   recuseFromEntryResolver,
 } from './judge-entries.js';
-import { judgePageResolver } from './judge-page.js';
+import { judgeEntryPageResolver, judgePageResolver } from './judge-page.js';
 import { saveJudgeScoresResolver } from './judge-scores.js';
 
 const { hackathonRecusal, hackathonScoreSave } = RATE_BUDGETS.edit;
@@ -47,6 +47,20 @@ export const getHackathonJudgePage = createServerFn({ strict: false })
     return handleResult(
       judgePageResolver(getDb(), {
         eventId: data.eventId,
+        userId: requireAuth(context.session).user.id,
+      }),
+    );
+  });
+
+/** One submission as the signed-in judge scores it (B-JDG-07). */
+export const getHackathonJudgeEntryPage = createServerFn({ strict: false })
+  .middleware([requirePermission('judging', 'score')])
+  .validator(appValidator(hackathons.judgeEntrySchema))
+  .handler(({ context, data }) => {
+    privateNoStore();
+    return handleResult(
+      judgeEntryPageResolver(getDb(), {
+        ...data,
         userId: requireAuth(context.session).user.id,
       }),
     );

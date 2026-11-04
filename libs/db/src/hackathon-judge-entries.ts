@@ -89,16 +89,8 @@ export const hasRecused = async (
   return row !== undefined;
 };
 
-/**
- * Every entry a judge reads (B-JDG-04): each submitted entry of the hackathon, as it was last
- * submitted, with its team and track, leaving out the ones the judge recused from. Every judge sees
- * every entry in Stage B. The order is the one teams submitted in.
- */
-export const listJudgeEntries = async (
-  db: Db,
-  input: { readonly eventId: string; readonly judgeId: string },
-): Promise<readonly JudgeEntry[]> => {
-  const rows = await db
+const judgeEntryRows = (db: Db) =>
+  db
     .select({
       submissionId: hackathonSubmissions.id,
       teamName: hackathonTeams.name,
@@ -129,23 +121,40 @@ export const listJudgeEntries = async (
     .leftJoin(
       hackathonTracks,
       eq(hackathonTracks.id, hackathonSubmissionVersions.trackId),
-    )
-    .leftJoin(
-      hackathonRecusals,
-      and(
-        eq(hackathonRecusals.submissionId, hackathonSubmissions.id),
-        eq(hackathonRecusals.judgeId, input.judgeId),
-      ),
-    )
+    );
+
+/**
+ * Every entry a judge reads (B-JDG-04): each submitted entry of the hackathon, as it was last
+ * submitted, with its team and track, leaving out the ones the judge recused from. Every judge sees
+ * every entry in Stage B. The order is the one teams submitted in.
+ */
+export const listJudgeEntries = (
+  db: Db,
+  input: { readonly eventId: string; readonly judgeId: string },
+): Promise<readonly JudgeEntry[]> =>
+  judgeEntryRows(db)
     .where(
       and(
         eq(hackathonSubmissions.eventId, input.eventId),
         eq(hackathonSubmissions.status, 'submitted'),
-        isNull(hackathonRecusals.judgeId),
+        sql`NOT EXISTS (SELECT 1 FROM ${hackathonRecusals} WHERE ${hackathonRecusals.submissionId} = ${hackathonSubmissions.id} AND ${hackathonRecusals.judgeId} = ${input.judgeId})`,
       ),
     )
     .orderBy(hackathonSubmissions.submittedAt, hackathonSubmissions.id);
-  return rows;
+
+/** One submitted entry of a hackathon as it was last submitted (B-JDG-07), or `null` for none. */
+export const readJudgeEntry = async (
+  db: Db,
+  input: { readonly eventId: string; readonly submissionId: string },
+): Promise<JudgeEntry | null> => {
+  const [row] = await judgeEntryRows(db).where(
+    and(
+      eq(hackathonSubmissions.id, input.submissionId),
+      eq(hackathonSubmissions.eventId, input.eventId),
+      eq(hackathonSubmissions.status, 'submitted'),
+    ),
+  );
+  return row ?? null;
 };
 
 /**

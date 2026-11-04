@@ -115,6 +115,14 @@ describe('HackathonJudgePage (B-JDG-06)', () => {
     expect(within(entry('Tabib')).getByText('Recused')).toBeTruthy();
   });
 
+  it('links the submissions a judge can score, and not the ones they recused from', () => {
+    renderPage(judgeView());
+
+    expect(screen.getByRole('link', { name: 'Ledger' })).toBeTruthy();
+    expect(screen.getByRole('link', { name: 'Souk' })).toBeTruthy();
+    expect(screen.queryByRole('link', { name: 'Tabib' })).toBeNull();
+  });
+
   it('says so when no team has submitted', () => {
     renderPage(
       judgeView({
@@ -167,7 +175,9 @@ describe('HackathonJudgePage (B-JDG-06)', () => {
     mocks.page.error = new Error('offline');
     renderPage(undefined);
 
-    expect(screen.getByText('The submissions could not be loaded.')).toBeTruthy();
+    expect(
+      screen.getByText('The submissions could not be loaded.'),
+    ).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Retry' })).toBeTruthy();
   });
 });

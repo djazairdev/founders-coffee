@@ -185,6 +185,7 @@ export {
   decideJudgeAccess,
   decideRecusal,
   judgeEntriesSchema,
+  judgeEntrySchema,
   recusalSchema,
   type RecusalInput,
 } from './judge-entries.js';
