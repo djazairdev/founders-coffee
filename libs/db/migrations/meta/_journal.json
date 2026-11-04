@@ -533,6 +533,13 @@
       "when": 1793818246917,
       "tag": "0075_member_profiles_hackathon_record",
       "breakpoints": true
+    },
+    {
+      "idx": 76,
+      "version": "6",
+      "when": 1793824212369,
+      "tag": "0076_enable_hackathons_dz",
+      "breakpoints": true
     }
   ]
 }
