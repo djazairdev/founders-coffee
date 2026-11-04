@@ -56,6 +56,15 @@ vi.mock('@tanstack/react-router', () => ({
   }) => createElement('a', { href: '#', className }, children),
 }));
 
+vi.mock('../results-hooks', () => ({
+  useHackathonResults: () => ({
+    data: undefined,
+    isError: false,
+    refetch: vi.fn(),
+  }),
+  usePublishHackathonResults: () => ({ mutate: vi.fn(), reset: vi.fn() }),
+}));
+
 vi.mock('../hooks', () => ({
   useHackathonDraft: () => mocks.draft,
   useHackathonDashboard: () => mocks.dashboard,

@@ -217,3 +217,13 @@ export {
   type HackathonReportDecision,
   type ReportDecisionInput,
 } from './report-decisions.js';
+export {
+  decidePublishResults,
+  entriesMissingScores,
+  hackathonResultsSchema,
+  publishResultsSchema,
+  settleResults,
+  tiedGroupsOf,
+  type PublishResultsInput,
+  type SettledResult,
+} from './results.js';

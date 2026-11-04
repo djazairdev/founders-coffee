@@ -25,6 +25,7 @@ import { useHackathonDraft } from '../hooks';
 import { HackathonDashboard } from './HackathonDashboard';
 import { HackathonDetailsForm } from './HackathonDetailsForm';
 import { HackathonPrizesSection } from './HackathonPrizesSection';
+import { HackathonResultsPanel } from './HackathonResultsPanel';
 import { HackathonReviewBanner } from './HackathonReviewBanner';
 import { HackathonReviewSection } from './HackathonReviewSection';
 import { HackathonRubricSection } from './HackathonRubricSection';
@@ -130,6 +131,13 @@ export const HackathonManagePage = ({
         timeZone={timeZone}
         markets={markets}
       />
+      {draft.event.status === 'published' ? (
+        <HackathonResultsPanel
+          eventId={draft.event.id}
+          locale={locale}
+          timeZone={timeZone}
+        />
+      ) : null}
       {draft.isEditable ? (
         <>
           <section aria-labelledby="hackathon-details-heading" className="mt-8">

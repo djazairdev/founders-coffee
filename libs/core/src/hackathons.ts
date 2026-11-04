@@ -104,6 +104,12 @@ export const HACKATHON_MENTOR_OFFICE_HOURS_MAX = 300;
 
 export const HACKATHON_RECUSAL_REASON_MAX = 500;
 export const HACKATHON_SCORE_COMMENT_MAX = 1000;
+export const HACKATHON_RESULTS_REASON_MAX = 1000;
+export const HACKATHON_TIE_ORDER_MAX = 500;
+
+export const HACKATHON_RESULT_TIE_NOTES = ['organiser_pick'] as const;
+export type HackathonResultTieNote =
+  (typeof HACKATHON_RESULT_TIE_NOTES)[number];
 
 export const HACKATHON_AI_POLICIES = [
   'disclosed',

@@ -28,6 +28,19 @@ describe('HackathonManagePage (B-HKN-12)', () => {
     expect(screen.queryByRole('button', { name: 'Save' })).toBeNull();
   });
 
+  it('offers the results only for a published hackathon', () => {
+    mocks.draft.data = draftView({
+      event: { ...draftView().event, status: 'published' },
+    });
+    renderPage();
+    expect(screen.getByRole('heading', { name: 'Results' })).toBeTruthy();
+    cleanup();
+
+    mocks.draft.data = draftView();
+    renderPage();
+    expect(screen.queryByRole('heading', { name: 'Results' })).toBeNull();
+  });
+
   it('answers a hackathon the reader does not organise as not found', () => {
     mocks.draft.isError = true;
     mocks.draft.error = { code: 'forbidden' };
