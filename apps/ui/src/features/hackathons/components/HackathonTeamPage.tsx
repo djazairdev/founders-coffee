@@ -26,6 +26,7 @@ import type { TeamPageView } from '../api';
 import { scheduleMoment } from '../schedule';
 import { useTeamPage } from '../team-hooks';
 import { HackathonTeamCreateForm } from './HackathonTeamCreateForm';
+import { HackathonTeamFeedback } from './HackathonTeamFeedback';
 import { HackathonParticipantFrame } from './HackathonParticipantFrame';
 import { HackathonTeamInviteLink } from './HackathonTeamInviteLink';
 import { HackathonTeamJoin } from './HackathonTeamJoin';
@@ -218,6 +219,9 @@ export const HackathonTeamPage = ({
         locale={locale}
         timeZone={timeZone}
       />
+      {view.feedback ? (
+        <HackathonTeamFeedback feedback={view.feedback} locale={locale} />
+      ) : null}
     </HackathonParticipantFrame>
   );
 };

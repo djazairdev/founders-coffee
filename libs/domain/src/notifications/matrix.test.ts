@@ -78,6 +78,7 @@ describe('notification channel matrix', () => {
     for (const template of [
       'hackathon_registration_confirmed',
       'hackathon_results_published',
+      'hackathon_results_feedback',
     ]) {
       expect(isHackathonTemplate(template)).toBe(true);
       expect(notificationCategoryForTemplate(template)).toBe(

@@ -1,4 +1,3 @@
-import type { Locale } from '@founders-coffee/core';
 import {
   enqueueNotificationIfAbsent,
   getHackathon,
@@ -8,7 +7,7 @@ import {
 } from '@founders-coffee/db';
 
 import { channelPlanFor } from './channel-plan.js';
-import { resolveNotificationContext } from './context.js';
+import { hackathonTeamUrlFor, resolveNotificationContext } from './context.js';
 import { hackathonTeamMessage } from './hackathon-team.js';
 import {
   validPayload,
@@ -17,11 +16,10 @@ import {
 } from './producer.js';
 import { armNotificationSchedule } from './schedule.js';
 
-const TEMPLATE_KEY = 'hackathon_results_published';
-
 /**
  * Write one batch of the notice that a hackathon's results are out (B-JDG-11), one row per member in
- * their language, following their Hackathons category. Each row's id is fixed by the hackathon and
+ * their language, following their Hackathons category. A member whose team was scored is told their
+ * feedback is ready and sent to their team page (B-JDG-12); everyone else, to the hackathon's page. Each row's id is fixed by the hackathon and
  * the member, so a queue message delivered twice writes nothing new. Answers where the next batch
  * starts, `null` once the list is done.
  */
@@ -38,11 +36,14 @@ export const enqueueResultsNoticeBatch = async (
   const { event } = found;
   const recipients = await listResultsNoticeRecipients(db, input);
   const sendAt = new Date();
-  const messages = new Map<Locale, Record<string, string>>();
+  const messages = new Map<string, Record<string, string>>();
   let written = 0;
-  for (const userId of recipients) {
+  for (const { userId, hasFeedback } of recipients) {
+    const templateKey = hasFeedback
+      ? 'hackathon_results_feedback'
+      : 'hackathon_results_published';
     const contact = await getNotificationContact(db, userId);
-    const plan = contact && channelPlanFor(contact, TEMPLATE_KEY);
+    const plan = contact && channelPlanFor(contact, templateKey);
     if (!contact || !plan) continue;
     const context = await resolveNotificationContext(db, {
       preferred: contact.localePref,
@@ -56,28 +57,31 @@ export const enqueueResultsNoticeBatch = async (
       startsAt: event.startsAt.toISOString(),
       locale: context.locale,
     };
+    const messageKey = `${templateKey}:${context.locale}`;
     const message =
-      messages.get(context.locale) ??
+      messages.get(messageKey) ??
       (await hackathonTeamMessage(
-        TEMPLATE_KEY,
+        templateKey,
         {
           title: event.title,
           team: '',
           name: '',
           project: '',
           reason: '',
-          url: valuesFor(base, context, true).url,
+          url: hasFeedback
+            ? hackathonTeamUrlFor(context.locale, event.id)
+            : valuesFor(base, context, true).url,
         },
         context.locale,
       ));
-    messages.set(context.locale, message);
+    messages.set(messageKey, message);
     const payload = { ...base, ...message };
     const queued = await enqueueNotificationIfAbsent(db, {
       id: `ntf_results_${event.id}_${userId}`,
       eventId: event.id,
       userId,
       channel: plan.primary,
-      templateKey: TEMPLATE_KEY,
+      templateKey,
       payload: plan.fallback
         ? validPayload(plan.fallback, validPayload(plan.primary, payload))
         : validPayload(plan.primary, payload),
@@ -90,6 +94,8 @@ export const enqueueResultsNoticeBatch = async (
   return {
     written,
     next:
-      recipients.length === input.limit ? (recipients.at(-1) ?? null) : null,
+      recipients.length === input.limit
+        ? (recipients.at(-1)?.userId ?? null)
+        : null,
   };
 };

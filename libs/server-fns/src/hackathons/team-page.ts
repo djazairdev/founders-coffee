@@ -6,6 +6,7 @@ import {
 import {
   listOwnTeamRequests,
   readParticipantStanding,
+  readTeamFeedback,
   readTeamPageTeam,
   type Db,
   type TeamPageMember,
@@ -48,13 +49,16 @@ export type TeamPageView = {
     readonly teamName: string;
     readonly createdAt: number;
   }[];
+  readonly feedback: hackathons.TeamFeedback | null;
 };
 
 /**
  * A member's team page for a published hackathon (B-TEAM-07): where they stand in it, the team
  * they are in with its members, and whether teams can still change, decided here from the
  * hackathon's dates. Only the captain is given the requests waiting for an answer and when the
- * team's invite link stops working; a member in no team is given their own requests instead.
+ * team's invite link stops working; a member in no team is given their own requests instead. Once
+ * the results are published, a member also reads the judges' feedback on their own team's entry
+ * (B-JDG-12): the team comes from the reader's own membership, so nobody can ask for another's.
  */
 export const teamPageResolver = async (
   db: Db,
@@ -63,12 +67,18 @@ export const teamPageResolver = async (
 ): Promise<Result<TeamPageView>> => {
   const loaded = await loadTeamHackathon(db, input.eventId);
   if (!loaded.ok) return loaded;
-  const { event, timeline, teamMin, teamMax } = loaded.data;
+  const { event, timeline, teamMin, teamMax, resultsPublishedAt } = loaded.data;
   const standing = await readParticipantStanding(db, input);
   const membership = standing.membership;
-  const [team, ownRequests] = await Promise.all([
+  const [team, ownRequests, feedback] = await Promise.all([
     membership ? readTeamPageTeam(db, membership.teamId, new Date(now)) : null,
     membership ? [] : listOwnTeamRequests(db, input),
+    membership && resultsPublishedAt
+      ? readTeamFeedback(db, {
+          eventId: input.eventId,
+          teamId: membership.teamId,
+        })
+      : null,
   ]);
   const isCaptain = membership?.isCaptain ?? false;
   return ok({
@@ -105,5 +115,12 @@ export const teamPageResolver = async (
       ...request,
       createdAt: request.createdAt.getTime(),
     })),
+    feedback:
+      feedback &&
+      hackathons.teamFeedbackOf(
+        feedback.title,
+        feedback.criteria,
+        feedback.scores,
+      ),
   });
 };

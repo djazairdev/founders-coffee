@@ -16,6 +16,9 @@ import {
   ntf_email_hackathon_judge_reminder_html,
   ntf_email_hackathon_judge_reminder_subject,
   ntf_email_hackathon_judge_reminder_text,
+  ntf_email_hackathon_results_feedback_html,
+  ntf_email_hackathon_results_feedback_subject,
+  ntf_email_hackathon_results_feedback_text,
   ntf_email_hackathon_results_published_html,
   ntf_email_hackathon_results_published_subject,
   ntf_email_hackathon_results_published_text,
@@ -44,6 +47,8 @@ import {
   ntf_push_hackathon_judge_accepted_title,
   ntf_push_hackathon_judge_reminder_body,
   ntf_push_hackathon_judge_reminder_title,
+  ntf_push_hackathon_results_feedback_body,
+  ntf_push_hackathon_results_feedback_title,
   ntf_push_hackathon_results_published_body,
   ntf_push_hackathon_results_published_title,
   ntf_push_hackathon_team_accepted_body,
@@ -160,6 +165,13 @@ const MESSAGES: Record<
     ntf_email_hackathon_results_published_subject,
     ntf_email_hackathon_results_published_html,
     ntf_email_hackathon_results_published_text,
+  ],
+  hackathon_results_feedback: [
+    ntf_push_hackathon_results_feedback_title,
+    ntf_push_hackathon_results_feedback_body,
+    ntf_email_hackathon_results_feedback_subject,
+    ntf_email_hackathon_results_feedback_html,
+    ntf_email_hackathon_results_feedback_text,
   ],
 };
 

@@ -235,3 +235,10 @@ export {
   type PublicTrackResults,
   type PublicWinner,
 } from './public-results.js';
+export {
+  teamFeedbackOf,
+  type FeedbackCriterion,
+  type FeedbackScore,
+  type TeamFeedback,
+  type TeamFeedbackJudge,
+} from './team-feedback.js';
