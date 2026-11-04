@@ -146,6 +146,8 @@ describe('publishing a hackathon’s results (B-JDG-09, real D1)', () => {
         actorUserId: actor,
         auditId,
         publishedAt: at,
+        certificates: [],
+        awards: [],
         metadata: {},
         results: [
           {

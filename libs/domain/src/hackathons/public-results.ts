@@ -72,6 +72,27 @@ export const prizeHolderOf = <
       : entry.rank === prize.place,
   );
 
+/** Who each prize goes to by the frozen ranks (B-PRZ-01); a prize nobody holds the place for, nobody. */
+export const defaultPrizeAwardsOf = (
+  entries: readonly {
+    readonly submissionId: string;
+    readonly trackId: string | null;
+    readonly rank: number | null;
+    readonly trackRank: number | null;
+  }[],
+  prizes: readonly {
+    readonly id: string;
+    readonly place: number;
+    readonly trackId: string | null;
+  }[],
+): readonly { readonly prizeId: string; readonly submissionId: string }[] =>
+  prizes.flatMap((prize) => {
+    const holder = prizeHolderOf(entries, prize);
+    return holder
+      ? [{ prizeId: prize.id, submissionId: holder.submissionId }]
+      : [];
+  });
+
 /**
  * What a hackathon's page shows of its frozen results (B-JDG-10): the entries ranked overall, the
  * unranked last; the ranks within each track; and the winner of each confirmed prize, the entry

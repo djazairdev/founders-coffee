@@ -236,6 +236,7 @@ export const publishHackathonResultsResolver = async (
     publishedAt: new Date(now),
     results,
     certificates,
+    awards: hackathons.defaultPrizeAwardsOf(results, prizes),
     metadata: {
       entries: results.length,
       missingEntries: missingEntries.length,

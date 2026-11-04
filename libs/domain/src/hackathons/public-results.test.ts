@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import { publicResultsOf, type PublicResultInput } from './public-results.js';
+import {
+  defaultPrizeAwardsOf,
+  publicResultsOf,
+  type PublicResultInput,
+} from './public-results.js';
 
 const result = (
   submissionId: string,
@@ -137,6 +141,24 @@ describe('publicResultsOf (B-JDG-10)', () => {
     expect(shown?.overall[0]?.pullRequests).toEqual([
       { url: 'https://g.example/1', status: 'submitted' },
       { url: 'https://g.example/2', status: 'merged' },
+    ]);
+  });
+
+  it('gives each prize to the entry holding its place, and none to a place nobody holds', () => {
+    const entries = [
+      result('sub_a', 1),
+      result('sub_b', 2, inTrack('trk_pay', 1)),
+    ];
+
+    expect(
+      defaultPrizeAwardsOf(entries, [
+        { id: 'prz_first', place: 1, trackId: null },
+        { id: 'prz_track', place: 1, trackId: 'trk_pay' },
+        { id: 'prz_third', place: 3, trackId: null },
+      ]),
+    ).toEqual([
+      { prizeId: 'prz_first', submissionId: 'sub_a' },
+      { prizeId: 'prz_track', submissionId: 'sub_b' },
     ]);
   });
 

@@ -7,6 +7,7 @@ import {
   revokeDisqualifiedCertificatesStatement,
   type NewCertificate,
 } from './hackathon-certificates.js';
+import { issuePrizeAwardsStatement } from './hackathon-prize-awards.js';
 import { lastSubmittedVersion } from './hackathon-submitted-version.js';
 import { bound } from './insert-select.js';
 import { auditStatement } from './operations-audit.js';
@@ -129,8 +130,8 @@ export const readJudgingRecord = async (db: Db, eventId: string) => {
 
 /**
  * Publish a hackathon's results (B-JDG-09), in one batch: its results are marked published, the
- * audit entry follows that write's `changes()`, and each frozen row and the certificates (B-CRT-01)
- * follow the audit entry. An entry disqualified since it was read is marked as it freezes, and what
+ * audit entry follows that write's `changes()`, and each frozen row, the prize awards (B-PRZ-01) and
+ * the certificates (B-CRT-01) follow the audit entry. An entry disqualified since it was read is marked as it freezes, and what
  * its team earned revoked (B-SAFE-03). Nothing lands when judging has not ended or another organiser
  * published first. Returns whether this call published them.
  */
@@ -143,6 +144,10 @@ export const publishResults = async (
     readonly publishedAt: Date;
     readonly results: readonly FrozenResult[];
     readonly certificates: readonly NewCertificate[];
+    readonly awards: readonly {
+      readonly prizeId: string;
+      readonly submissionId: string;
+    }[];
     readonly metadata: Record<string, unknown>;
   },
 ): Promise<boolean> => {
@@ -202,6 +207,11 @@ export const publishResults = async (
           .where(and(eq(hackathons.eventId, input.eventId), isThisPublication)),
       ),
     ),
+    issuePrizeAwardsStatement(db, {
+      awards: input.awards,
+      awardedAt: input.publishedAt,
+      isIssued: isThisPublication,
+    }),
     issueCertificatesStatement(db, {
       eventId: input.eventId,
       certificates: input.certificates,

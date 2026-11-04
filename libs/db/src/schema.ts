@@ -42,6 +42,8 @@ import {
   HACKATHON_REPORT_STATUSES,
   HACKATHON_REPORT_TARGETS,
   HACKATHON_CERTIFICATE_KINDS,
+  HACKATHON_PRIZE_DELIVERY_STATUSES,
+  HACKATHON_PRIZE_NOTE_MAX,
   HACKATHON_RESULT_TIE_NOTES,
   HACKATHON_REVIEW_STATUSES,
   HACKATHON_SCORE_COMMENT_MAX,
@@ -1302,6 +1304,44 @@ export const hackathonResults = sqliteTable(
 );
 
 export type HackathonResult = typeof hackathonResults.$inferSelect;
+
+/**
+ * Which frozen result holds a prize, and how its delivery stands (B-PRZ-01), one row per prize. It
+ * points at the result rather than the entry, so an award outlasts a team that later disbands. The
+ * note is for the organiser alone, and `delivered_at` says when the team received the prize.
+ */
+export const hackathonPrizeAwards = sqliteTable(
+  'hackathon_prize_awards',
+  {
+    prizeId: text('prize_id')
+      .primaryKey()
+      .references(() => hackathonPrizes.id, { onDelete: 'cascade' }),
+    submissionId: text('submission_id')
+      .notNull()
+      .references(() => hackathonResults.submissionId, { onDelete: 'cascade' }),
+    awardedAt: integer('awarded_at', { mode: 'timestamp' }).notNull(),
+    deliveryStatus: text('delivery_status', {
+      enum: [...HACKATHON_PRIZE_DELIVERY_STATUSES],
+    })
+      .notNull()
+      .default('pending'),
+    deliveredAt: integer('delivered_at', { mode: 'timestamp' }),
+    privateNote: text('private_note'),
+  },
+  (table) => [
+    index('hackathon_prize_awards_submission_index').on(table.submissionId),
+    check(
+      'hackathon_prize_awards_delivered_check',
+      sql`(${table.deliveryStatus} = 'received') = (${table.deliveredAt} IS NOT NULL)`,
+    ),
+    check(
+      'hackathon_prize_awards_note_check',
+      sql`${table.privateNote} IS NULL OR length(${table.privateNote}) <= ${sql.raw(String(HACKATHON_PRIZE_NOTE_MAX))}`,
+    ),
+  ],
+);
+
+export type HackathonPrizeAward = typeof hackathonPrizeAwards.$inferSelect;
 
 /**
  * What a member earned from a hackathon whose results are out (B-CRT-01): taking part, a prize, or
