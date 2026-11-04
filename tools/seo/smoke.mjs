@@ -28,7 +28,7 @@ const PRIVATE_PATHS = [
 ];
 const HTML_CONTENT_TYPE = 'text/html';
 const MAX_DYNAMIC_ROUTES = 25;
-const DYNAMIC_TYPES = ['city', 'event', 'organisation'];
+const DYNAMIC_TYPES = ['city', 'event', 'organisation', 'project'];
 const PLATFORM_ORGANISATION = 'founders-coffee';
 const SITEMAP_SMOKE_QUERY = '?seo_smoke=1';
 
@@ -256,10 +256,9 @@ const run = async () => {
     failures.push(...privateRouteFailures({ path, response, body }));
   }
   const coverage = Object.fromEntries(
-    ['company', 'market', 'city', 'event', 'organisation'].map((type) => [
-      type,
-      routes.filter((route) => route.type === type).length,
-    ]),
+    ['company', 'market', 'city', 'event', 'organisation', 'project'].map(
+      (type) => [type, routes.filter((route) => route.type === type).length],
+    ),
   );
   if (requireDynamic && (coverage.city === 0 || coverage.event === 0))
     failures.push(

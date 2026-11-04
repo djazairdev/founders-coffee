@@ -14,6 +14,8 @@ export const OPERATIONS: Operations = {
 };
 
 export const EXEMPT: Readonly<Record<string, string>> = {
+  getProjectPage:
+    'Public by design: a published project’s page is for anyone, signed in or not, and its slug is the only input. A draft or hidden project reads as not found.',
   getHackathonCertificatePage:
     'Public by design: whoever holds a certificate’s code reads what it proves, signed in or not, in every phase and after hackathons are switched off, because the certificate outlives both.',
   joinHackathonInterest:

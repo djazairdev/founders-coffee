@@ -1,3 +1,5 @@
+import { Link } from '@tanstack/react-router';
+
 import {
   hackathon_project_confirm,
   hackathon_project_confirm_note,
@@ -11,10 +13,12 @@ import {
   hackathon_project_status_draft,
   hackathon_project_status_hidden,
   hackathon_project_status_published,
+  hackathon_project_view,
   type Locale,
 } from '@founders-coffee/i18n';
 import { Button, StatusMessage } from '@founders-coffee/ui';
 
+import { localizedProject } from '../../../lib/locale-routing';
 import type { TeamPageView } from '../api';
 import { teamErrorMessage } from '../team-errors';
 import {
@@ -72,6 +76,14 @@ export const HackathonTeamProject = ({
           <p className="mt-1 text-body-sm text-neutral">
             {STATUS[project.status]({}, options)}
           </p>
+          {project.status === 'published' ? (
+            <Link
+              {...localizedProject(locale, project.slug)}
+              className="link mt-1 inline-block text-body-sm"
+            >
+              {hackathon_project_view({}, options)}
+            </Link>
+          ) : null}
           {project.teammates > 0 ? (
             <p className="mt-1 text-body-sm text-neutral">
               {hackathon_project_confirmed_count(

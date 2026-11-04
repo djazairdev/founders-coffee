@@ -1,4 +1,5 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import type { ReactNode } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import type { TeamPageView } from '../api';
@@ -16,6 +17,16 @@ const change = (mutate: () => void) => ({
   isError: false,
   error: null,
 });
+
+vi.mock('@tanstack/react-router', () => ({
+  Link: ({
+    params,
+    children,
+  }: {
+    params: { slug: string };
+    children: ReactNode;
+  }) => <a href={`/p/${params.slug}`}>{children}</a>,
+}));
 
 vi.mock('../team-hooks', () => ({
   useCreateProject: () => change(mocks.create),

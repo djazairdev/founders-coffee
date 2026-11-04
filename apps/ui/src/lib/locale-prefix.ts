@@ -8,6 +8,7 @@ const LOCALE_DIRECT = new Set([
   'hackathon',
   'login',
   'o',
+  'p',
   'onboarding',
   'profile',
   'u',
