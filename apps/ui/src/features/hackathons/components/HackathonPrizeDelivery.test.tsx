@@ -131,9 +131,7 @@ describe('HackathonPrizeDelivery (B-PRZ-02)', () => {
       ...VIEW,
       prizes: [{ ...prize, status: 'received' }],
     });
-    expect(
-      (screen.getByLabelText('Goes to') as HTMLSelectElement).disabled,
-    ).toBe(true);
+    expect(screen.getByLabelText('Goes to')).toHaveProperty('disabled', true);
     cleanup();
 
     renderPanel({
