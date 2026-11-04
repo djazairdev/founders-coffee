@@ -13,6 +13,9 @@ import {
   ntf_email_hackathon_deadline_24h_team_html,
   ntf_email_hackathon_deadline_24h_team_text,
   ntf_email_hackathon_deadline_24h_text,
+  ntf_email_hackathon_judge_judging_open_html,
+  ntf_email_hackathon_judge_judging_open_subject,
+  ntf_email_hackathon_judge_judging_open_text,
   ntf_email_hackathon_judging_open_html,
   ntf_email_hackathon_judging_open_subject,
   ntf_email_hackathon_judging_open_text,
@@ -28,6 +31,8 @@ import {
   ntf_push_hackathon_deadline_24h_body,
   ntf_push_hackathon_deadline_24h_team_body,
   ntf_push_hackathon_deadline_24h_title,
+  ntf_push_hackathon_judge_judging_open_body,
+  ntf_push_hackathon_judge_judging_open_title,
   ntf_push_hackathon_judging_open_body,
   ntf_push_hackathon_judging_open_title,
   ntf_push_hackathon_kickoff_body,
@@ -87,6 +92,13 @@ export const REMINDER_MESSAGES: Record<
     ntf_email_hackathon_judging_open_subject,
     ntf_email_hackathon_judging_open_html,
     ntf_email_hackathon_judging_open_text,
+  ],
+  hackathon_judge_judging_open: [
+    ntf_push_hackathon_judge_judging_open_title,
+    ntf_push_hackathon_judge_judging_open_body,
+    ntf_email_hackathon_judge_judging_open_subject,
+    ntf_email_hackathon_judge_judging_open_html,
+    ntf_email_hackathon_judge_judging_open_text,
   ],
 };
 

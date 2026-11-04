@@ -21,6 +21,7 @@ import { logger, type Metrics } from '@founders-coffee/observability';
 import { hackathonNotFound } from './edit-context.js';
 import { requireHackathonsEnabled } from './flag.js';
 import { recordHackathonMetric } from './metrics.js';
+import { requestResultsNotices } from '../notifications/hackathon-results-request.js';
 
 export type HackathonResultsEntry = {
   readonly submissionId: string;
@@ -227,6 +228,7 @@ export const publishHackathonResultsResolver = async (
     marketCode: event.marketCode,
     hackathonId: input.eventId,
   });
+  await requestResultsNotices(input.eventId);
   logger.info('Hackathon results published', {
     eventId: input.eventId,
     entries: results.length,

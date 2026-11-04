@@ -24,6 +24,8 @@ import {
   type PlaceAnswered,
   type PlacePorts,
 } from './places.js';
+import { notifyJudgeAccepted } from '../notifications/hackathon-judge-notices.js';
+import { cancelJudgeReminders } from '../notifications/hackathon-reminders.js';
 
 export type JudgeInviteCreated = {
   readonly judgeId: string;
@@ -75,13 +77,18 @@ export const removeJudgeResolver = async (
   input: Omit<Organiser, 'userId'> & { readonly judgeId: string },
   now: number = Date.now(),
 ): Promise<Result<{ readonly judgeId: string }>> => {
+  const judges = await listOrganiserHackathonJudges(db, input.eventId);
   const removed = await removePlaceResolver(
     db,
     judgePorts,
     { ...input, placeId: input.judgeId },
     now,
   );
-  return removed.ok ? ok({ judgeId: removed.data.placeId }) : removed;
+  if (!removed.ok) return removed;
+  const userId = judges.find((judge) => judge.id === input.judgeId)?.userId;
+  if (userId)
+    await cancelJudgeReminders(db, { eventId: input.eventId, userId });
+  return ok({ judgeId: removed.data.placeId });
 };
 
 /** Every judge's place for the hackathon's organisers (B-JDG-03), with who accepted each. */
@@ -110,6 +117,8 @@ export const answerJudgeInviteResolver = (
       ...input,
       accept: (tokenHash) =>
         acceptHackathonJudgeInvite(db, { tokenHash, userId: input.userId }),
+      onAccepted: (eventId) =>
+        notifyJudgeAccepted(db, { eventId, userId: input.userId }),
     },
     now,
   );

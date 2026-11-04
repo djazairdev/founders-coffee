@@ -168,6 +168,7 @@ export const answerPlaceInvite = async (
     readonly answer: 'accept' | 'decline';
     readonly userId: string;
     readonly accept: (tokenHash: string) => Promise<boolean>;
+    readonly onAccepted?: (eventId: string) => Promise<void>;
   },
   now: number,
 ): Promise<Result<PlaceAnswered>> => {
@@ -211,5 +212,6 @@ export const answerPlaceInvite = async (
     eventId: invite.eventId,
     marketCode,
   });
+  if (status === 'accepted') await input.onAccepted?.(invite.eventId);
   return answered;
 };

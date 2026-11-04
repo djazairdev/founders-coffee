@@ -15,7 +15,14 @@ export interface HackathonInterestLaunchDueMessage {
   readonly eventId: string;
 }
 
+export interface HackathonResultsNoticesDueMessage {
+  readonly kind: 'hackathon_results_notices_due';
+  readonly eventId: string;
+  readonly afterUserId: string | null;
+}
+
 export type AppQueueMessage =
   | NotificationDueMessage
   | WaitlistLaunchDueMessage
-  | HackathonInterestLaunchDueMessage;
+  | HackathonInterestLaunchDueMessage
+  | HackathonResultsNoticesDueMessage;

@@ -10,9 +10,15 @@ import {
   type Event,
 } from '@founders-coffee/db';
 import {
+  ntf_email_hackathon_judge_accepted_html,
+  ntf_email_hackathon_judge_accepted_subject,
+  ntf_email_hackathon_judge_accepted_text,
   ntf_email_hackathon_judge_reminder_html,
   ntf_email_hackathon_judge_reminder_subject,
   ntf_email_hackathon_judge_reminder_text,
+  ntf_email_hackathon_results_published_html,
+  ntf_email_hackathon_results_published_subject,
+  ntf_email_hackathon_results_published_text,
   ntf_email_hackathon_team_accepted_html,
   ntf_email_hackathon_team_accepted_subject,
   ntf_email_hackathon_team_accepted_text,
@@ -34,8 +40,12 @@ import {
   ntf_email_hackathon_submission_received_html,
   ntf_email_hackathon_submission_received_subject,
   ntf_email_hackathon_submission_received_text,
+  ntf_push_hackathon_judge_accepted_body,
+  ntf_push_hackathon_judge_accepted_title,
   ntf_push_hackathon_judge_reminder_body,
   ntf_push_hackathon_judge_reminder_title,
+  ntf_push_hackathon_results_published_body,
+  ntf_push_hackathon_results_published_title,
   ntf_push_hackathon_team_accepted_body,
   ntf_push_hackathon_team_accepted_title,
   ntf_push_hackathon_team_declined_body,
@@ -137,6 +147,20 @@ const MESSAGES: Record<
     ntf_email_hackathon_judge_reminder_html,
     ntf_email_hackathon_judge_reminder_text,
   ],
+  hackathon_judge_accepted: [
+    ntf_push_hackathon_judge_accepted_title,
+    ntf_push_hackathon_judge_accepted_body,
+    ntf_email_hackathon_judge_accepted_subject,
+    ntf_email_hackathon_judge_accepted_html,
+    ntf_email_hackathon_judge_accepted_text,
+  ],
+  hackathon_results_published: [
+    ntf_push_hackathon_results_published_title,
+    ntf_push_hackathon_results_published_body,
+    ntf_email_hackathon_results_published_subject,
+    ntf_email_hackathon_results_published_html,
+    ntf_email_hackathon_results_published_text,
+  ],
 };
 
 const URLS: Partial<
@@ -145,6 +169,7 @@ const URLS: Partial<
   hackathon_team_declined: hackathonLookingUrlFor,
   hackathon_submission_received: hackathonSubmitUrlFor,
   hackathon_judge_reminder: hackathonJudgeUrlFor,
+  hackathon_judge_accepted: hackathonJudgeUrlFor,
 };
 
 /** The push and email forms of a team notice, in the reader's language. */
