@@ -45,7 +45,7 @@ export const HackathonCriterionEditor = ({
       className="grid gap-4 rounded-box border border-base-300 p-4"
     >
       <div className="flex items-center justify-between gap-2">
-        <h3 id={headingId} className="font-display text-h5">
+        <h3 id={headingId} className="font-display text-body-lg">
           {hackathon_criterion_number({ n }, { locale })}
         </h3>
         {form.canRemove ? (

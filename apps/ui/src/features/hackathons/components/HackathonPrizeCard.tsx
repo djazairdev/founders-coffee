@@ -62,7 +62,7 @@ export const HackathonPrizeCard = ({
             : hackathon_prize_not_public({}, options)}
         </span>
       </p>
-      <h3 className="font-display text-h5">
+      <h3 className="font-display text-body-lg">
         <bdi>{prize.title}</bdi>
       </h3>
       <p className="whitespace-pre-line text-body-sm">
