@@ -5,7 +5,13 @@ import type { Db } from './db.js';
 import { revokeTeamCertificatesStatement } from './hackathon-certificates.js';
 import type { ReportedTarget } from './hackathon-report-review.js';
 import { auditStatement } from './operations-audit.js';
-import { events, hackathonReports, hackathonSubmissions } from './schema.js';
+import {
+  events,
+  hackathonReports,
+  hackathonResults,
+  hackathonSubmissions,
+  projects,
+} from './schema.js';
 
 type Decision = ReportedTarget & {
   readonly eventId: string;
@@ -66,7 +72,9 @@ export const dismissReportTarget = async (
  * Disqualify the team behind a reported entry or team (B-SAFE-02), in one batch: the target's open
  * reports are decided with the reason and evidence and audited, then every other open report about
  * the team or its entry is decided the same way, the entry it submitted is marked disqualified and
- * what its members earned from the hackathon is revoked (B-CRT-01).
+ * what its members earned from the hackathon is revoked (B-CRT-01). After the results, its frozen
+ * result is marked rather than removed, so the ranks stay as published, and a project made from its
+ * entry is hidden (B-SAFE-03).
  * Only the first statement checks that the target is still open; the audit follows its `changes()`
  * and the rest the row it wrote, read by its reviewer and second, so nothing lands when another
  * administrator decided first.
@@ -152,6 +160,30 @@ export const disqualifyReportedTeam = async (
       revokedAt: decision.reviewedAt,
       isRevoked: isThisDecision,
     }),
+    db
+      .update(hackathonResults)
+      .set({ disqualifiedAt: decision.reviewedAt })
+      .where(
+        and(
+          eq(hackathonResults.eventId, input.eventId),
+          eq(hackathonResults.teamId, input.teamId),
+          isThisDecision,
+        ),
+      ),
+    db
+      .update(projects)
+      .set({
+        status: 'hidden',
+        version: sql`${projects.version} + 1`,
+        updatedAt: new Date(),
+      })
+      .where(
+        and(
+          eq(projects.status, 'published'),
+          inArray(projects.sourceSubmissionId, teamEntries),
+          isThisDecision,
+        ),
+      ),
   ]);
   const count = (rows: unknown) => (rows as readonly unknown[]).length;
   const decided = count(target);

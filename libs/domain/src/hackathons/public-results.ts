@@ -10,6 +10,7 @@ export type PublicResultInput = {
   readonly rank: number | null;
   readonly trackRank: number | null;
   readonly tieNote: string | null;
+  readonly disqualifiedAt: Date | null;
   readonly criteria: readonly {
     readonly criterionId: string;
     readonly name: string;
@@ -24,7 +25,11 @@ export type PublicPullRequest = {
   readonly status: HackathonPullRequestStatus;
 };
 
-export type PublicResult = Omit<PublicResultInput, 'pullRequestUrls'> & {
+export type PublicResult = Omit<
+  PublicResultInput,
+  'pullRequestUrls' | 'disqualifiedAt'
+> & {
+  readonly isDisqualified: boolean;
   readonly pullRequests: readonly PublicPullRequest[];
 };
 
@@ -35,6 +40,7 @@ export type PublicWinner = {
   readonly trackTitle: string | null;
   readonly title: string;
   readonly teamName: string;
+  readonly isDisqualified: boolean;
 };
 
 export type PublicTrackResults = {
@@ -70,7 +76,9 @@ export const prizeHolderOf = <
  * What a hackathon's page shows of its frozen results (B-JDG-10): the entries ranked overall, the
  * unranked last; the ranks within each track; and the winner of each confirmed prize, the entry
  * holding the prize's place overall or in its track. A prize nobody holds that place for has no
- * winner. A pull request nobody reviewed stands as submitted. `null` until the results are out.
+ * winner. An entry disqualified after the results keeps its place, marked, until its prize is
+ * decided (B-SAFE-03). A pull request nobody reviewed stands as submitted. `null` until the results
+ * are out.
  */
 export const publicResultsOf = (input: {
   readonly results: readonly PublicResultInput[];
@@ -85,18 +93,21 @@ export const publicResultsOf = (input: {
   })[];
 }): PublicResults | null => {
   if (input.results.length === 0) return null;
-  const overall = input.results.map(({ pullRequestUrls, ...result }) => ({
-    ...result,
-    pullRequests: pullRequestUrls.map((url) => ({
-      url,
-      status:
-        input.pullRequests.find(
-          (recorded) =>
-            recorded.submissionId === result.submissionId &&
-            recorded.url === url,
-        )?.status ?? ('submitted' as const),
-    })),
-  }));
+  const overall = input.results.map(
+    ({ pullRequestUrls, disqualifiedAt, ...result }) => ({
+      ...result,
+      isDisqualified: disqualifiedAt !== null,
+      pullRequests: pullRequestUrls.map((url) => ({
+        url,
+        status:
+          input.pullRequests.find(
+            (recorded) =>
+              recorded.submissionId === result.submissionId &&
+              recorded.url === url,
+          )?.status ?? ('submitted' as const),
+      })),
+    }),
+  );
   const trackIds = [
     ...new Set(
       overall.flatMap((result) =>
@@ -129,6 +140,7 @@ export const publicResultsOf = (input: {
               trackTitle: prize.trackId ? holder.trackTitle : null,
               title: holder.title,
               teamName: holder.teamName,
+              isDisqualified: holder.isDisqualified,
             },
           ]
         : [];

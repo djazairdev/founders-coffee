@@ -1,5 +1,6 @@
 import {
   formatNumber,
+  hackathon_results_page_disqualified,
   hackathon_results_page_criterion_score,
   hackathon_results_page_pr_merged,
   hackathon_results_page_pr_reviewed,
@@ -58,6 +59,11 @@ export const HackathonResultEntry = ({
       <p className="text-body-sm text-neutral">
         <bdi className="break-words">{result.teamName}</bdi>
       </p>
+      {result.isDisqualified ? (
+        <p className="text-caption font-medium">
+          {hackathon_results_page_disqualified({}, options)}
+        </p>
+      ) : null}
       {isDetailed ? (
         <>
           {result.tieNote ? (

@@ -47,6 +47,7 @@ const entry = (
   trackRank: rank,
   isTied: false,
   tieNote: null,
+  isDisqualified: false,
   ...changes,
 });
 
@@ -192,6 +193,19 @@ describe('HackathonResultsPanel (B-JDG-09)', () => {
     renderPanel(resultsView());
 
     expect(screen.getByText(/The ties changed/u)).toBeTruthy();
+  });
+
+  it('tells the organiser an entry was disqualified after the results and its prize is theirs to decide', () => {
+    renderPanel(
+      resultsView({
+        stage: 'published',
+        publishedAt: Date.parse('2099-03-22T11:00:00Z'),
+        entries: [entry('sub_a', 'Ledger', 1, { isDisqualified: true })],
+      }),
+    );
+
+    expect(screen.getByText(/Disqualified after the results\./u)).toBeTruthy();
+    expect(screen.getByText(/yours to decide/u)).toBeTruthy();
   });
 
   it('shows the frozen results once published, with no way to publish again', () => {

@@ -1,10 +1,23 @@
-import { and, eq, inArray, isNull, ne, sql, type SQL } from 'drizzle-orm';
+import {
+  and,
+  eq,
+  inArray,
+  isNotNull,
+  isNull,
+  ne,
+  sql,
+  type SQL,
+} from 'drizzle-orm';
 
 import type { HackathonCertificateKind } from '@founders-coffee/core';
 
 import type { Db } from './db.js';
 import { bound } from './insert-select.js';
-import { hackathonCertificates, hackathonTeamMembers } from './schema.js';
+import {
+  hackathonCertificates,
+  hackathonResults,
+  hackathonTeamMembers,
+} from './schema.js';
 
 export type NewCertificate = {
   readonly id: string;
@@ -78,6 +91,45 @@ export const revokeTeamCertificatesStatement = (
             .select({ userId: hackathonTeamMembers.userId })
             .from(hackathonTeamMembers)
             .where(eq(hackathonTeamMembers.teamId, input.teamId)),
+        ),
+        input.isRevoked,
+      ),
+    );
+
+/**
+ * The statement that takes back what the teams already marked disqualified in a hackathon's frozen
+ * results earned, for an entry disqualified just as the results were published (B-SAFE-03).
+ */
+export const revokeDisqualifiedCertificatesStatement = (
+  db: Db,
+  input: {
+    readonly eventId: string;
+    readonly revokedAt: Date;
+    readonly isRevoked: SQL;
+  },
+) =>
+  db
+    .update(hackathonCertificates)
+    .set({ revokedAt: input.revokedAt })
+    .where(
+      and(
+        eq(hackathonCertificates.eventId, input.eventId),
+        ne(hackathonCertificates.kind, 'judge'),
+        inArray(
+          hackathonCertificates.userId,
+          db
+            .select({ userId: hackathonTeamMembers.userId })
+            .from(hackathonTeamMembers)
+            .innerJoin(
+              hackathonResults,
+              eq(hackathonResults.teamId, hackathonTeamMembers.teamId),
+            )
+            .where(
+              and(
+                eq(hackathonResults.eventId, input.eventId),
+                isNotNull(hackathonResults.disqualifiedAt),
+              ),
+            ),
         ),
         input.isRevoked,
       ),
