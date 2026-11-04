@@ -183,6 +183,12 @@ export const localizedProject = (locale: Locale, slug: string) => ({
   params: { locale, slug },
 });
 
+/** The screen where a project's members keep it up to date or leave it. */
+export const localizedProjectEdit = (locale: Locale, slug: string) => ({
+  to: '/$locale/p/$slug/edit' as const,
+  params: { locale, slug },
+});
+
 /** The page where a member sees their own organisation and its members (B-ORG-09). */
 export const localizedMyOrganisation = (locale: Locale, slug: string) => ({
   to: '/$locale/o/$slug/manage' as const,

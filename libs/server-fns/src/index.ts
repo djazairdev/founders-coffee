@@ -17,6 +17,8 @@ export * from './waitlist/index.js';
 export * from './hackathons/index.js';
 export * from './profile/hackathon-record-rpc.js';
 export * from './projects/from-entry-rpc.js';
+export * from './projects/edit-rpc.js';
+export type { ProjectEditor } from './projects/edit.js';
 export * from './projects/page-rpc.js';
 export type { ProjectPage } from './projects/page.js';
 export * from './hackathons/certificate-page-rpc.js';

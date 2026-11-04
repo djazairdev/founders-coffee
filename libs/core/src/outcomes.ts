@@ -176,6 +176,7 @@ export const HACKATHON_ERROR_CODES = [
   'project_exists',
   'project_not_found',
   'not_project_owner',
+  'project_last_member',
   'project_needs_confirmation',
   'judging_closed',
   'judge_limit_reached',

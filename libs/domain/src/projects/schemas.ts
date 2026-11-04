@@ -7,6 +7,7 @@ import {
   PROJECT_SLUG_MIN,
   PROJECT_TITLE_MAX,
   PROJECT_URL_MAX,
+  idSchema,
   projectStageSchema,
 } from '@founders-coffee/core';
 
@@ -38,3 +39,21 @@ export const projectSchema = z.strictObject({
 });
 
 export type ProjectInput = z.infer<typeof projectSchema>;
+
+export const projectEditSchema = projectSchema
+  .pick({
+    description: true,
+    stage: true,
+    repositoryUrl: true,
+    demoUrl: true,
+    websiteUrl: true,
+    isSearchIndexable: true,
+  })
+  .extend({
+    projectId: idSchema,
+    expectedVersion: z.number().int().min(1),
+  });
+export type ProjectEdit = z.infer<typeof projectEditSchema>;
+
+export const projectEditorSchema = z.strictObject({ slug: projectSlugSchema });
+export const projectRefSchema = z.strictObject({ projectId: idSchema });

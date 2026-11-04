@@ -61,6 +61,7 @@ const LEGACY_PRIVATE_ADDRESS = /^\/(?:account|activity|preferences)(?:\/|$)/iu;
 const HOST_WIZARD = /^\/(?:[^/]+\/){1,2}host\/create(?:\/|$)/iu;
 const HACKATHON_SCREEN =
   /^\/(?:[^/]+\/)?hackathon\/[^/]+\/(?:manage|team|looking|submit|judge)(?:\/|$)/iu;
+const PROJECT_SCREEN = /^\/(?:[^/]+\/)?p\/[^/]+\/[^/]/iu;
 const ORGANISATION_SCREEN =
   /^\/(?:[^/]+\/)?o\/(?:apply|invitations|[^/]+\/[^/]+)(?:\/|$)/iu;
 
@@ -114,7 +115,8 @@ export const routedPath = (pathname: string): string =>
  * `submit` and `judge` — sit under `hackathon/{eventId}`, while its public page is the event's. An
  * organisation's public page is `o/{slug}` and nothing deeper, so `o/apply`, `o/invitations/…` and
  * every address beneath a slug, such as `o/{slug}/manage`, are private: the domain reserves those
- * names as slugs. Case is ignored because the router ignores it, so `/en/PROFILE` is the profile
+ * names as slugs. A project's public page is `p/{slug}`, and everything beneath it, such as
+ * `p/{slug}/edit`, is private. Case is ignored because the router ignores it, so `/en/PROFILE` is the profile
  * screen. The address is read as the router reads it, through {@link routedPath}, so
  * `/en/%70rofile` and `/en//profile` are the profile screen too.
  *
@@ -130,7 +132,8 @@ export const isPrivatePath = (pathname: string): boolean => {
     LEGACY_PRIVATE_ADDRESS.test(path) ||
     HOST_WIZARD.test(path) ||
     HACKATHON_SCREEN.test(path) ||
-    ORGANISATION_SCREEN.test(path)
+    ORGANISATION_SCREEN.test(path) ||
+    PROJECT_SCREEN.test(path)
   );
 };
 

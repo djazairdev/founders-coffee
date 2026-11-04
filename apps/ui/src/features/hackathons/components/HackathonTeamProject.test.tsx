@@ -107,4 +107,19 @@ describe('HackathonTeamProject', () => {
     expect(screen.getByText('Published.')).toBeTruthy();
     expect(screen.queryByRole('button')).toBeNull();
   });
+
+  it('links someone on the project to its edit screen, and nobody else', () => {
+    render(<HackathonTeamProject eventId="evt_1" project={MADE} locale="en" />);
+    expect(screen.getByRole('link', { name: 'Manage the page' })).toBeTruthy();
+    cleanup();
+
+    render(
+      <HackathonTeamProject
+        eventId="evt_1"
+        project={{ ...MADE, isOnProject: false }}
+        locale="en"
+      />,
+    );
+    expect(screen.queryByRole('link', { name: 'Manage the page' })).toBeNull();
+  });
 });
