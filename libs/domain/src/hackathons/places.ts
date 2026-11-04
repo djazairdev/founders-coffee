@@ -103,7 +103,8 @@ export const decidePlaceChange = (
  * Decide whether a member can answer an invite link for a judge's or a mentor's place: the link is
  * still waiting for an answer and places can still change. To accept, the member holds no other
  * place of that role in the hackathon, and does not hold the other role there either: a mentor
- * is never a judge of the same hackathon. A link answered or removed no longer works, except that
+ * is never a judge of the same hackathon, and a judge never takes part in it (`isParticipating`,
+ * which only a judge's place asks about). A link answered or removed no longer works, except that
  * the member who accepted it gets their acceptance back.
  */
 export const decidePlaceAnswer = (
@@ -117,6 +118,7 @@ export const decidePlaceAnswer = (
     readonly userId: string;
     readonly heldPlace: HackathonJudgeStatus | null;
     readonly holdsOtherRole: boolean;
+    readonly isParticipating: boolean;
   },
 ): Result<{ readonly isAlreadyAnswered: boolean }> => {
   const { invite } = input;
@@ -141,6 +143,13 @@ export const decidePlaceAnswer = (
       new AppError(
         CODES[otherRole(role)].held,
         `Already a ${otherRole(role)} here`,
+      ),
+    );
+  if (input.isParticipating)
+    return err(
+      new AppError(
+        'already_registered',
+        'Already taking part in this hackathon',
       ),
     );
   return ok({ isAlreadyAnswered: false });

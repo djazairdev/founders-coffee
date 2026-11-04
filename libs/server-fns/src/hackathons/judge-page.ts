@@ -12,6 +12,7 @@ import {
 import { hackathons } from '@founders-coffee/domain';
 
 import type { JudgeEntryView } from './judge-entries.js';
+import { hackathonNotFound } from './edit-context.js';
 import { loadPlaceHackathon, type PlaceHackathon } from './place-context.js';
 
 export type JudgePageEntry = {
@@ -82,7 +83,8 @@ const standingOf = (
 /**
  * A member's judge page for a hackathon (B-JDG-06): where judging stands, decided here from the
  * hackathon's dates, whether they judge it, and, for an accepted judge while judging is open, every
- * submitted entry marked to score, scored or recused, with their progress across them.
+ * submitted entry marked to score, scored or recused, with their progress across them. A draft
+ * is a judge's to see and nobody else's.
  */
 export const judgePageResolver = async (
   db: Db,
@@ -95,6 +97,7 @@ export const judgePageResolver = async (
   const stage = hackathons.judgingStageAt({ ...hackathon, now });
   const place = await readJudgePlace(db, input);
   const isJudge = place?.status === 'accepted';
+  if (hackathon.isDraft && !isJudge) return hackathonNotFound();
   const [rows, criteria] =
     isJudge && stage === 'judging'
       ? await Promise.all([
@@ -140,6 +143,8 @@ export const judgeEntryPageResolver = async (
   const hackathon = loaded.data;
   const stage = hackathons.judgingStageAt({ ...hackathon, now });
   const place = await readJudgePlace(db, input);
+  if (hackathon.isDraft && place?.status !== 'accepted')
+    return hackathonNotFound();
   const standing = standingOf(
     input.eventId,
     hackathon,

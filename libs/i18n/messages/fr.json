@@ -1790,6 +1790,7 @@
   "hackathon_withdraw_error_captain": "Confiez le rôle de capitaine à un coéquipier avant de vous retirer.",
   "hackathon_register_error_rate_limited": "Trop de tentatives. Attendez quelques minutes, puis réessayez.",
   "hackathon_register_error_failed": "Cela n’a pas fonctionné. Réessayez.",
+  "hackathon_register_error_judge": "Vous êtes membre du jury de ce hackathon : vous ne pouvez donc pas y participer.",
   "hackathon_submission_ai_heading": "Usage de l’IA",
   "hackathon_submission_ai_hint_disclosed": "Indiquez les outils d’IA utilisés et ce que votre équipe a construit elle-même.",
   "hackathon_submission_ai_hint_ai_native": "Ce hackathon est conçu autour de l’IA. Indiquez les outils d’IA utilisés et ce que votre équipe a construit elle-même.",

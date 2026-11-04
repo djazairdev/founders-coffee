@@ -1597,6 +1597,7 @@
   "hackathon_withdraw_error_captain": "Pass the captaincy to a teammate before you withdraw.",
   "hackathon_register_error_rate_limited": "Too many tries. Wait a few minutes, then try again.",
   "hackathon_register_error_failed": "That did not work. Try again.",
+  "hackathon_register_error_judge": "You judge this hackathon, so you cannot also take part in it.",
   "hackathon_submission_ai_heading": "AI use",
   "hackathon_submission_ai_hint_disclosed": "Name any AI tools you used, and say what your team built itself.",
   "hackathon_submission_ai_hint_ai_native": "This hackathon is built around AI. Name the AI tools you built with, and say what your team built itself.",

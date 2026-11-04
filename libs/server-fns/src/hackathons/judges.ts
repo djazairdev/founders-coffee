@@ -4,6 +4,7 @@ import {
   addHackathonJudgeInvite,
   countOpenJudgePlaces,
   declineHackathonJudgeInvite,
+  holdsHackathonRegistration,
   listOrganiserHackathonJudges,
   readHackathonJudgeInvite,
   readHeldJudgePlace,
@@ -49,6 +50,7 @@ const judgePorts: PlacePorts = {
   readInvite: readHackathonJudgeInvite,
   readHeld: readHeldJudgePlace,
   readHeldOther: readHeldMentorPlace,
+  isParticipating: holdsHackathonRegistration,
   decline: declineHackathonJudgeInvite,
 };
 
@@ -103,7 +105,7 @@ export const listJudgesResolver = async (
 
 /**
  * Accept or decline a judge's invite link as the signed-in member (B-JDG-03). A member who
- * mentors the hackathon cannot also judge it (B-HKN-25).
+ * mentors the hackathon, or takes part in it, cannot also judge it (B-HKN-25, B-SAFE-04).
  */
 export const answerJudgeInviteResolver = (
   db: Db,

@@ -52,6 +52,7 @@ const mentorPorts: PlacePorts = {
   readInvite: readHackathonMentorInvite,
   readHeld: readHeldMentorPlace,
   readHeldOther: readHeldJudgePlace,
+  isParticipating: () => Promise.resolve(false),
   decline: declineHackathonMentorInvite,
 };
 

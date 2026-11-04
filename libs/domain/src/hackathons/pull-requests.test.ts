@@ -20,6 +20,7 @@ const decide = (
   decidePullRequestStatus({
     timeline,
     now: kickoffAt + 60 * HOUR,
+    isCancelled: false,
     isResultsPublished: false,
     entry: { status: 'submitted', submittedPullRequestUrls: [PR] },
     url: PR,
@@ -34,6 +35,9 @@ describe('recording what maintainers did with a pull request (B-SUB-08)', () => 
     expect(decide().ok).toBe(true);
     expect(decide({ now: kickoffAt + HOUR }).ok).toBe(true);
     expect(codeOf(decide({ now: kickoffAt - 1 }))).toBe('building_not_started');
+    expect(codeOf(decide({ isCancelled: true }))).toBe(
+      'hackathon_not_editable',
+    );
     expect(codeOf(decide({ isResultsPublished: true }))).toBe(
       'results_published',
     );
