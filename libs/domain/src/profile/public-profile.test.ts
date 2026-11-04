@@ -52,6 +52,7 @@ describe('public profile projection', () => {
       hostedCount: 6,
       attendedCount: null,
       hackathonRecord: [],
+      projects: [],
     });
     expect(publicMemberProfileSchema.parse(projected)).toEqual(projected);
   });
@@ -90,6 +91,7 @@ describe('public profile projection', () => {
       hostedCount: 6,
       attendedCount: 11,
       hackathonRecord: [],
+      projects: [],
     });
     expect(projected.interests).not.toBe(owner.interests);
     expect(projected.spokenLanguages).not.toBe(owner.spokenLanguages);

@@ -64,12 +64,13 @@ export const publicProfileOf = (
   owner: profile.OwnerProfile,
   record: profile.MeetupRecord,
   hackathonRecord: readonly profile.HackathonRecordEntry[] = [],
+  projects: readonly profile.PublicProfileProject[] = [],
 ): Result<profile.PublicMemberProfile> => {
   if (!owner.displayName)
     return err(new AppError('not_found', 'Profile not found'));
   return ok(
     profile.publicMemberProfileSchema.parse(
-      profile.projectPublicProfile(owner, record, hackathonRecord),
+      profile.projectPublicProfile(owner, record, hackathonRecord, projects),
     ),
   );
 };

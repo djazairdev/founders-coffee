@@ -22,6 +22,7 @@ const member: PublicProfile = {
   hostedCount: 0,
   attendedCount: null,
   hackathonRecord: [],
+  projects: [],
 };
 
 afterEach(cleanup);

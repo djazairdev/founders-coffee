@@ -1,4 +1,4 @@
-import { and, asc, eq, inArray, isNull, sql } from 'drizzle-orm';
+import { and, asc, desc, eq, inArray, isNull, sql } from 'drizzle-orm';
 
 import type { ProjectStage } from '@founders-coffee/core';
 
@@ -147,3 +147,45 @@ export const listIndexableProjects = (
       ),
     )
     .orderBy(projects.slug);
+
+const PROFILE_PROJECT_LIMIT = 20;
+
+/**
+ * The published projects a member confirmed being listed on, newest first, with where the frozen
+ * results placed each (B-PRJ-05). The hackathon's part is empty once its entry is deleted, and the
+ * result's before the results are out or after a disqualification.
+ */
+export const listProfileProjects = (db: Db, userId: string) =>
+  db
+    .select({
+      slug: projects.slug,
+      title: projects.title,
+      stage: projects.stage,
+      marketCode: projects.marketCode,
+      hackathonTitle: events.title,
+      rank: hackathonResults.rank,
+      trackRank: hackathonResults.trackRank,
+    })
+    .from(projectMembers)
+    .innerJoin(projects, eq(projects.id, projectMembers.projectId))
+    .leftJoin(
+      hackathonSubmissions,
+      eq(hackathonSubmissions.id, projects.sourceSubmissionId),
+    )
+    .leftJoin(events, eq(events.id, hackathonSubmissions.eventId))
+    .leftJoin(
+      hackathonResults,
+      and(
+        eq(hackathonResults.submissionId, hackathonSubmissions.id),
+        isNull(hackathonResults.disqualifiedAt),
+      ),
+    )
+    .where(
+      and(
+        eq(projectMembers.userId, userId),
+        eq(projectMembers.isListed, true),
+        eq(projects.status, 'published'),
+      ),
+    )
+    .orderBy(desc(projects.createdAt), desc(projects.id))
+    .limit(PROFILE_PROJECT_LIMIT);

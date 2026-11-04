@@ -8,6 +8,7 @@ import {
   initializeMemberProfile,
   listHackathonRecordCertificates,
   listHackathonRecordProjects,
+  listProfileProjects,
   updateMemberProfile,
   type Db,
 } from '@founders-coffee/db';
@@ -63,19 +64,46 @@ export const readOwnerProfile = (
     return ownerProfileOf(userId, identity, stored);
   });
 
+/** The rows from markets that still have hackathons on, each market asked about once. */
+const inOpenMarkets = async <Row extends { readonly marketCode: string }>(
+  db: Db,
+  rows: readonly Row[],
+): Promise<readonly Row[]> => {
+  const marketCodes = [...new Set(rows.map((row) => row.marketCode))];
+  const switchedOn = await Promise.all(
+    marketCodes.map((code) => hackathonsEnabled(db, code)),
+  );
+  const openMarkets = marketCodes.filter((_, index) => switchedOn[index]);
+  return rows.filter((row) => openMarkets.includes(row.marketCode));
+};
+
+/**
+ * The published projects a member confirmed being listed on, newest first (B-PRJ-05). Confirming
+ * already names them on each project's public page, so the profile asks for no second switch.
+ */
+const readProfileProjects = async (
+  db: Db,
+  userId: string,
+): Promise<readonly profile.PublicProfileProject[]> =>
+  (await inOpenMarkets(db, await listProfileProjects(db, userId))).map(
+    ({ slug, title, stage, hackathonTitle, rank, trackRank }) => ({
+      slug,
+      title,
+      stage,
+      hackathonTitle,
+      rank,
+      trackRank,
+    }),
+  );
+
 /** A member's hackathon record, leaving out the markets that have since turned hackathons off. */
 const readHackathonRecord = async (
   db: Db,
   userId: string,
 ): Promise<readonly profile.HackathonRecordEntry[]> => {
   const certificates = await listHackathonRecordCertificates(db, userId);
-  const marketCodes = [...new Set(certificates.map((row) => row.marketCode))];
-  const switchedOn = await Promise.all(
-    marketCodes.map((code) => hackathonsEnabled(db, code)),
-  );
-  const openMarkets = marketCodes.filter((_, index) => switchedOn[index]);
   return profile.hackathonRecordOf(
-    certificates.filter((row) => openMarkets.includes(row.marketCode)),
+    await inOpenMarkets(db, certificates),
     await listHackathonRecordProjects(db, userId),
   );
 };
@@ -89,9 +117,10 @@ export const readPublicProfile = (
     const result = await readOwnerProfile(db, userId);
     if (!result.ok) return result;
     const now = new Date();
-    const [hosted, attended] = await Promise.all([
+    const [hosted, attended, projects] = await Promise.all([
       countHostedMeetups(db, userId, now),
       countAttendedMeetups(db, userId, now),
+      readProfileProjects(db, userId),
     ]);
     return publicProfileOf(
       result.data,
@@ -99,6 +128,7 @@ export const readPublicProfile = (
       result.data.visibility.hackathonRecord
         ? await readHackathonRecord(db, userId)
         : [],
+      projects,
     );
   });
 

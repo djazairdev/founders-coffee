@@ -19,7 +19,7 @@ export const privacyHackathonsFrench = section(
     ),
     subheading('Projets'),
     ...text(
-      'Une équipe peut transformer son dépôt en page de projet : son titre, le problème qu’il traite, une description, son stade et ses liens. Votre nom n’y figure que si vous le confirmez.',
+      'Une équipe peut transformer son dépôt en page de projet : son titre, le problème qu’il traite, une description, son stade et ses liens. Votre nom n’y figure, et le projet n’apparaît sur votre profil public, que si vous le confirmez.',
     ),
     subheading('Attestations'),
     ...text(
