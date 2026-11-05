@@ -105,6 +105,15 @@ describe('HackathonResults (B-JDG-10)', () => {
     expect(within(overall).getByText('Not ranked')).toBeTruthy();
   });
 
+  it('renders no empty list for an entry with no scores (#474)', () => {
+    const { container } = render(
+      <HackathonResults results={shown} locale="en" />,
+    );
+
+    expect(screen.getAllByText('Not ranked').length).toBeGreaterThan(0);
+    expect(container.querySelectorAll('ul:empty')).toHaveLength(0);
+  });
+
   it('ranks entries within each track, without repeating the details', () => {
     renderResults();
 
