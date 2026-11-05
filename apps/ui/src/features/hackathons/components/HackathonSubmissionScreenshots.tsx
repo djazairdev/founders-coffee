@@ -46,8 +46,8 @@ export const HackathonSubmissionScreenshots = ({
     <fieldset className="grid gap-2">
       <legend className="text-label">
         {hackathon_screenshots_label({}, options)}{' '}
-        <span className="ms-0.5 font-normal text-neutral">
-          {optional({}, options)}
+        <span className="ms-0.5 text-neutral">
+          ({optional({}, options).toLowerCase()})
         </span>
       </legend>
       {isReadOnly ? null : (
