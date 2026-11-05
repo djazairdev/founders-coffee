@@ -24,8 +24,9 @@ export const FormField = ({
   <div>
     <label className="text-label" htmlFor={id}>
       {label}
+      {isOptional ? ' ' : null}
       {isOptional ? (
-        <span className="ms-1.5 text-neutral">
+        <span className="ms-0.5 text-neutral">
           ({optionalLabel.toLowerCase()})
         </span>
       ) : null}
