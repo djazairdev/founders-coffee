@@ -24,6 +24,8 @@ import {
   removeHackathonTeamMember,
   requestToJoinHackathonTeam,
   revokeHackathonTeamInvite,
+  removeHackathonScreenshot,
+  reserveHackathonScreenshot,
   saveHackathonSubmissionDraft,
   submitHackathonSubmission,
   recuseFromHackathonEntry,
@@ -89,6 +91,9 @@ import {
   type SaveHackathonTracksRequest,
   type SubmitHackathonForReviewRequest,
 } from '@founders-coffee/server-fns';
+import type { SubmissionDraftFields } from './submission-draft-fields';
+
+export type { SubmissionDraftFields };
 
 export const hackathonsApi = {
   joinHackathonInterest,
@@ -170,17 +175,6 @@ export const teamsApi = {
     removeHackathonTeamMember({ data: request }),
 };
 
-export type SubmissionDraftFields = {
-  readonly trackId: string | null;
-  readonly title: string;
-  readonly description: string;
-  readonly repositoryUrl: string | null;
-  readonly demoVideoUrl: string | null;
-  readonly pullRequestUrls: readonly string[];
-  readonly aiTools: readonly string[];
-  readonly aiStatement: string | null;
-};
-
 export const submissionsApi = {
   page: (eventId: string) => getHackathonSubmissionPage({ data: { eventId } }),
   saveDraft: (request: {
@@ -202,6 +196,12 @@ export const submissionsApi = {
     submitHackathonSubmission({
       data: { ...request, isOriginalWorkAttested: true },
     }),
+  reserveScreenshot: (eventId: string) =>
+    reserveHackathonScreenshot({ data: { eventId } }),
+  removeScreenshot: (request: {
+    readonly eventId: string;
+    readonly screenshotId: string;
+  }) => removeHackathonScreenshot({ data: request }),
 };
 
 export const hackathonResultsApi = {

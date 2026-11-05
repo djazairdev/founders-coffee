@@ -52,6 +52,8 @@ vi.mock('@tanstack/react-router', () => ({
 }));
 
 vi.mock('../submission-hooks', () => ({
+  useAddSubmissionScreenshot: () => mutation(),
+  useRemoveSubmissionScreenshot: () => mutation(),
   useSubmissionPage: () => mocks.page,
   useSaveSubmissionDraft: () => {
     mocks.save ??= mutation();

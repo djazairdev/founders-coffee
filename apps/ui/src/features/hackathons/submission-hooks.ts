@@ -1,5 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
+import { AppError } from '@founders-coffee/core';
+
+import { putImage } from '../../lib/put-image';
 import {
   submissionsApi,
   type SubmissionDraftFields,
@@ -40,6 +43,34 @@ export const useSubmitSubmission = (eventId: string) => {
   const cache = useQueryClient();
   return useMutation<SubmissionSubmitted, Error, number>({
     mutationFn: (version) => submissionsApi.submit({ eventId, version }),
+    onSettled: () =>
+      cache.invalidateQueries({ queryKey: [...SUBMISSION, eventId] }),
+  });
+};
+
+/** Reserve a place for a screenshot, send its bytes, then read the page again (B-SUB-09). */
+export const useAddSubmissionScreenshot = (eventId: string) => {
+  const cache = useQueryClient();
+  return useMutation<void, Error, File>({
+    mutationFn: async (file) => {
+      const { screenshotId } = await submissionsApi.reserveScreenshot(eventId);
+      const sent = await putImage(
+        `/api/hackathon/screenshot/${screenshotId}`,
+        file,
+      );
+      if (!sent.ok) throw new AppError(sent.error.code, 'Upload failed');
+    },
+    onSettled: () =>
+      cache.invalidateQueries({ queryKey: [...SUBMISSION, eventId] }),
+  });
+};
+
+/** Take a screenshot off the entry, then read the page again (B-SUB-09). */
+export const useRemoveSubmissionScreenshot = (eventId: string) => {
+  const cache = useQueryClient();
+  return useMutation<unknown, Error, string>({
+    mutationFn: (screenshotId) =>
+      submissionsApi.removeScreenshot({ eventId, screenshotId }),
     onSettled: () =>
       cache.invalidateQueries({ queryKey: [...SUBMISSION, eventId] }),
   });

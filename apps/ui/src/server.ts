@@ -18,6 +18,7 @@ import {
   handleCspReportRequest,
 } from '@founders-coffee/server-fns/csp-report-http';
 import { handleProfilePhotoRequest } from '@founders-coffee/server-fns/profile-photo-http';
+import { handleSubmissionScreenshotRequest } from '@founders-coffee/server-fns/submission-screenshot-http';
 import { allowSignInCode } from '@founders-coffee/server-fns/sign-in-code-limit';
 import type { ResponseLinkHeaderEntry } from '@tanstack/react-start/server';
 export { EventChatDO } from '@founders-coffee/server-fns/chat-room';
@@ -206,6 +207,9 @@ export default {
 
     const photo = handleProfilePhotoRequest(request, url);
     if (photo) return secure(await photo);
+
+    const screenshot = handleSubmissionScreenshotRequest(request, url);
+    if (screenshot) return secure(await screenshot);
 
     if (url.pathname.startsWith('/api/auth/'))
       return secure(await authHandler(env)(request));

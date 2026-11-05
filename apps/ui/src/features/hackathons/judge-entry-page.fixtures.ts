@@ -27,6 +27,7 @@ export const entryView = (
   stage: 'judging',
   isJudge: true,
   isRecused: false,
+  screenshots: [],
   entry: {
     submissionId: SUBMISSION_ID,
     teamName: 'Byte Club',

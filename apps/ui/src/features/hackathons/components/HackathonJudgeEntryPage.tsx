@@ -53,7 +53,11 @@ const Scoring = ({
     );
   return (
     <>
-      <HackathonJudgeEntryDetails entry={view.entry} locale={locale} />
+      <HackathonJudgeEntryDetails
+        entry={view.entry}
+        screenshots={view.screenshots}
+        locale={locale}
+      />
       <HackathonJudgeScoreForm
         eventId={view.event.id}
         submissionId={submissionId}

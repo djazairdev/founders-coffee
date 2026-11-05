@@ -7,9 +7,11 @@ import {
   type Result,
 } from '@founders-coffee/core';
 import {
+  listSubmissionScreenshots,
   readParticipantStanding,
   readSubmissionPageRows,
   type Db,
+  type SubmissionScreenshotView,
 } from '@founders-coffee/db';
 import { hackathons } from '@founders-coffee/domain';
 
@@ -52,6 +54,7 @@ export type SubmissionPageView = {
     readonly aiTools: readonly string[];
     readonly aiStatement: string | null;
     readonly submittedAt: number | null;
+    readonly screenshots: readonly SubmissionScreenshotView[];
   } | null;
 };
 
@@ -86,6 +89,9 @@ export const submissionPageResolver = async (
       })
     : null;
   const entry = rows?.entry ?? null;
+  const screenshots = entry
+    ? await listSubmissionScreenshots(db, entry.id)
+    : [];
   return ok({
     event: {
       id: event.id,
@@ -110,6 +116,7 @@ export const submissionPageResolver = async (
     entry: entry && {
       ...entry,
       submittedAt: entry.submittedAt?.getTime() ?? null,
+      screenshots,
     },
   });
 };

@@ -1,6 +1,7 @@
 import { ok, type Result } from '@founders-coffee/core';
 import {
   hasRecused,
+  listSubmissionScreenshots,
   listCriterionScales,
   listHackathonCriteria,
   listJudgeProgress,
@@ -10,6 +11,7 @@ import {
   readJudgeEntry,
   readJudgePlace,
   type Db,
+  type SubmissionScreenshotView,
 } from '@founders-coffee/db';
 import { hackathons } from '@founders-coffee/domain';
 
@@ -63,6 +65,7 @@ export type JudgeScoreView = {
 export type JudgeEntryPageView = JudgingStanding & {
   readonly isRecused: boolean;
   readonly entry: JudgeEntryView | null;
+  readonly screenshots: readonly SubmissionScreenshotView[];
   readonly criteria: readonly JudgeCriterionView[];
   readonly scores: readonly JudgeScoreView[];
 };
@@ -164,14 +167,21 @@ export const judgeEntryPageResolver = async (
     stage,
     place?.status === 'accepted',
   );
-  const empty = { isRecused: false, entry: null, criteria: [], scores: [] };
+  const empty = {
+    isRecused: false,
+    entry: null,
+    screenshots: [],
+    criteria: [],
+    scores: [],
+  };
   if (place?.status !== 'accepted' || stage !== 'judging')
     return ok({ ...standing, ...empty });
   const judge = { judgeId: place.judgeId, submissionId: input.submissionId };
   if (await hasRecused(db, judge))
     return ok({ ...standing, ...empty, isRecused: true });
-  const [entry, criteria, scores] = await Promise.all([
+  const [entry, screenshots, criteria, scores] = await Promise.all([
     readJudgeEntry(db, input),
+    listSubmissionScreenshots(db, input.submissionId),
     listHackathonCriteria(db, input.eventId),
     listJudgeScores(db, judge),
   ]);
@@ -179,6 +189,7 @@ export const judgeEntryPageResolver = async (
     ...standing,
     isRecused: false,
     entry: entry && { ...entry, submittedAt: entry.submittedAt.getTime() },
+    screenshots: entry ? screenshots : [],
     criteria: criteria.map(({ id, name, description, weight, scale }) => ({
       id,
       name,
