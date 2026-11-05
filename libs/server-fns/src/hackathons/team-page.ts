@@ -33,6 +33,7 @@ export type TeamPageView = {
   };
   readonly submissionDeadlineAt: number;
   readonly canChangeTeams: boolean;
+  readonly canStillRegister: boolean;
   readonly teamMin: number;
   readonly teamMax: number;
   readonly viewerId: string;
@@ -119,6 +120,9 @@ export const teamPageResolver = async (
     },
     submissionDeadlineAt: timeline.submissionDeadlineAt,
     canChangeTeams: hackathons.canChangeTeams(timeline, now),
+    canStillRegister: ['upcoming', 'registration_open'].includes(
+      hackathons.phaseAt(timeline, now),
+    ),
     teamMin,
     teamMax,
     viewerId: input.userId,

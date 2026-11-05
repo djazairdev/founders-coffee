@@ -2,6 +2,7 @@ import { Link } from '@tanstack/react-router';
 import { useState } from 'react';
 
 import {
+  hackathon_disqualified,
   hackathon_team_deadline,
   hackathon_team_error,
   hackathon_team_find,
@@ -13,6 +14,7 @@ import {
   hackathon_team_size,
   hackathon_team_title,
   hackathon_team_waitlisted,
+  hackathon_withdrawn,
   type Locale,
 } from '@founders-coffee/i18n';
 import { StatusMessage } from '@founders-coffee/ui';
@@ -39,6 +41,13 @@ import { HackathonTeamProject } from './HackathonTeamProject';
 import { HackathonParticipantQueryStatus } from './HackathonParticipantQueryStatus';
 import { HackathonTeamRequests } from './HackathonTeamRequests';
 
+const standingMessage = ({ registration, canStillRegister }: TeamPageView) => {
+  if (registration === 'waitlisted') return hackathon_team_waitlisted;
+  if (registration === 'withdrawn') return hackathon_withdrawn;
+  if (registration === 'disqualified') return hackathon_disqualified;
+  return canStillRegister ? hackathon_team_not_registered : null;
+};
+
 const LINK_CLASS =
   'link link-hover mt-2 block w-fit text-body-sm font-medium text-secondary';
 
@@ -59,14 +68,14 @@ const Team = ({
 }) => {
   const { team, canChangeTeams: canChange } = view;
   const eventId = view.event.id;
-  if (view.registration !== 'registered')
-    return (
+  if (view.registration !== 'registered') {
+    const standing = standingMessage(view);
+    return standing ? (
       <StatusMessage variant="info" className="mt-6">
-        {view.registration === 'waitlisted'
-          ? hackathon_team_waitlisted({}, { locale })
-          : hackathon_team_not_registered({}, { locale })}
+        {standing({}, { locale })}
       </StatusMessage>
-    );
+    ) : null;
+  }
   if (!team)
     return (
       <>
@@ -204,7 +213,7 @@ export const HackathonTeamPage = ({
           {hackathon_team_project_link({}, { locale })}
         </Link>
       ) : null}
-      {view.registration === 'registered' ? (
+      {view.registration === 'registered' && view.canChangeTeams ? (
         <Link
           {...localizedHackathonLooking(locale, eventId)}
           className={LINK_CLASS}
