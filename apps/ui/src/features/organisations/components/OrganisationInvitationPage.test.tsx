@@ -109,6 +109,16 @@ describe('OrganisationInvitationPage (B-ORG-10)', () => {
     expect(mocks.declineInvitation).toHaveBeenCalledWith('inv_1');
   });
 
+  it('tells someone removed since they joined that they no longer belong', async () => {
+    mocks.invitation.mockResolvedValue({ ...pending, state: 'left' });
+    renderPage();
+
+    expect(await screen.findByText(/no longer belong/u)).toBeTruthy();
+    expect(
+      screen.queryByRole('link', { name: 'See your organisation' }),
+    ).toBeNull();
+  });
+
   it('says when an answer could not be saved', async () => {
     mocks.invitation.mockResolvedValue(pending);
     mocks.acceptInvitation.mockRejectedValue(new Error('offline'));

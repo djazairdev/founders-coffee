@@ -134,6 +134,16 @@ describe('the invitation page (B-ORG-10, real D1)', () => {
     expect(await stateFor(declining, declined)).toBe('declined');
   });
 
+  it('stops saying they joined once the member has been removed', async () => {
+    const joining = await signedInMember();
+    const accepted = await invited(bed, joining.email);
+    await answer(bed, acceptInvitationResolver, joining, accepted);
+
+    await bed.db.delete(member).where(eq(member.userId, joining.userId));
+
+    expect(await stateFor(joining, accepted)).toBe('left');
+  });
+
   it('says when the organisation cannot take members, or the recipient already belongs', async () => {
     const recipient = await signedInMember();
     const invitationId = await invited(bed, recipient.email);

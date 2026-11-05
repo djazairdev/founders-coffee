@@ -1099,6 +1099,7 @@
   "org_invitation_declined_body": "You declined this invitation.",
   "org_invitation_unavailable_body": "{organisation} cannot take new members at the moment.",
   "org_invitation_already_member_body": "You already belong to {organisation}.",
+  "org_invitation_left_body": "You no longer belong to {organisation}. Ask it to invite you again.",
   "org_invitation_error_failed": "Your answer could not be saved. Try again.",
   "org_page_upcoming": "Upcoming events",
   "org_page_past": "Past events",

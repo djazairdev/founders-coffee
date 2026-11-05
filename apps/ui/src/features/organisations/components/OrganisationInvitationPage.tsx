@@ -5,6 +5,7 @@ import {
   org_invitation_accept,
   org_invitation_accepted_body,
   org_invitation_already_member_body,
+  org_invitation_left_body,
   org_invitation_as_admin,
   org_invitation_as_member,
   org_invitation_cancelled_body,
@@ -169,6 +170,12 @@ const AnsweredInvitation = ({
           </StatusMessage>
           <OrganisationLink invitation={invitation} locale={locale} />
         </div>
+      );
+    case 'left':
+      return (
+        <StatusMessage variant="info">
+          {named(org_invitation_left_body)}
+        </StatusMessage>
       );
     case 'declined':
       return (
