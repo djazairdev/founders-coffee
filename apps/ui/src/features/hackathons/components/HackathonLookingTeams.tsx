@@ -10,6 +10,7 @@ import {
 } from '@founders-coffee/i18n';
 import { Button, StatusMessage } from '@founders-coffee/ui';
 
+import { HackathonReportButton } from '../../hackathon-reports/components/HackathonReportButton';
 import type { LookingForTeamView } from '../api';
 import { teamErrorMessage } from '../team-errors';
 import { useRequestToJoinTeam } from '../team-hooks';
@@ -83,6 +84,13 @@ export const HackathonLookingTeams = ({
                     </Button>
                   ) : null}
                 </div>
+                <HackathonReportButton
+                  eventId={eventId}
+                  targetType="team"
+                  targetId={team.id}
+                  name={team.name}
+                  locale={locale}
+                />
               </li>
             );
           })}

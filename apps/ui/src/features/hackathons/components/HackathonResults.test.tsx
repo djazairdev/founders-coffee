@@ -80,6 +80,30 @@ describe('HackathonResults (B-JDG-10)', () => {
     expect(screen.getByText(/Whole hackathon/u)).toBeTruthy();
   });
 
+  it('offers a member, and nobody else, a report on each entry that still stands', () => {
+    renderResults();
+    expect(screen.queryByRole('button', { name: /^Report / })).toBeNull();
+    cleanup();
+
+    const [first, ...rest] = shown.overall;
+    render(
+      <HackathonResults
+        results={
+          {
+            ...shown,
+            overall: [{ ...first, isDisqualified: true }, ...rest],
+          } as typeof shown
+        }
+        reportEventId="evt_1"
+        locale="en"
+      />,
+    );
+
+    expect(screen.getAllByRole('button', { name: /^Report / })).toHaveLength(
+      rest.length,
+    );
+  });
+
   it('leaves the winners out when no prize has one', () => {
     render(
       <HackathonResults results={{ ...shown, winners: [] }} locale="en" />,

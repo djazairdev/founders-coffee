@@ -14,6 +14,7 @@ import {
 } from '@founders-coffee/i18n';
 import { IsolatedValue } from '@founders-coffee/ui';
 
+import { HackathonReportButton } from '../../hackathon-reports/components/HackathonReportButton';
 import type { HackathonPublicResult } from '../api';
 
 const PULL_REQUEST_STATUS = {
@@ -26,11 +27,13 @@ export const HackathonResultEntry = ({
   result,
   place,
   isDetailed,
+  reportEventId = null,
   locale,
 }: {
   result: HackathonPublicResult;
   place: number | null;
   isDetailed: boolean;
+  reportEventId?: string | null;
   locale: Locale;
 }) => {
   const options = { locale };
@@ -122,6 +125,15 @@ export const HackathonResultEntry = ({
             </div>
           ) : null}
         </>
+      ) : null}
+      {reportEventId && !result.isDisqualified ? (
+        <HackathonReportButton
+          eventId={reportEventId}
+          targetType="submission"
+          targetId={result.submissionId}
+          name={result.title}
+          locale={locale}
+        />
       ) : null}
     </li>
   );
