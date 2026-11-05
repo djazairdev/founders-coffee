@@ -12,6 +12,7 @@ import {
   type ConfirmHackathonPrizeRequest,
   type CreateHackathonDraftRequest,
   type HackathonDashboard,
+  type HackathonParticipantsView,
   type HackathonDraftCreated,
   type HackathonEditSaved,
   type HackathonDraftView,
@@ -49,6 +50,13 @@ export const useHackathonDraft = (eventId: string) =>
   useQuery<HackathonDraftView>({
     queryKey: [...DRAFT, eventId],
     queryFn: () => hackathonsApi.draft(eventId),
+  });
+
+/** Who registered for a hackathon, for its organisers (B-REG-08). */
+export const useHackathonParticipants = (eventId: string) =>
+  useQuery<HackathonParticipantsView>({
+    queryKey: [...DRAFT, eventId, 'participants'],
+    queryFn: () => hackathonsApi.participants(eventId),
   });
 
 /**

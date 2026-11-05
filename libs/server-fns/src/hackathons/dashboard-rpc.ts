@@ -8,6 +8,7 @@ import { requireHackathonOrganiser } from '../auth-middleware.js';
 import { getDb } from '../db.js';
 import { privateNoStore } from '../response-cache.js';
 import { hackathonDashboardResolver } from './dashboard.js';
+import { hackathonParticipantsResolver } from './participants.js';
 
 const hackathonDashboardSchema = z.strictObject({ eventId: idSchema });
 
@@ -22,4 +23,13 @@ export const getHackathonDashboard = createServerFn({ strict: false })
   .handler(({ data }) => {
     privateNoStore();
     return handleResult(hackathonDashboardResolver(getDb(), data.eventId));
+  });
+
+/** Who registered for a hackathon, for the organisation that leads it (B-REG-08). */
+export const getHackathonParticipants = createServerFn({ strict: false })
+  .middleware([requireHackathonOrganiser('manage')])
+  .validator(appValidator(hackathonDashboardSchema))
+  .handler(({ data }) => {
+    privateNoStore();
+    return handleResult(hackathonParticipantsResolver(getDb(), data.eventId));
   });
