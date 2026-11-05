@@ -18,9 +18,11 @@ const LIST = 'mt-2 divide-y divide-base-300 rounded-box border border-base-300';
 
 export const HackathonResults = ({
   results,
+  reportEventId = null,
   locale,
 }: {
   results: HackathonPublicResults;
+  reportEventId?: string | null;
   locale: Locale;
 }) => {
   const options = { locale };
@@ -78,6 +80,7 @@ export const HackathonResults = ({
               result={result}
               place={result.rank}
               isDetailed
+              reportEventId={reportEventId}
               locale={locale}
             />
           ))}

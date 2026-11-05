@@ -60,6 +60,7 @@ type EventDetailProps = {
   hackathon?: Schedule | null;
   details?: Details | null;
   organisations?: EventOrganisers;
+  canReport?: boolean;
 };
 
 export const EventDetail = ({
@@ -75,6 +76,7 @@ export const EventDetail = ({
   hackathon = null,
   details = null,
   organisations = [],
+  canReport = false,
 }: EventDetailProps) => {
   const hostName = host?.displayName ?? role_host({}, { locale });
   const start = new Date(event.startsAt);
@@ -247,6 +249,7 @@ export const EventDetail = ({
             <HackathonPageDetails
               details={details}
               market={market}
+              reportEventId={canReport ? event.id : null}
               locale={locale}
             />
           ) : null}

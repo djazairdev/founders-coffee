@@ -71,6 +71,7 @@ const EventRoute = () => {
         mapboxToken={mapboxToken}
         hackathon={hackathon}
         organisations={organisations}
+        canReport={viewerId !== null}
         details={
           rules
             ? {

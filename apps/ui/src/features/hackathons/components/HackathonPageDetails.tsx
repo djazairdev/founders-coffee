@@ -12,15 +12,21 @@ import { HackathonWorkshops } from './HackathonWorkshops';
 export const HackathonPageDetails = ({
   details,
   market,
+  reportEventId = null,
   locale,
 }: {
   details: Details;
   market: Market;
+  reportEventId?: string | null;
   locale: Locale;
 }) => (
   <>
     {details.results ? (
-      <HackathonResults results={details.results} locale={locale} />
+      <HackathonResults
+        results={details.results}
+        reportEventId={reportEventId}
+        locale={locale}
+      />
     ) : null}
     <HackathonRules rules={details.rules} locale={locale} />
     <HackathonOffer offer={details} locale={locale} />
