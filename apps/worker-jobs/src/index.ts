@@ -27,6 +27,7 @@ import { processEmbeddings } from './jobs/embeddings.js';
 import type { EmbeddingsMessage } from './jobs/messages.js';
 import { processNotificationDue } from './jobs/notifications.js';
 import { sweepProfileAssets } from './jobs/profile-asset-sweep.js';
+import { sweepSubmissionScreenshots } from './jobs/submission-screenshot-sweep.js';
 import { backfillCloseoutPrompts } from './jobs/closeout-prompt-backfill.js';
 import { sweepChatRetention } from './jobs/chat-retention.js';
 import { sweepExpiredHackathonReports } from './jobs/hackathon-report-retention.js';
@@ -188,6 +189,11 @@ export default {
           await sweepProfileAssets(db, photos);
           await sweepClosingAccounts(db, photos);
         }
+        if (env.SUBMISSION_ASSETS)
+          await sweepSubmissionScreenshots(
+            db,
+            new R2PhotoStore(env.SUBMISSION_ASSETS),
+          );
         await sweepExpiredWaitlistEntries(db);
         await sweepExpiredHackathonInterest(db);
         await sweepChatRetention(db);

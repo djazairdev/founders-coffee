@@ -92,6 +92,16 @@ export const RATE_BUDGETS = {
       limit: 5,
       windowMs: 10 * MINUTE_MS,
     },
+    screenshotReservation: {
+      action: 'reserve_submission_screenshot',
+      limit: 10,
+      windowMs: 10 * MINUTE_MS,
+    },
+    screenshotUpload: {
+      action: 'upload_submission_screenshot',
+      limit: 10,
+      windowMs: 10 * MINUTE_MS,
+    },
   },
   chat: {
     connect: {

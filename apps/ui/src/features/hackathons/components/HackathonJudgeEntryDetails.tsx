@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 
 import {
   hackathon_judging_entry_team,
+  hackathon_screenshots_label,
   hackathon_submission_ai_statement,
   hackathon_submission_ai_tools,
   hackathon_submission_demo_video,
@@ -13,6 +14,7 @@ import {
 } from '@founders-coffee/i18n';
 
 import type { JudgeEntryPageView } from '../api';
+import { HackathonScreenshotImage } from './HackathonScreenshotImage';
 
 const HEADING_ID = 'hackathon-judge-entry-heading';
 
@@ -43,9 +45,11 @@ const EntryLink = ({ url }: { url: string }) => (
 
 export const HackathonJudgeEntryDetails = ({
   entry,
+  screenshots,
   locale,
 }: {
   entry: NonNullable<JudgeEntryPageView['entry']>;
+  screenshots: JudgeEntryPageView['screenshots'];
   locale: Locale;
 }) => {
   const options = { locale };
@@ -68,6 +72,22 @@ export const HackathonJudgeEntryDetails = ({
             <bdi>{entry.description}</bdi>
           </span>
         </Detail>
+        {screenshots.length > 0 ? (
+          <Detail label={hackathon_screenshots_label({}, options)}>
+            <ul className="grid gap-3 sm:grid-cols-3">
+              {screenshots.map((screenshot, index) => (
+                <li key={screenshot.id}>
+                  <HackathonScreenshotImage
+                    screenshot={screenshot}
+                    position={index + 1}
+                    title={entry.title}
+                    locale={locale}
+                  />
+                </li>
+              ))}
+            </ul>
+          </Detail>
+        ) : null}
         <Detail label={hackathon_submission_repository({}, options)}>
           <EntryLink url={entry.repositoryUrl} />
         </Detail>

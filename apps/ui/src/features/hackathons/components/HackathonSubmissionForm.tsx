@@ -13,6 +13,7 @@ import { submissionErrorMessage } from '../submission-errors';
 import { useHackathonSubmissionForm } from '../useHackathonSubmissionForm';
 import { HackathonSubmissionAiFields } from './HackathonSubmissionAiFields';
 import { HackathonSubmissionFields } from './HackathonSubmissionFields';
+import { HackathonSubmissionScreenshots } from './HackathonSubmissionScreenshots';
 import { HackathonSubmissionSend } from './HackathonSubmissionSend';
 import { HackathonSubmissionSubmitted } from './HackathonSubmissionSubmitted';
 
@@ -66,6 +67,13 @@ export const HackathonSubmissionForm = ({
         isReadOnly={isReadOnly}
         locale={locale}
         onChange={project.change}
+      />
+      <HackathonSubmissionScreenshots
+        eventId={eventId}
+        entry={entry}
+        title={project.form.title}
+        isReadOnly={isReadOnly}
+        locale={locale}
       />
       <HackathonSubmissionAiFields
         form={project.form}

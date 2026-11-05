@@ -157,6 +157,8 @@ export const HACKATHON_ERROR_CODES = [
   'submission_conflict',
   'submission_incomplete',
   'submission_locked',
+  'screenshot_limit_reached',
+  'entry_not_saved',
   'captain_must_transfer',
   'track_not_in_hackathon',
   'ai_tools_required',

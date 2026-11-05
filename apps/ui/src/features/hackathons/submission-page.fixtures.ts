@@ -40,6 +40,7 @@ export const submissionView = (
           aiTools: ['Copilot'],
           aiStatement: 'We used Copilot for tests only.',
           submittedAt: null,
+          screenshots: [],
           ...entry,
         },
   ...changes,

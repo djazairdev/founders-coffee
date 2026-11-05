@@ -11,6 +11,7 @@ export const privacyHackathonsFrench = section(
     subheading('Dépôts, notes et résultats'),
     ...text(
       'Pour un dépôt, nous conservons son titre, sa description, son dépôt de code, sa démo, les pull requests qu’il mentionne, sa déclaration sur l’IA, votre confirmation que le travail est original, et chaque version soumise par l’équipe.',
+      'Une équipe peut ajouter jusqu’à trois captures d’écran à son dépôt. Nous les réencodons, ce qui retire leurs métadonnées, comme la localisation, et nous les conservons avec le dépôt. Seuls l’équipe et le jury du hackathon peuvent les ouvrir.',
       'Pendant l’évaluation, nous conservons les notes et commentaires de chaque membre du jury, ainsi que le motif d’un éventuel déport. À la publication des résultats, nous les figeons : nom de l’équipe, titre du dépôt, notes et rang.',
     ),
     subheading('Compétences, liens et ce à quoi vous êtes ouvert'),

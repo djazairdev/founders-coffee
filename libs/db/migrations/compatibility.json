@@ -75,5 +75,6 @@
   "0073_hackathon_retention_indexes": "compatible",
   "0074_hackathon_prize_awards": "compatible",
   "0075_member_profiles_hackathon_record": "compatible",
-  "0076_profile_indexable": "compatible"
+  "0076_profile_indexable": "compatible",
+  "0077_hackathon_submission_screenshots": "compatible"
 }

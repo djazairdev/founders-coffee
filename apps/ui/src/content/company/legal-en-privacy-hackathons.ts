@@ -11,6 +11,7 @@ export const privacyHackathonsEnglish = section(
     subheading('Submissions, scores and results'),
     ...text(
       'For a submission, we store its title, description, code repository, demo, any pull requests it links, its AI statement, your confirmation that the work is original, and each version the team submitted.',
+      'A team can add up to three screenshots to its submission. We re-encode them, which removes their metadata, such as location, and keep them with the submission. Only the team and the hackathon’s judges can open them.',
       'During judging, we store each judge’s scores and comments, and the reason for any recusal. When the results are published, we freeze them: team name, submission title, scores and rank.',
     ),
     subheading('Skills, links and what you are open to'),

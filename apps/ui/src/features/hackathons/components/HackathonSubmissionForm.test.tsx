@@ -17,6 +17,8 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock('../submission-hooks', () => ({
+  useAddSubmissionScreenshot: () => mutation(),
+  useRemoveSubmissionScreenshot: () => mutation(),
   useSaveSubmissionDraft: () => {
     mocks.save ??= mutation();
     return mocks.save;

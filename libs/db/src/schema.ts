@@ -1059,6 +1059,36 @@ export type NewHackathonSubmission = typeof hackathonSubmissions.$inferInsert;
  * snapshot is complete by construction, since only a submit writes one. `submitted_by` is who
  * pressed submit; it stays with the snapshot after their account closes, as the tombstone.
  */
+export const hackathonSubmissionScreenshots = sqliteTable(
+  'hackathon_submission_screenshots',
+  {
+    id: text('id').primaryKey(),
+    submissionId: text('submission_id').notNull(),
+    eventId: text('event_id').notNull(),
+    teamId: text('team_id').notNull(),
+    objectKey: text('object_key').notNull().unique(),
+    status: text('status', { enum: ['pending', 'ready', 'removed'] })
+      .notNull()
+      .default('pending'),
+    width: integer('width'),
+    height: integer('height'),
+    expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull(),
+    createdAt: integer('created_at', { mode: 'timestamp' })
+      .notNull()
+      .default(sql`(unixepoch())`),
+  },
+  (table) => [
+    index('hackathon_submission_screenshots_entry_index').on(
+      table.submissionId,
+      table.status,
+    ),
+    index('hackathon_submission_screenshots_expiry_index').on(
+      table.status,
+      table.expiresAt,
+    ),
+  ],
+);
+
 export const hackathonSubmissionVersions = sqliteTable(
   'hackathon_submission_versions',
   {

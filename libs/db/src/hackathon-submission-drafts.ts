@@ -28,7 +28,7 @@ export type TeamSubmissionRead = {
   readonly version: number;
 };
 
-type Captain = {
+export type SubmissionCaptain = {
   readonly eventId: string;
   readonly teamId: string;
   readonly captainId: string;
@@ -38,7 +38,7 @@ type Captain = {
  * Whether the member captains the team and the team is building: the hackathon is published, its
  * kickoff has come and its submission deadline is ahead.
  */
-const captainBuilding = (input: Captain): SQL =>
+export const captainBuilding = (input: SubmissionCaptain): SQL =>
   sql`EXISTS (SELECT 1 FROM ${hackathonTeamMembers} JOIN ${hackathons} ON ${hackathons.eventId} = ${hackathonTeamMembers.eventId} JOIN ${events} ON ${events.id} = ${hackathonTeamMembers.eventId} WHERE ${hackathonTeamMembers.teamId} = ${input.teamId} AND ${hackathonTeamMembers.eventId} = ${input.eventId} AND ${hackathonTeamMembers.userId} = ${input.captainId} AND ${hackathonTeamMembers.isCaptain} = 1 AND ${events.status} = 'published' AND ${events.startsAt} <= unixepoch() AND ${hackathons.submissionDeadlineAt} > unixepoch())`;
 
 /** The team's submission, its status and version, or `null` before its first save. */
@@ -63,7 +63,7 @@ export const readTeamSubmission = async (
  */
 export const createSubmissionDraft = async (
   db: Db,
-  input: Captain & {
+  input: SubmissionCaptain & {
     readonly id: string;
     readonly draft: SubmissionDraftFields;
   },
@@ -114,7 +114,7 @@ export const createSubmissionDraft = async (
  */
 export const updateSubmissionDraft = async (
   db: Db,
-  input: Captain & {
+  input: SubmissionCaptain & {
     readonly version: number;
     readonly draft: SubmissionDraftFields;
   },

@@ -103,6 +103,10 @@ export {
 } from './pull-requests-rpc.js';
 export type { HackathonPullRequestEntry } from './pull-requests.js';
 export { saveHackathonSubmissionDraft } from './submission-drafts-rpc.js';
+export {
+  removeHackathonScreenshot,
+  reserveHackathonScreenshot,
+} from './screenshots-rpc.js';
 export { getHackathonSubmissionPage } from './submission-page-rpc.js';
 export type { SubmissionPageView, SubmissionStage } from './submission-page.js';
 export type { SubmissionDraftSaved } from './submission-drafts.js';

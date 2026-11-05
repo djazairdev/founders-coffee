@@ -11,6 +11,10 @@ import {
   createProjectFromEntryResolver,
   publishProjectResolver,
 } from '../../projects/from-entry.js';
+import {
+  removeScreenshotResolver,
+  reserveScreenshotResolver,
+} from '../screenshots.js';
 import { saveSubmissionDraftResolver } from '../submission-drafts.js';
 import { submissionPageResolver } from '../submission-page.js';
 import { submitSubmissionResolver } from '../submission-submit.js';
@@ -68,6 +72,25 @@ export const SUBMISSION_OPERATIONS: Operations = {
         version: call.world.entryVersion,
       }),
     cells: captainWhileBuilding,
+  },
+  reserveHackathonScreenshot: {
+    gate: may('submission', 'create'),
+    changesWorld: true,
+    run: (call) => reserveScreenshotResolver(call.db, selfOf(call)),
+    cells: captainWhileBuilding,
+  },
+  removeHackathonScreenshot: {
+    gate: may('submission', 'create'),
+    changesWorld: true,
+    run: (call) =>
+      removeScreenshotResolver(call.db, {
+        ...selfOf(call),
+        screenshotId: 'sht_missing',
+      }),
+    cells: {
+      ...captainWhileBuilding,
+      building: everyoneBut('not_team_captain', { captain: 'not_found' }),
+    },
   },
   createHackathonProject: {
     gate: may('team', 'join'),

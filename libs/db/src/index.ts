@@ -111,6 +111,7 @@ export * from './hackathon-workshops.js';
 export * from './hackathon-team-requests.js';
 export * from './hackathon-team-changes.js';
 export * from './hackathon-submission-drafts.js';
+export * from './hackathon-submission-screenshots.js';
 export * from './hackathon-submission-submit.js';
 export * from './hackathon-submission-page.js';
 export * from './notification-reminders.js';
