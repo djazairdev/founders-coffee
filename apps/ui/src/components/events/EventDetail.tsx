@@ -7,7 +7,6 @@ import {
   cityInputs,
   event_timezone,
   event_when,
-  formatDate,
   localizedName,
   going_count,
   role_host,
@@ -35,9 +34,10 @@ import { HackathonAside } from '../../features/hackathons/components/HackathonAs
 import { localizedCity } from '../../lib/locale-routing';
 import { EventCancelledNotice } from './EventCancelledNotice';
 import { EventFormatBadge } from './EventFormatBadge';
-import { EventHostCard } from './EventHostCard';
+import { EventHostCard, type EventOrganisers } from './EventHostCard';
 import { EventCoHosts } from './EventCoHosts';
 import { eventDetailsTitle } from './event-details-title';
+import { eventDayLabel } from './event-time';
 import { EventKindBadge } from './EventKindBadge';
 import { EventRunByBadge } from './EventRunByBadge';
 import { EventTopics } from './EventTopics';
@@ -59,6 +59,7 @@ type EventDetailProps = {
   mapboxToken: string | null;
   hackathon?: Schedule | null;
   details?: Details | null;
+  organisations?: EventOrganisers;
 };
 
 export const EventDetail = ({
@@ -73,18 +74,12 @@ export const EventDetail = ({
   mapboxToken,
   hackathon = null,
   details = null,
+  organisations = [],
 }: EventDetailProps) => {
   const hostName = host?.displayName ?? role_host({}, { locale });
-  const on = (value: Date, options: Intl.DateTimeFormatOptions) =>
-    formatDate(value, locale, {
-      timeZone: market.timezone,
-      hour12: false,
-      ...options,
-    });
   const start = new Date(event.startsAt);
   const end = event.endsAt == null ? null : new Date(event.endsAt);
-  const names = locale === 'ar' ? 'long' : 'short';
-  const day = on(start, { weekday: names, day: 'numeric', month: names });
+  const day = eventDayLabel(start, locale, market.timezone);
   const timeRange = (
     <EventTimeRange
       locale={locale}
@@ -245,6 +240,7 @@ export const EventDetail = ({
               host={host}
               cityName={cityName}
               isHost={isHost}
+              organisations={organisations}
             />
           </section>
           {details ? (
