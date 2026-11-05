@@ -13,6 +13,7 @@ export type InvitationState =
   | 'expired'
   | 'cancelled'
   | 'accepted'
+  | 'left'
   | 'declined'
   | 'unavailable'
   | 'already_member';
@@ -38,15 +39,18 @@ const stateOf = async (
   inviteeId: string,
 ): Promise<InvitationState> => {
   if (invitation.status === 'canceled') return 'cancelled';
-  if (invitation.status === 'accepted') return 'accepted';
   if (invitation.status === 'rejected') return 'declined';
+  const belongs = () =>
+    readOrganisationMembership(db, {
+      organisationId: invitation.organisationId,
+      userId: inviteeId,
+    });
+  if (invitation.status === 'accepted')
+    return (await belongs()) ? 'accepted' : 'left';
   if (invitation.expiresAt.getTime() <= Date.now()) return 'expired';
   if (!organisations.isOrganisationActive(invitation.organisationStatus))
     return 'unavailable';
-  const membership = await readOrganisationMembership(db, {
-    organisationId: invitation.organisationId,
-    userId: inviteeId,
-  });
+  const membership = await belongs();
   return membership ? 'already_member' : 'pending';
 };
 
