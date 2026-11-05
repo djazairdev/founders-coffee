@@ -17,6 +17,8 @@ import { localizedEvent } from '../../lib/locale-routing';
 import { AvatarGroup } from './AvatarGroup';
 import { EventCoHosts } from './EventCoHosts';
 import { eventDetailsTitle } from './event-details-title';
+import { endsOnAnotherDay } from './event-time';
+import { EventTimeRange } from './EventTimeRange';
 import { EventFormatBadge } from './EventFormatBadge';
 import { EventKindBadge } from './EventKindBadge';
 import { EventRunByBadge } from './EventRunByBadge';
@@ -47,8 +49,20 @@ export const EventCard = ({
     });
   const at = (options: Intl.DateTimeFormatOptions) => on(start, options);
   const clock = { hour: '2-digit', minute: '2-digit' } as const;
+  const isOneDay = end == null || !endsOnAnotherDay(start, end, timezone);
   const timeRange =
-    end == null ? at(clock) : `${at(clock)}\u2013${on(end, clock)}`;
+    end == null ? (
+      at(clock)
+    ) : !isOneDay ? (
+      <EventTimeRange
+        locale={locale}
+        timeZone={timezone}
+        start={start}
+        end={end}
+      />
+    ) : (
+      `${at(clock)}\u2013${on(end, clock)}`
+    );
   const cityName = eventCityName(event, locale);
   const isGoing = event.viewerRsvp === 'going';
   const hasHost = event.hostName != null && event.hostName.length > 0;
@@ -101,7 +115,7 @@ export const EventCard = ({
           <p className="flex flex-wrap items-start gap-x-2 gap-y-1 text-body-sm text-neutral">
             <span
               dir={direction(locale)}
-              className="whitespace-nowrap tabular-nums"
+              className={`tabular-nums${isOneDay ? ' whitespace-nowrap' : ''}`}
             >
               {timeRange}
             </span>

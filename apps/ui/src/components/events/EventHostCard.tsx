@@ -9,14 +9,23 @@ import {
 } from '@founders-coffee/i18n';
 import type { PublicProfile } from '@founders-coffee/server-fns';
 
-import { localizedPublicProfile } from '../../lib/locale-routing';
+import {
+  localizedOrganisation,
+  localizedPublicProfile,
+} from '../../lib/locale-routing';
 import { initials } from '../../lib/utils';
+
+export type EventOrganisers = readonly {
+  readonly name: string;
+  readonly slug: string;
+}[];
 
 type EventHostCardProps = {
   locale: Locale;
   host: PublicProfile | null;
   cityName: string;
   isHost: boolean;
+  organisations?: EventOrganisers;
 };
 
 export const EventHostCard = ({
@@ -24,6 +33,7 @@ export const EventHostCard = ({
   host,
   cityName,
   isHost,
+  organisations = [],
 }: EventHostCardProps) => (
   <section
     className={`mt-6 rounded-box border border-base-300 bg-base-100 p-4${isHost ? ' flex-1' : ''}`}
@@ -37,6 +47,20 @@ export const EventHostCard = ({
         </p>
       ) : null}
     </div>
+    {organisations.length > 0 ? (
+      <ul className="mt-3 grid gap-1">
+        {organisations.map(({ name, slug }) => (
+          <li key={slug}>
+            <Link
+              {...localizedOrganisation(locale, slug)}
+              className="link font-display font-semibold wrap-break-word"
+            >
+              <bdi>{name}</bdi>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    ) : null}
     <div className="mt-3 grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3.5 gap-y-3 sm:grid-cols-[auto_minmax(0,1fr)_auto]">
       <span
         aria-hidden="true"

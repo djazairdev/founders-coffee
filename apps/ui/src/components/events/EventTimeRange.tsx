@@ -1,9 +1,10 @@
 import {
-  formatDate,
   host_time_from,
   host_time_to,
   type Locale,
 } from '@founders-coffee/i18n';
+
+import { endsOnAnotherDay, eventClockLabel, eventDayLabel } from './event-time';
 
 export const EventTimeRange = ({
   locale,
@@ -16,20 +17,25 @@ export const EventTimeRange = ({
   start: Date;
   end: Date | null;
 }) => {
-  const at = (value: Date) =>
-    formatDate(value, locale, {
-      timeZone,
-      hour12: false,
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+  const at = (value: Date) => eventClockLabel(value, locale, timeZone);
   if (end === null) return <bdi dir="ltr">{at(start)}</bdi>;
-  return locale === 'ar' ? (
-    <span dir="rtl">
-      {host_time_from({}, { locale })} <bdi dir="ltr">{at(start)}</bdi>{' '}
-      {host_time_to({}, { locale })} <bdi dir="ltr">{at(end)}</bdi>
-    </span>
-  ) : (
-    <bdi dir="ltr">{`${at(start)}–${at(end)}`}</bdi>
+  const endDay = endsOnAnotherDay(start, end, timeZone)
+    ? eventDayLabel(end, locale, timeZone)
+    : null;
+  if (locale === 'ar')
+    return (
+      <span dir="rtl">
+        {host_time_from({}, { locale })} <bdi dir="ltr">{at(start)}</bdi>{' '}
+        {host_time_to({}, { locale })} {endDay ? <bdi>{endDay}</bdi> : null}
+        {endDay ? ' ' : null}
+        <bdi dir="ltr">{at(end)}</bdi>
+      </span>
+    );
+  return (
+    <bdi dir="ltr">
+      {endDay
+        ? `${at(start)} – ${endDay}, ${at(end)}`
+        : `${at(start)}–${at(end)}`}
+    </bdi>
   );
 };

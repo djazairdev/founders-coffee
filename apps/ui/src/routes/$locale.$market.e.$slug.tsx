@@ -44,6 +44,7 @@ const EventRoute = () => {
     workshops,
     results,
     registration,
+    organisations,
   } = Route.useLoaderData();
   useReloadOnMemberChange();
   const isHost = viewerId === event.hostId;
@@ -69,6 +70,7 @@ const EventRoute = () => {
         phase={phase}
         mapboxToken={mapboxToken}
         hackathon={hackathon}
+        organisations={organisations}
         details={
           rules
             ? {
