@@ -88,12 +88,7 @@ export const PUBLIC_MARKET_FIELDS = [
   'timezone',
 ] as const;
 
-const GENERIC_IDENTITY_COLUMNS = [
-  'createdAt',
-  'id',
-  'name',
-  'updatedAt',
-];
+const GENERIC_IDENTITY_COLUMNS = ['createdAt', 'id', 'name', 'updatedAt'];
 
 export const IDENTITY_COLUMNS_NEVER_PUBLISHED = Object.keys(
   getTableColumns(user),
