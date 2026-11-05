@@ -1648,7 +1648,7 @@
   "hackathon_screenshot_save_first": "Enregistrez d’abord votre projet, puis ajoutez des captures d’écran.",
   "hackathon_screenshot_add": "Ajouter une capture",
   "hackathon_screenshot_remove": "Retirer la capture {position}",
-  "hackathon_screenshot_alt": "Capture {position} de {title}",
+  "hackathon_screenshot_alt": "Capture {position} du projet « {title} »",
   "hackathon_screenshot_error_large": "Cette image est trop lourde. Choisissez-en une de moins de 5 Mo.",
   "hackathon_screenshot_error_small": "Cette image est trop petite. Il lui faut au moins 64 pixels de large et de haut.",
   "hackathon_screenshot_error_type": "Utilisez une image JPEG, PNG ou WebP.",
