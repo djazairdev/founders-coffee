@@ -63,7 +63,7 @@ export const HostWizardActions = ({
           <Button
             variant="ghost"
             onClick={onBack}
-            disabled={isPublishing}
+            isBusy={isPublishing}
             className="font-semibold"
           >
             {host_back({}, { locale })}
@@ -80,7 +80,8 @@ export const HostWizardActions = ({
         <Button
           variant="primary"
           onClick={onNext}
-          disabled={isDisabled}
+          disabled={isDisabled && !isPublishing}
+          isBusy={isPublishing}
           className="ms-auto min-w-28 font-semibold"
         >
           {isPublishing ? (

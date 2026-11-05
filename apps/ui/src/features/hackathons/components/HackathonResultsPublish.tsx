@@ -97,7 +97,7 @@ export const HackathonResultsPublish = ({
               dir="auto"
               maxLength={HACKATHON_RESULTS_REASON_MAX}
               value={form.reason}
-              disabled={form.isPublishing}
+              readOnly={form.isPublishing}
               onChange={(event) => form.changeReason(event.target.value)}
             />
           </FormField>
@@ -109,7 +109,7 @@ export const HackathonResultsPublish = ({
         </StatusMessage>
       ) : null}
       <div>
-        <Button type="submit" variant="primary" disabled={form.isPublishing}>
+        <Button type="submit" variant="primary" isBusy={form.isPublishing}>
           {form.isPublishing
             ? hackathon_results_panel_publishing({}, options)
             : hackathon_results_panel_publish({}, options)}

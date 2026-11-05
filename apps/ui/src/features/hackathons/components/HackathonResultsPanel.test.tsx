@@ -253,6 +253,25 @@ describe('HackathonResultsPanel (B-JDG-09)', () => {
     expect(mocks.query.refetch).toHaveBeenCalled();
   });
 
+  it('moves focus to the published message once the button is gone (#471)', () => {
+    const view = renderPanel(resultsView());
+    screen.getByRole('button', { name: 'Publish results' }).focus();
+
+    mocks.query.data = resultsView({
+      stage: 'published',
+      publishedAt: Date.parse('2099-03-22T11:00:00Z'),
+    });
+    view.rerender(
+      <HackathonResultsPanel
+        eventId={EVENT_ID}
+        locale="en"
+        timeZone="Africa/Algiers"
+      />,
+    );
+
+    expect(document.activeElement?.textContent).toContain('published');
+  });
+
   it('reads in Arabic', () => {
     renderPanel(tie(), 'ar');
 

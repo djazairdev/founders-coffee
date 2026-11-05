@@ -82,7 +82,7 @@ export const HackathonJudgeScoreForm = ({
             </StatusMessage>
           ) : null}
           <div>
-            <Button type="submit" variant="primary" disabled={form.isSaving}>
+            <Button type="submit" variant="primary" isBusy={form.isSaving}>
               {form.isSaving
                 ? hackathon_judging_saving({}, options)
                 : hackathon_judging_save({}, options)}

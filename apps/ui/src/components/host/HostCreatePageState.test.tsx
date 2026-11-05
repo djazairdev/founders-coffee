@@ -128,7 +128,7 @@ describe('HostCreatePage EC-07 state', () => {
     fireEvent.click(publish);
 
     expect(hostCreateMocks.mutateAsync).toHaveBeenCalledOnce();
-    expect(publish.disabled).toBe(true);
+    expect(publish.getAttribute('aria-disabled')).toBe('true');
     expect(screen.getByText('Publishing…')).toBeTruthy();
     resolveMutation?.();
     await waitFor(() => expect(hostCreateMocks.navigate).toHaveBeenCalled());

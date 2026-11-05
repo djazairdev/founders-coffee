@@ -72,7 +72,7 @@ export const HackathonJudgeRecusal = ({
             dir="auto"
             maxLength={HACKATHON_RECUSAL_REASON_MAX}
             value={reason}
-            disabled={recuse.isPending}
+            readOnly={recuse.isPending}
             onChange={(event) => {
               setReason(event.target.value);
               setIsReasonMissing(false);
@@ -85,7 +85,7 @@ export const HackathonJudgeRecusal = ({
           </StatusMessage>
         ) : null}
         <div>
-          <Button type="submit" variant="outline" disabled={recuse.isPending}>
+          <Button type="submit" variant="outline" isBusy={recuse.isPending}>
             {recuse.isPending
               ? hackathon_judging_recusing({}, options)
               : hackathon_judging_recuse_button({}, options)}

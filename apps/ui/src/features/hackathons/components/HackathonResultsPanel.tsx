@@ -1,3 +1,5 @@
+import type { RefObject } from 'react';
+
 import {
   hackathon_results_panel_empty,
   hackathon_results_panel_error,
@@ -12,6 +14,7 @@ import {
 import { Button, LoadingStatus, StatusMessage } from '@founders-coffee/ui';
 
 import type { HackathonResultsView } from '../api';
+import { useFocusAfterChange } from '../../../lib/useFocusAfterChange';
 import { useHackathonResults } from '../results-hooks';
 import { scheduleMoment } from '../schedule';
 import { HackathonResultsList } from './HackathonResultsList';
@@ -22,11 +25,13 @@ const HEADING_ID = 'hackathon-results-heading';
 const Standing = ({
   eventId,
   view,
+  publishedRef,
   locale,
   timeZone,
 }: {
   eventId: string;
   view: HackathonResultsView;
+  publishedRef: RefObject<HTMLDivElement | null>;
   locale: Locale;
   timeZone: string;
 }) => {
@@ -43,7 +48,12 @@ const Standing = ({
   if (view.stage === 'published')
     return (
       <>
-        <StatusMessage variant="success" className="mt-3">
+        <StatusMessage
+          ref={publishedRef}
+          tabIndex={-1}
+          variant="success"
+          className="mt-3"
+        >
           {hackathon_results_panel_published(
             {
               date: scheduleMoment(
@@ -86,6 +96,7 @@ export const HackathonResultsPanel = ({
 }) => {
   const query = useHackathonResults(eventId, true);
   const view = query.data;
+  const publishedRef = useFocusAfterChange<HTMLDivElement>(view?.stage);
   if (view?.stage === 'unavailable') return null;
   return (
     <section aria-labelledby={HEADING_ID} className="mt-8">
@@ -97,6 +108,7 @@ export const HackathonResultsPanel = ({
           key={view.stage}
           eventId={eventId}
           view={view}
+          publishedRef={publishedRef}
           locale={locale}
           timeZone={timeZone}
         />

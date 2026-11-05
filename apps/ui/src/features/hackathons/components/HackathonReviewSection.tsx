@@ -15,6 +15,7 @@ import {
 } from '@founders-coffee/i18n';
 import { Button, StatusMessage } from '@founders-coffee/ui';
 
+import { useFocusAfterChange } from '../../../lib/useFocusAfterChange';
 import type { HackathonDraftView } from '../api';
 import { hackathonEditError } from '../edit-errors';
 import { READINESS_ITEMS } from '../review-items';
@@ -77,13 +78,19 @@ export const HackathonReviewSection = ({
 }) => {
   const submit = useSubmitHackathonForReview();
   const { review } = draft;
+  const heading = useFocusAfterChange<HTMLHeadingElement>(review.status);
   if (draft.event.status !== 'draft' || review.status === 'approved')
     return null;
   const isReady = review.gaps.length === 0;
 
   return (
     <section aria-labelledby={HEADING_ID} className="mt-12">
-      <h2 id={HEADING_ID} className="font-display text-h4">
+      <h2
+        ref={heading}
+        tabIndex={-1}
+        id={HEADING_ID}
+        className="font-display text-h4"
+      >
         {hackathon_review_heading({}, { locale })}
       </h2>
       {review.status === 'submitted' ? (
@@ -114,7 +121,8 @@ export const HackathonReviewSection = ({
             <div>
               <Button
                 variant="primary"
-                disabled={!isReady || submit.isPending}
+                disabled={!isReady}
+                isBusy={submit.isPending}
                 aria-describedby={isReady ? undefined : UNREADY_ID}
                 onClick={() =>
                   submit.mutate({

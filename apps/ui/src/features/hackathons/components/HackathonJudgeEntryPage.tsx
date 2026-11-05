@@ -16,6 +16,7 @@ import type { RootMarket } from '../../markets/api';
 import type { JudgeEntryPageView } from '../api';
 import { useJudgeEntryPage } from '../judging-hooks';
 import { HackathonJudgeEntryDetails } from './HackathonJudgeEntryDetails';
+import { useFocusAfterChange } from '../../../lib/useFocusAfterChange';
 import { HackathonJudgeRecusal } from './HackathonJudgeRecusal';
 import { HackathonJudgeScoreForm } from './HackathonJudgeScoreForm';
 import { HackathonJudgingNotice } from './HackathonJudgingNotice';
@@ -32,9 +33,15 @@ const Scoring = ({
   locale: Locale;
 }) => {
   const options = { locale };
+  const recused = useFocusAfterChange<HTMLDivElement>(view.isRecused);
   if (view.isRecused)
     return (
-      <StatusMessage variant="info" className="mt-6">
+      <StatusMessage
+        ref={recused}
+        tabIndex={-1}
+        variant="info"
+        className="mt-6"
+      >
         {hackathon_judging_entry_recused({}, options)}
       </StatusMessage>
     );

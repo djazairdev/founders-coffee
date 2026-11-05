@@ -92,8 +92,10 @@ describe('HackathonPrizeDelivery (B-PRZ-02)', () => {
       }).disabled,
     ).toBe(true);
     expect(
-      screen.getByRole<HTMLButtonElement>('button', { name: 'Award' }).disabled,
-    ).toBe(true);
+      screen
+        .getByRole('button', { name: 'Award' })
+        .getAttribute('aria-disabled'),
+    ).toBe('true');
 
     fireEvent.change(holder, { target: { value: 'sub_2' } });
     fireEvent.click(screen.getByRole('button', { name: 'Award' }));

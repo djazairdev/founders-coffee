@@ -12,6 +12,7 @@ import {
 
 import { useAuth } from '../../../lib/app-providers';
 import { localizedLogin } from '../../../lib/locale-routing';
+import { useFocusAfterChange } from '../../../lib/useFocusAfterChange';
 import type { HackathonRegistrationView, HackathonSchedule } from '../api';
 import { phaseSentence } from '../schedule';
 import { HackathonRegistrationForm } from './HackathonRegistrationForm';
@@ -103,16 +104,26 @@ const Body = ({
 
 export const HackathonRegistrationCard = (
   props: HackathonRegistrationCardProps,
-) => (
-  <section
-    aria-labelledby={HEADING_ID}
-    className="rounded-box border-2 border-secondary bg-base-100 p-3 shadow-[var(--shadow-2)] sm:p-5"
-  >
-    <h2 id={HEADING_ID} className="font-display text-h4 font-semibold">
-      {hackathon_register_heading({}, { locale: props.locale })}
-    </h2>
-    <div className="mt-3">
-      <Body {...props} />
-    </div>
-  </section>
-);
+) => {
+  const heading = useFocusAfterChange<HTMLHeadingElement>(
+    props.registration.viewer?.status ?? 'none',
+  );
+  return (
+    <section
+      aria-labelledby={HEADING_ID}
+      className="rounded-box border-2 border-secondary bg-base-100 p-3 shadow-[var(--shadow-2)] sm:p-5"
+    >
+      <h2
+        ref={heading}
+        tabIndex={-1}
+        id={HEADING_ID}
+        className="font-display text-h4 font-semibold"
+      >
+        {hackathon_register_heading({}, { locale: props.locale })}
+      </h2>
+      <div className="mt-3">
+        <Body {...props} />
+      </div>
+    </section>
+  );
+};

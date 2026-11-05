@@ -24,6 +24,7 @@ import {
   StatusMessage,
 } from '@founders-coffee/ui';
 
+import { useFocusFirstField } from '../../../lib/useFocusFirstField';
 import type { HackathonTrackView } from '../api';
 import {
   PRIZE_PLACE_MAX,
@@ -54,8 +55,10 @@ export const HackathonPrizeForm = ({
     'aria-describedby':
       form.errors[field] || hint ? fieldNoteId(idOf(field)) : undefined,
   });
+  const firstField = useFocusFirstField();
   return (
     <form
+      ref={firstField}
       noValidate
       className="grid gap-4 rounded-box border border-base-300 p-4"
       onSubmit={(event) => {
@@ -169,12 +172,12 @@ export const HackathonPrizeForm = ({
         />
       </FormField>
       <div className="flex flex-wrap gap-2">
-        <Button type="submit" variant="primary" disabled={form.isBusy}>
+        <Button type="submit" variant="primary" isBusy={form.isBusy}>
           {form.isBusy
             ? hackathon_details_saving({}, options)
             : hackathon_prize_save({}, options)}
         </Button>
-        <Button variant="ghost" disabled={form.isBusy} onClick={form.close}>
+        <Button variant="ghost" isBusy={form.isBusy} onClick={form.close}>
           {hackathon_prize_cancel({}, options)}
         </Button>
       </div>

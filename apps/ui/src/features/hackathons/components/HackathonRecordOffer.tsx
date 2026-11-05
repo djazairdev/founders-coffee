@@ -35,7 +35,7 @@ export const HackathonRecordOffer = ({
       <Button
         variant={isShown ? 'outline' : 'primary'}
         className="mt-3"
-        disabled={change.isPending}
+        isBusy={change.isPending}
         onClick={() => change.mutate(!isShown)}
       >
         {isShown
