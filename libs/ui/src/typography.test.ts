@@ -26,3 +26,16 @@ describe('the sticky header and keyboard focus', () => {
     expect(styles).toMatch(/html\s*\{\s*scroll-padding-block-start: 4\.5rem;/u);
   });
 });
+
+describe('a side panel in right-to-left', () => {
+  it('sits on the page once it is open, as daisyUI leaves it off the page', () => {
+    const styles = readFileSync(
+      new URL('./styles.css', import.meta.url),
+      'utf8',
+    );
+
+    expect(styles).toMatch(
+      /\[dir='rtl'\] \.modal\[open\]\.modal-end > \.modal-box,[^{]*\{\s*translate: 0;/u,
+    );
+  });
+});
