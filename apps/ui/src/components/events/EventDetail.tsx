@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router';
 import { CalendarDays, MapPin, Users } from 'lucide-react';
 
+import { eventLanguages, textLanguage } from '@founders-coffee/core';
 import {
   back_to_city,
   cityInputs,
@@ -98,6 +99,7 @@ export const EventDetail = ({
   const contentDirection = locale === 'ar' ? 'rtl' : 'ltr';
   const isCancelled = event.status === 'cancelled';
   const isGoing = event.viewerRsvp === 'going';
+  const languages = eventLanguages(event);
   const isChatAvailable = market.featureFlags.meetupChat === true;
   const hasRsvpBox =
     event.kind !== 'hackathon' &&
@@ -133,7 +135,7 @@ export const EventDetail = ({
           </span>
         </div>
         <h1 className="mt-4 font-display text-h3 font-semibold text-balance md:text-h2">
-          <bdi>{event.title}</bdi>
+          <bdi lang={textLanguage(event.title, languages)}>{event.title}</bdi>
         </h1>
         <EventCoHosts
           runBy={event.runBy}
@@ -142,7 +144,10 @@ export const EventDetail = ({
           className="mt-3"
         />
         {event.description ? (
-          <p className="mt-4 max-w-3xl whitespace-pre-line text-body-lg leading-relaxed text-neutral">
+          <p
+            lang={textLanguage(event.description, languages)}
+            className="mt-4 max-w-3xl whitespace-pre-line text-body-lg leading-relaxed text-neutral"
+          >
             <IsolatedLines text={event.description} />
           </p>
         ) : null}
