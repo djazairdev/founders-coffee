@@ -114,6 +114,25 @@ describe('HackathonTeamPage (B-TEAM-07)', () => {
     ).toBeTruthy();
   });
 
+  it('tells nobody to register once they no longer can', () => {
+    renderPage(teamView({ registration: null, canStillRegister: false }, null));
+
+    expect(screen.queryByText(/^Register for this hackathon/u)).toBeNull();
+    cleanup();
+
+    renderPage(teamView({ registration: 'withdrawn' }, null));
+    expect(screen.getByText('You left this hackathon.')).toBeTruthy();
+    expect(screen.queryByText(/^Register for this hackathon/u)).toBeNull();
+  });
+
+  it('points to who is looking for a team only while teams can change', () => {
+    renderPage(teamView({ canChangeTeams: false }));
+
+    expect(
+      screen.queryByRole('link', { name: 'See who is looking for a team' }),
+    ).toBeNull();
+  });
+
   it('asks someone not registered, or waitlisted, to wait for a place', () => {
     renderPage(teamView({ registration: null }, null));
     expect(

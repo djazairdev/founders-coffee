@@ -19,6 +19,7 @@ export const teamView = (
   },
   submissionDeadlineAt: Date.parse('2099-03-14T11:00:00Z'),
   canChangeTeams: true,
+  canStillRegister: true,
   teamMin: 2,
   teamMax: 4,
   viewerId: 'usr_captain',
