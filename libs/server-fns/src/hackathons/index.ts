@@ -50,10 +50,14 @@ export type { TeamPageView } from './team-page.js';
 export {
   getHackathonDashboard,
   getHackathonParticipants,
+  getHackathonTeams,
   type HackathonDashboardRequest,
 } from './dashboard-rpc.js';
 export type { HackathonDashboard } from './dashboard.js';
-export type { HackathonParticipantsView } from './participants.js';
+export type {
+  HackathonParticipantsView,
+  HackathonTeamsView,
+} from './participants.js';
 export {
   answerHackathonJudgeInvite,
   createHackathonJudgeInvite,

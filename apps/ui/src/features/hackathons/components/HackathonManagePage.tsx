@@ -32,6 +32,7 @@ import { HackathonResultsPanel } from './HackathonResultsPanel';
 import { HackathonReviewBanner } from './HackathonReviewBanner';
 import { HackathonReviewSection } from './HackathonReviewSection';
 import { HackathonRubricSection } from './HackathonRubricSection';
+import { HackathonTeamsList } from './HackathonTeamsList';
 import { HackathonTracksSection } from './HackathonTracksSection';
 import { HackathonsUnavailable } from './HackathonsUnavailable';
 
@@ -137,6 +138,7 @@ export const HackathonManagePage = ({
       {draft.event.status === 'published' ? (
         <>
           <HackathonParticipantsList eventId={draft.event.id} locale={locale} />
+          <HackathonTeamsList eventId={draft.event.id} locale={locale} />
           <HackathonJudgingProgress eventId={draft.event.id} locale={locale} />
           <HackathonResultsPanel
             eventId={draft.event.id}

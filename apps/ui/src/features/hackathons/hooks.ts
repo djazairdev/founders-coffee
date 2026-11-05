@@ -13,6 +13,7 @@ import {
   type CreateHackathonDraftRequest,
   type HackathonDashboard,
   type HackathonParticipantsView,
+  type HackathonTeamsView,
   type HackathonDraftCreated,
   type HackathonEditSaved,
   type HackathonDraftView,
@@ -56,7 +57,14 @@ export const useHackathonDraft = (eventId: string) =>
 export const useHackathonParticipants = (eventId: string) =>
   useQuery<HackathonParticipantsView>({
     queryKey: [...DRAFT, eventId, 'participants'],
-    queryFn: () => hackathonsApi.participants(eventId),
+    queryFn: () => hackathonsApi.roster(eventId),
+  });
+
+/** A hackathon's teams and entries, for its organisers (B-OPS-02). */
+export const useHackathonTeams = (eventId: string) =>
+  useQuery<HackathonTeamsView>({
+    queryKey: [...DRAFT, eventId, 'teams'],
+    queryFn: () => hackathonsApi.teams(eventId),
   });
 
 /**
