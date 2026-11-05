@@ -36,6 +36,7 @@ export const HackathonResultEntry = ({
   const options = { locale };
   const number = (value: number) =>
     formatNumber(value, locale, { maximumFractionDigits: 2 });
+  const scored = result.criteria.filter((criterion) => criterion.mean !== null);
   return (
     <li className="grid gap-1 p-3">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
@@ -71,29 +72,27 @@ export const HackathonResultEntry = ({
               {hackathon_results_panel_tie_settled({}, options)}
             </p>
           ) : null}
-          <ul className="mt-1 grid gap-0.5 text-caption text-neutral">
-            {result.criteria.flatMap((criterion) =>
-              criterion.mean === null
-                ? []
-                : [
-                    <li key={criterion.criterionId}>
-                      <IsolatedValue
-                        value={criterion.name}
-                        message={(name) =>
-                          hackathon_results_page_criterion_score(
-                            {
-                              name,
-                              score: number(criterion.mean ?? 0),
-                              scale: number(criterion.scale),
-                            },
-                            options,
-                          )
-                        }
-                      />
-                    </li>,
-                  ],
-            )}
-          </ul>
+          {scored.length > 0 ? (
+            <ul className="mt-1 grid gap-0.5 text-caption text-neutral">
+              {scored.map((criterion) => (
+                <li key={criterion.criterionId}>
+                  <IsolatedValue
+                    value={criterion.name}
+                    message={(name) =>
+                      hackathon_results_page_criterion_score(
+                        {
+                          name,
+                          score: number(criterion.mean ?? 0),
+                          scale: number(criterion.scale),
+                        },
+                        options,
+                      )
+                    }
+                  />
+                </li>
+              ))}
+            </ul>
+          ) : null}
           {result.pullRequests.length > 0 ? (
             <div className="mt-1 grid gap-1">
               <p className="text-caption text-neutral">
