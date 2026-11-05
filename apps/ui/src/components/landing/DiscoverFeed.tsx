@@ -59,7 +59,7 @@ export const DiscoverFeed = ({
   return (
     <section
       id="market-events"
-      className="mx-auto max-w-content scroll-mt-24 px-4 pb-16 pt-8 md:px-8"
+      className="mx-auto max-w-content scroll-mt-6 px-4 pb-16 pt-8 md:px-8"
     >
       {items.length > 0 || type ? (
         <>

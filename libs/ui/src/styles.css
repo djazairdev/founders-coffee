@@ -120,6 +120,11 @@
 }
 
 @layer base {
+  /* The sticky header is 57px tall, 65px from md. Without this a field reached with Shift+Tab stops
+     under it. An element that sets its own scroll margin adds to this. */
+  html {
+    scroll-padding-block-start: 4.5rem;
+  }
   body {
     font-family: var(--font-body);
     font-variant-numeric: tabular-nums;
