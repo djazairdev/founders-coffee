@@ -139,9 +139,16 @@ export const EventCard = ({
                   .join('/')}
               </span>
             ) : (
-              <span dir="auto" className="text-secondary">
-                {locale === 'ar' ? '،' : ','} {cityName}
-              </span>
+              <>
+                {event.venue === null ? (
+                  <span aria-hidden="true">·</span>
+                ) : null}
+                <span dir="auto" className="text-secondary">
+                  {event.venue === null
+                    ? cityName
+                    : `${locale === 'ar' ? '،' : ','} ${cityName}`}
+                </span>
+              </>
             )}
           </p>
 
