@@ -4,7 +4,6 @@ import { CalendarDays, MapPin, Users } from 'lucide-react';
 import {
   back_to_city,
   cityInputs,
-  event_details_title,
   event_timezone,
   event_when,
   formatDate,
@@ -37,6 +36,7 @@ import { EventCancelledNotice } from './EventCancelledNotice';
 import { EventFormatBadge } from './EventFormatBadge';
 import { EventHostCard } from './EventHostCard';
 import { EventCoHosts } from './EventCoHosts';
+import { eventDetailsTitle } from './event-details-title';
 import { EventKindBadge } from './EventKindBadge';
 import { EventRunByBadge } from './EventRunByBadge';
 import { EventTopics } from './EventTopics';
@@ -192,54 +192,56 @@ export const EventDetail = ({
         id="event-details-title"
         className="mt-8 font-display text-h4 font-semibold"
       >
-        {event_details_title({}, { locale })}
+        {eventDetailsTitle(event.kind, locale)}
       </h2>
 
       <div
         className={`mt-4 grid gap-8 ${hasAside ? 'lg:grid-cols-[minmax(0,1.45fr)_minmax(18rem,0.75fr)]' : ''}`}
       >
-        <section
-          aria-labelledby="event-details-title"
-          className="flex flex-col"
-        >
-          <dl className="grid gap-3 sm:grid-cols-2">
-            <div className="rounded-box border border-base-300 bg-base-100 p-4">
-              <dt className="eyebrow">{event_when({}, { locale })}</dt>
-              <dd className="mt-1.5 flex items-start gap-2 font-medium">
-                <CalendarDays
-                  className="mt-0.5 size-4 shrink-0 text-secondary"
-                  aria-hidden="true"
-                />
-                <time dateTime={start.toISOString()}>{day}</time>
-              </dd>
-              <dd className="mt-0.5 ms-6 overflow-x-clip text-body-sm text-neutral">
-                <span className="-ms-4 flex flex-wrap">
-                  <span className="ms-4 font-medium text-base-content">
-                    {timeRange}
+        <div className="flex flex-col">
+          <section
+            aria-labelledby="event-details-title"
+            className="flex flex-1 flex-col"
+          >
+            <dl className="grid gap-3 sm:grid-cols-2">
+              <div className="rounded-box border border-base-300 bg-base-100 p-4">
+                <dt className="eyebrow">{event_when({}, { locale })}</dt>
+                <dd className="mt-1.5 flex items-start gap-2 font-medium">
+                  <CalendarDays
+                    className="mt-0.5 size-4 shrink-0 text-secondary"
+                    aria-hidden="true"
+                  />
+                  <time dateTime={start.toISOString()}>{day}</time>
+                </dd>
+                <dd className="mt-0.5 ms-6 overflow-x-clip text-body-sm text-neutral">
+                  <span className="-ms-4 flex flex-wrap">
+                    <span className="ms-4 font-medium text-base-content">
+                      {timeRange}
+                    </span>
+                    <span className="relative ms-4 before:absolute before:-start-2.5 before:content-['·']">
+                      {event_timezone(
+                        { market: localizedName(market, locale) },
+                        { locale },
+                      )}
+                    </span>
                   </span>
-                  <span className="relative ms-4 before:absolute before:-start-2.5 before:content-['·']">
-                    {event_timezone(
-                      { market: localizedName(market, locale) },
-                      { locale },
-                    )}
-                  </span>
-                </span>
-              </dd>
-            </div>
-            <EventWhere
-              locale={locale}
-              event={event}
-              place={streetAddress ?? cityName}
-              isCancelled={isCancelled}
-            />
-          </dl>
+                </dd>
+              </div>
+              <EventWhere
+                locale={locale}
+                event={event}
+                place={streetAddress ?? cityName}
+                isCancelled={isCancelled}
+              />
+            </dl>
 
-          <EventHostCard
-            locale={locale}
-            host={host}
-            cityName={cityName}
-            isHost={isHost}
-          />
+            <EventHostCard
+              locale={locale}
+              host={host}
+              cityName={cityName}
+              isHost={isHost}
+            />
+          </section>
           {details ? (
             <HackathonPageDetails
               details={details}
@@ -247,7 +249,7 @@ export const EventDetail = ({
               locale={locale}
             />
           ) : null}
-        </section>
+        </div>
 
         {hasRsvpBox ? (
           <EventRsvpBox

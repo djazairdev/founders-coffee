@@ -4,7 +4,6 @@ import { ArrowUpRight, MapPin } from 'lucide-react';
 import { eventLanguages } from '@founders-coffee/core';
 import {
   direction,
-  event_details_title,
   event_host,
   formatDate,
   going_count,
@@ -17,6 +16,7 @@ import { eventCityName } from '../../features/events/event-city-name';
 import { localizedEvent } from '../../lib/locale-routing';
 import { AvatarGroup } from './AvatarGroup';
 import { EventCoHosts } from './EventCoHosts';
+import { eventDetailsTitle } from './event-details-title';
 import { EventFormatBadge } from './EventFormatBadge';
 import { EventKindBadge } from './EventKindBadge';
 import { EventRunByBadge } from './EventRunByBadge';
@@ -183,7 +183,7 @@ export const EventCard = ({
         {...detailsHref}
         className="btn btn-outline btn-xs sm:btn-sm md:btn-md w-full shrink-0 self-center whitespace-nowrap sm:w-auto"
       >
-        <span>{event_details_title({}, { locale })}</span>
+        <span>{eventDetailsTitle(event.kind, locale)}</span>
         <ArrowUpRight className="size-4 rtl:rotate-180" aria-hidden="true" />
       </Link>
     </article>
