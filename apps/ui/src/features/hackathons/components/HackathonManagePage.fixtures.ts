@@ -84,6 +84,7 @@ vi.mock('../hooks', () => ({
   useHackathonDraft: () => mocks.draft,
   useHackathonDashboard: () => mocks.dashboard,
   useHackathonParticipants: () => ({ data: undefined, isError: false }),
+  useHackathonTeams: () => ({ data: undefined, isError: false }),
   useSaveHackathonDetails: () => mocks.save,
   useSaveHackathonTracks: () => mocks.saveTracks,
   useSaveHackathonRubric: () => mocks.saveTracks,
