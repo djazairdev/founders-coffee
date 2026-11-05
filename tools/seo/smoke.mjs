@@ -176,7 +176,7 @@ const run = async () => {
   for (const path of discovery) {
     const type = classifyPath(path);
     if (
-      (type === 'market' || DYNAMIC_TYPES.includes(type)) &&
+      (type === 'market' || DYNAMIC_TYPES.has(type)) &&
       (type === 'market' || dynamicCount < maxDynamicRoutes)
     ) {
       paths.add(path);
