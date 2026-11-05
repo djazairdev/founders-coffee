@@ -103,6 +103,7 @@ export * from './hackathon-report-review.js';
 export * from './hackathon-report-decisions.js';
 export * from './hackathon-team-notices.js';
 export * from './hackathon-dashboard.js';
+export * from './hackathon-organiser-lists.js';
 export * from './hackathon-places.js';
 export * from './hackathon-judges.js';
 export * from './hackathon-mentors.js';

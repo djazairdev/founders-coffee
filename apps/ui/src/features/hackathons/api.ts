@@ -50,6 +50,7 @@ import {
   confirmHackathonPrize,
   createHackathonDraft,
   getHackathonDashboard,
+  getHackathonParticipants,
   getHackathonDraft,
   joinHackathonInterest,
   registerForHackathon,
@@ -68,6 +69,7 @@ import {
   type CreateHackathonDraftRequest,
   type EventPage,
   type HackathonDashboard,
+  type HackathonParticipantsView,
   type HackathonSchedule,
   type HackathonDraftCreated,
   type HackathonDraftView,
@@ -91,6 +93,8 @@ export const hackathonsApi = {
   createHackathonDraft,
   draft: (eventId: string) => getHackathonDraft({ data: { eventId } }),
   dashboard: (eventId: string) => getHackathonDashboard({ data: { eventId } }),
+  participants: (eventId: string) =>
+    getHackathonParticipants({ data: { eventId } }),
   saveDetails: (request: SaveHackathonDetailsRequest) =>
     saveHackathonDetails({ data: request }),
   saveTracks: (request: SaveHackathonTracksRequest) =>
@@ -249,6 +253,7 @@ export type {
   ConfirmHackathonPrizeRequest,
   CreateHackathonDraftRequest,
   HackathonDashboard,
+  HackathonParticipantsView,
   HackathonDraftCreated,
   HackathonDraftView,
   HackathonRegistrationView,
