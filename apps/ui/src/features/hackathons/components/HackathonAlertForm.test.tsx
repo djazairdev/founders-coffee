@@ -124,12 +124,12 @@ describe('HackathonAlertForm', () => {
   it('waits for the human check, on its own action, before it can send', () => {
     renderForm();
 
-    expect(submit().hasAttribute('disabled')).toBe(true);
+    expect(submit().getAttribute('aria-disabled')).toBe('true');
     expect(screen.getByTestId('turnstile').dataset.action).toBe(
       'join_hackathon_interest',
     );
     fireEvent.click(screen.getByTestId('turnstile'));
-    expect(submit().hasAttribute('disabled')).toBe(false);
+    expect(submit().getAttribute('aria-disabled')).toBeNull();
   });
 
   it('sends the address with the market, language and token, and confirms', async () => {
@@ -189,7 +189,7 @@ describe('HackathonAlertForm', () => {
       await screen.findByText('Something went wrong. Try again.'),
     ).toBeTruthy();
     expect(screen.getByTestId('turnstile').dataset.reset).toBe('1');
-    expect(submit().hasAttribute('disabled')).toBe(true);
+    expect(submit().getAttribute('aria-disabled')).toBe('true');
   });
 
   it('reads a refused address as an invalid one', async () => {

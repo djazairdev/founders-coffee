@@ -20,7 +20,7 @@ import {
   hackathon_register_waitlist_submit,
   type Locale,
 } from '@founders-coffee/i18n';
-import { StatusMessage } from '@founders-coffee/ui';
+import { Button, StatusMessage } from '@founders-coffee/ui';
 
 import { localizedLanding } from '../../../lib/locale-routing';
 import { ATTENDANCE_LABELS } from '../detail-labels';
@@ -172,17 +172,18 @@ export const HackathonRegistrationForm = ({
         </StatusMessage>
       ) : null}
       <div>
-        <button
+        <Button
           type="submit"
-          className="btn btn-secondary btn-xs sm:btn-sm md:btn-md w-full sm:w-auto"
-          disabled={register.isPending}
+          variant="secondary"
+          className="w-full sm:w-auto"
+          isBusy={register.isPending}
         >
           {register.isPending
             ? hackathon_register_saving({}, options)
             : isFull
               ? hackathon_register_waitlist_submit({}, options)
               : hackathon_register_submit({}, options)}
-        </button>
+        </Button>
       </div>
     </form>
   );

@@ -12,7 +12,7 @@ import {
   hackathon_withdraw_yes,
   type Locale,
 } from '@founders-coffee/i18n';
-import { Badge, StatusMessage } from '@founders-coffee/ui';
+import { Badge, Button, StatusMessage } from '@founders-coffee/ui';
 
 import { ATTENDANCE_LABELS } from '../detail-labels';
 import { registrationErrorMessage } from '../registration-errors';
@@ -68,22 +68,21 @@ export const HackathonRegistrationStanding = ({
             {hackathon_withdraw_confirm({}, options)}
           </p>
           <div className="flex flex-wrap gap-2">
-            <button
-              type="button"
-              className="btn btn-error btn-outline btn-xs sm:btn-sm md:btn-md"
+            <Button
+              variant="outline"
+              className="btn-error"
               onClick={confirm}
-              disabled={withdraw.isPending}
+              isBusy={withdraw.isPending}
             >
               {hackathon_withdraw_yes({}, options)}
-            </button>
-            <button
-              type="button"
-              className="btn btn-ghost btn-xs sm:btn-sm md:btn-md"
+            </Button>
+            <Button
+              variant="ghost"
               onClick={() => setIsConfirming(false)}
-              disabled={withdraw.isPending}
+              isBusy={withdraw.isPending}
             >
               {hackathon_withdraw_keep({}, options)}
-            </button>
+            </Button>
           </div>
         </div>
       ) : canWithdraw ? (

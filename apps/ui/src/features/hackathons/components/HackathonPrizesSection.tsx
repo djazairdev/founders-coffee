@@ -14,6 +14,7 @@ import {
 } from '@founders-coffee/i18n';
 import { Button, StatusMessage } from '@founders-coffee/ui';
 
+import { useFocusAfterChange } from '../../../lib/useFocusAfterChange';
 import type { HackathonDraftView } from '../api';
 import {
   NEW_PRIZE_KEY,
@@ -42,6 +43,9 @@ const PrizesList = ({
   locale: Locale;
 }) => {
   const form = useHackathonPrizes({ draft, locale });
+  const list = useFocusAfterChange<HTMLDivElement>(
+    `${form.editing}:${form.confirming}:${draft.prizes.length}`,
+  );
   const formFor = (key: string, isConfirmed: boolean) => (
     <HackathonPrizeForm
       currency={draft.event.currency}
@@ -53,7 +57,7 @@ const PrizesList = ({
     />
   );
   return (
-    <div className="grid gap-4">
+    <div ref={list} tabIndex={-1} className="grid gap-4">
       {draft.stage === 'locked' ? (
         <StatusMessage variant="info">
           {hackathon_prizes_locked_hint({}, { locale })}

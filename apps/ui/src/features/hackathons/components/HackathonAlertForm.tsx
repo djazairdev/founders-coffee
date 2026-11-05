@@ -14,7 +14,7 @@ import {
   hero_waitlist_submitting,
   type Locale,
 } from '@founders-coffee/i18n';
-import { Input, StatusMessage, Turnstile } from '@founders-coffee/ui';
+import { Button, Input, StatusMessage, Turnstile } from '@founders-coffee/ui';
 
 import { useAuth } from '../../../lib/app-providers';
 import { localizedLanding } from '../../../lib/locale-routing';
@@ -112,18 +112,14 @@ export const HackathonAlertForm = ({
           aria-invalid={error !== null}
           aria-describedby={CONSENT_ID}
           className="bg-base-100 sm:flex-1"
-          disabled={join.isPending}
+          readOnly={join.isPending}
           required
         />
-        <button
-          type="submit"
-          className="btn btn-primary btn-xs sm:btn-sm md:btn-md"
-          disabled={join.isPending || !isVerified}
-        >
+        <Button type="submit" isBusy={join.isPending || !isVerified}>
           {join.isPending
             ? hero_waitlist_submitting({}, { locale })
             : hero_waitlist_submit({}, { locale })}
-        </button>
+        </Button>
       </div>
       {sitekey && !isBypassed && (
         <Turnstile

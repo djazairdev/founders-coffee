@@ -131,7 +131,7 @@ export const HackathonPrizeCard = ({
               { title: prize.title },
               options,
             )}
-            disabled={form.isBusy}
+            isBusy={form.isBusy}
             onClick={() => form.withdraw(prize)}
           >
             {hackathon_prize_withdraw({}, options)}

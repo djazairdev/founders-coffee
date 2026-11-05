@@ -155,7 +155,7 @@ export const HackathonJudgingProgress = ({
               <div>
                 <Button
                   variant="outline"
-                  disabled={remind.isPending}
+                  isBusy={remind.isPending}
                   onClick={() => remind.mutate()}
                 >
                   {remind.isPending

@@ -71,8 +71,10 @@ export const HackathonJudgeCriterionField = ({
               name={`judge-score-${criterion.id}`}
               className="sr-only"
               checked={draft.value === value}
-              disabled={isDisabled}
-              onChange={() => onChange({ ...draft, value })}
+              aria-disabled={isDisabled}
+              onChange={() => {
+                if (!isDisabled) onChange({ ...draft, value });
+              }}
             />
             {number(value)}
           </label>
@@ -96,7 +98,7 @@ export const HackathonJudgeCriterionField = ({
           dir="auto"
           maxLength={HACKATHON_SCORE_COMMENT_MAX}
           value={draft.comment}
-          disabled={isDisabled}
+          readOnly={isDisabled}
           onChange={(event) =>
             onChange({ ...draft, comment: event.target.value })
           }

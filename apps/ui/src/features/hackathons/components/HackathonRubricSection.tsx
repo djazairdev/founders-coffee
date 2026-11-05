@@ -100,7 +100,7 @@ const RubricForm = ({
         </StatusMessage>
       ) : null}
       <div>
-        <Button type="submit" variant="primary" disabled={form.isSaving}>
+        <Button type="submit" variant="primary" isBusy={form.isSaving}>
           {form.isSaving
             ? hackathon_details_saving({}, { locale })
             : hackathon_rubric_save({}, { locale })}

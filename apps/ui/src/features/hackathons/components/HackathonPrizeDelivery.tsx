@@ -108,8 +108,8 @@ const PrizeRow = ({
       <Button
         variant="outline"
         className="mt-2"
-        disabled={
-          isReceived ||
+        disabled={isReceived}
+        isBusy={
           assign.isPending ||
           !submissionId ||
           submissionId === prize.submissionId
@@ -158,7 +158,7 @@ const PrizeRow = ({
           />
           <Button
             className="mt-2"
-            disabled={deliver.isPending}
+            isBusy={deliver.isPending}
             onClick={() =>
               deliver.mutate({
                 eventId,

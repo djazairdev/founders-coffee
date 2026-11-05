@@ -9,6 +9,7 @@ import {
 } from '@founders-coffee/i18n';
 import { Button, fieldNoteId, FormField } from '@founders-coffee/ui';
 
+import { useFocusFirstField } from '../../../lib/useFocusFirstField';
 import { NOTE_MAX } from '../hackathon-prize-form';
 import { prizeNoteId, type useHackathonPrizes } from '../useHackathonPrizes';
 
@@ -23,8 +24,10 @@ export const HackathonPrizeConfirmForm = ({
 }) => {
   const options = { locale };
   const noteId = prizeNoteId(prizeId);
+  const firstField = useFocusFirstField();
   return (
     <form
+      ref={firstField}
       noValidate
       className="grid gap-4 rounded-box border border-base-300 p-4"
       onSubmit={(event) => {
@@ -52,14 +55,14 @@ export const HackathonPrizeConfirmForm = ({
         />
       </FormField>
       <div className="flex flex-wrap gap-2">
-        <Button type="submit" variant="primary" disabled={form.isBusy}>
+        <Button type="submit" variant="primary" isBusy={form.isBusy}>
           {form.isBusy
             ? hackathon_details_saving({}, options)
             : hackathon_prize_confirm({}, options)}
         </Button>
         <Button
           variant="ghost"
-          disabled={form.isBusy}
+          isBusy={form.isBusy}
           onClick={form.closeConfirm}
         >
           {hackathon_prize_cancel({}, options)}

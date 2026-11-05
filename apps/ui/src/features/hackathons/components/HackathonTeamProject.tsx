@@ -23,6 +23,7 @@ import {
   localizedProject,
   localizedProjectEdit,
 } from '../../../lib/locale-routing';
+import { useFocusAfterChange } from '../../../lib/useFocusAfterChange';
 import type { TeamPageView } from '../api';
 import { teamErrorMessage } from '../team-errors';
 import {
@@ -54,9 +55,19 @@ export const HackathonTeamProject = ({
   const publish = usePublishProject(eventId);
   const failed = [create, confirm, publish].find((change) => change.isError);
   const isBusy = create.isPending || confirm.isPending || publish.isPending;
+  const heading = useFocusAfterChange<HTMLHeadingElement>(
+    project.stage === 'can_create'
+      ? project.stage
+      : `${project.status}:${project.isListed}`,
+  );
   return (
     <section aria-labelledby="hackathon-team-project-heading" className="mt-6">
-      <h2 id="hackathon-team-project-heading" className="font-display text-h4">
+      <h2
+        ref={heading}
+        tabIndex={-1}
+        id="hackathon-team-project-heading"
+        className="font-display text-h4"
+      >
         {hackathon_project_heading({}, options)}
       </h2>
       {project.stage === 'can_create' ? (
@@ -66,7 +77,7 @@ export const HackathonTeamProject = ({
           </p>
           <Button
             className={BUTTON_CLASS}
-            disabled={isBusy}
+            isBusy={isBusy}
             onClick={() => create.mutate()}
           >
             {hackathon_project_create({}, options)}
@@ -114,7 +125,7 @@ export const HackathonTeamProject = ({
               </p>
               <Button
                 className={BUTTON_CLASS}
-                disabled={isBusy}
+                isBusy={isBusy}
                 onClick={() => confirm.mutate(project.id)}
               >
                 {hackathon_project_confirm({}, options)}
@@ -135,7 +146,8 @@ export const HackathonTeamProject = ({
               )}
               <Button
                 className={BUTTON_CLASS}
-                disabled={isBusy || !project.canPublish}
+                disabled={!project.canPublish}
+                isBusy={isBusy}
                 onClick={() => publish.mutate(project.id)}
               >
                 {hackathon_project_publish({}, options)}
