@@ -15,3 +15,14 @@ describe('P1-002 date badge typography', () => {
     expect(dateStyle).not.toContain('overline');
   });
 });
+
+describe('the sticky header and keyboard focus', () => {
+  it('keeps a field reached with Shift+Tab out from under the header (#472)', () => {
+    const styles = readFileSync(
+      new URL('./styles.css', import.meta.url),
+      'utf8',
+    );
+
+    expect(styles).toMatch(/html\s*\{\s*scroll-padding-block-start: 4\.5rem;/u);
+  });
+});

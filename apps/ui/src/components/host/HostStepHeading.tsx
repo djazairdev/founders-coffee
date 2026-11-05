@@ -28,7 +28,7 @@ export const HostStepHeading = ({
     <h2
       ref={headingRef}
       tabIndex={-1}
-      className="font-display text-h3 font-semibold text-base-content outline-none max-lg:sr-only max-lg:scroll-mt-20"
+      className="font-display text-h3 font-semibold text-base-content outline-none max-lg:sr-only max-lg:scroll-mt-2"
     >
       {title}
     </h2>
