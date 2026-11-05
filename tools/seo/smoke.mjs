@@ -2,17 +2,11 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { dirname } from 'node:path';
 
 import { discoveryFailures } from './discovery-contract.mjs';
-import { inspectGeoDocument } from './geo-contract.mjs';
-import { documentHeaderFailures } from './header-contract.mjs';
 import { fetchSmoke } from './http.mjs';
 import { privateRouteFailures } from './private-contract.mjs';
-import {
-  classifyPath,
-  COMPANY_PAGES,
-  defaultAlternateHref,
-  soleAlternateLocale,
-  withLocale,
-} from './routes.mjs';
+import { profileFailures } from './profile-contract.mjs';
+import { routeEntry } from './route-entry.mjs';
+import { classifyPath, COMPANY_PAGES } from './routes.mjs';
 
 const DEFAULT_ORIGIN = 'https://staging.founders.coffee';
 const LOCALES = ['ar', 'fr', 'en'];
@@ -26,9 +20,15 @@ const PRIVATE_PATHS = [
   '/en/o/code-club/manage',
   '/en/o/invitations/inv_1',
 ];
-const HTML_CONTENT_TYPE = 'text/html';
 const MAX_DYNAMIC_ROUTES = 25;
-const DYNAMIC_TYPES = ['city', 'event', 'organisation', 'project'];
+const MAX_UNLISTED_PROFILES = 5;
+const DYNAMIC_TYPES = new Set([
+  'city',
+  'event',
+  'organisation',
+  'project',
+  'profile',
+]);
 const PLATFORM_ORGANISATION = 'founders-coffee';
 const SITEMAP_SMOKE_QUERY = '?seo_smoke=1';
 
@@ -54,11 +54,6 @@ const maxDynamicRoutes = Number(
 
 const absoluteUrl = (path) => new URL(path, `${origin}/`).toString();
 
-const readAttribute = (tag, name) => {
-  const match = tag.match(new RegExp(`${name}=["']([^"']+)["']`, 'iu'));
-  return match?.[1] ?? null;
-};
-
 const linksFromHtml = (html) => {
   const links = new Set();
   for (const match of html.matchAll(/href=["']([^"']+)["']/giu)) {
@@ -69,65 +64,6 @@ const linksFromHtml = (html) => {
       links.add(url.pathname);
   }
   return [...links];
-};
-
-const routeEntry = (path, type, response, body, failures) => {
-  const contentType = response.headers.get('content-type') ?? '';
-  const robots = response.headers.get('x-robots-tag');
-  const cacheControl = response.headers.get('cache-control');
-  const canonicalTags = [
-    ...body.matchAll(/<link\b(?=[^>]*\brel=["']canonical["'])[^>]*>/giu),
-  ];
-  const canonical = canonicalTags[0]
-    ? readAttribute(canonicalTags[0][0], 'href')
-    : null;
-  const documentLocale = soleAlternateLocale(body);
-  const canonicalPath = documentLocale
-    ? withLocale(path, documentLocale)
-    : path;
-  const expectedCanonical = new URL(
-    canonicalPath,
-    `${canonicalOrigin}/`,
-  ).toString();
-  if (response.status !== 200)
-    failures.push(`${path}: expected 200, got ${response.status}`);
-  if (!contentType.toLowerCase().includes(HTML_CONTENT_TYPE))
-    failures.push(
-      `${path}: expected HTML content type, got ${contentType || 'missing'}`,
-    );
-  if (canonicalTags.length !== 1)
-    failures.push(
-      `${path}: expected one canonical, got ${canonicalTags.length}`,
-    );
-  if (canonical !== expectedCanonical)
-    failures.push(
-      `${path}: canonical ${canonical ?? 'missing'} != ${expectedCanonical}`,
-    );
-  if (documentLocale) {
-    const fallback = defaultAlternateHref(body);
-    if (fallback !== expectedCanonical)
-      failures.push(
-        `${path}: single-language document sends x-default to ${fallback ?? 'nowhere'}, not ${expectedCanonical}`,
-      );
-  }
-  for (const failure of inspectGeoDocument({
-    path,
-    type,
-    body,
-    canonical,
-  }))
-    failures.push(`${path}: GEO ${failure}`);
-  failures.push(...documentHeaderFailures({ path, response, canonicalOrigin }));
-  return {
-    path,
-    type,
-    status: response.status,
-    contentType,
-    canonical,
-    robots,
-    cacheControl,
-    hreflangCount: (body.match(/rel=["']alternate["']/giu) ?? []).length,
-  };
 };
 
 const fetchResponse = async (path, followRedirects = true) => {
@@ -218,10 +154,10 @@ const run = async () => {
       if (
         type === 'market' ||
         type === 'company' ||
-        (sitemapDynamicCount < maxDynamicRoutes && DYNAMIC_TYPES.includes(type))
+        (sitemapDynamicCount < maxDynamicRoutes && DYNAMIC_TYPES.has(type))
       ) {
         paths.add(parsed.pathname);
-        if (DYNAMIC_TYPES.includes(type)) sitemapDynamicCount += 1;
+        if (DYNAMIC_TYPES.has(type)) sitemapDynamicCount += 1;
       }
     } catch {
       failures.push(`sitemap.xml: invalid URL ${sitemapUrl}`);
@@ -231,7 +167,9 @@ const run = async () => {
   for (const locale of LOCALES) {
     const path = `/${locale}/algeria`;
     const { response, body } = await fetchStatic(path);
-    routes.push(routeEntry(path, 'market', response, body, failures));
+    routes.push(
+      routeEntry(path, 'market', response, body, failures, canonicalOrigin),
+    );
     discovery.push(...linksFromHtml(body));
   }
   let dynamicCount = 0;
@@ -245,20 +183,56 @@ const run = async () => {
       if (type !== 'market') dynamicCount += 1;
     }
   }
+  const profileLinks = new Set(
+    discovery.filter((path) => classifyPath(path) === 'profile'),
+  );
   for (const path of paths) {
     if (routes.some((route) => route.path === path)) continue;
     const type = classifyPath(path) ?? 'public';
     const { response, body } = await fetchStatic(path);
-    routes.push(routeEntry(path, type, response, body, failures));
+    routes.push(
+      routeEntry(path, type, response, body, failures, canonicalOrigin),
+    );
+    if (type === 'profile')
+      failures.push(
+        ...profileFailures({ path, response, body, isInSitemap: true }),
+      );
+    if (type === 'event')
+      for (const link of linksFromHtml(body))
+        if (classifyPath(link) === 'profile') profileLinks.add(link);
+  }
+  const unlistedProfiles = [...profileLinks]
+    .filter((path) => !paths.has(path))
+    .slice(0, MAX_UNLISTED_PROFILES);
+  for (const path of unlistedProfiles) {
+    const { response, body } = await fetchResponse(path, false);
+    failures.push(
+      ...profileFailures({
+        path,
+        response,
+        body,
+        canonicalOrigin,
+        isInSitemap: false,
+      }),
+    );
   }
   for (const path of PRIVATE_PATHS) {
     const { response, body } = await fetchResponse(path, false);
     failures.push(...privateRouteFailures({ path, response, body }));
   }
   const coverage = Object.fromEntries(
-    ['company', 'market', 'city', 'event', 'organisation', 'project'].map(
-      (type) => [type, routes.filter((route) => route.type === type).length],
-    ),
+    [
+      'company',
+      'market',
+      'city',
+      'event',
+      'organisation',
+      'project',
+      'profile',
+    ].map((type) => [
+      type,
+      routes.filter((route) => route.type === type).length,
+    ]),
   );
   if (requireDynamic && (coverage.city === 0 || coverage.event === 0))
     failures.push(
@@ -271,7 +245,11 @@ const run = async () => {
     canonicalOrigin,
     robots: { status: robotsResponse.status, body: robots },
     sitemap: { status: sitemapResponse.status, urlCount: sitemapUrls.length },
-    coverage: { locales: LOCALES, classes: coverage },
+    coverage: {
+      locales: LOCALES,
+      classes: coverage,
+      unlistedProfiles: unlistedProfiles.length,
+    },
     routes: routes.sort((a, b) => a.path.localeCompare(b.path)),
     discoveredSitemapUrls: sitemapUrls,
     failures,

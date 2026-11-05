@@ -6,6 +6,7 @@ import type {
   SitemapMarket,
   SitemapOrganisation,
   SitemapProject,
+  SitemapProfile,
 } from '@founders-coffee/server-fns';
 
 import { canonicalPath, type CanonicalRoute } from './seo';
@@ -67,6 +68,13 @@ const projectItems = (projects: readonly SitemapProject[]): SitemapItem[] =>
     })),
   );
 
+const profileItems = (profiles: readonly SitemapProfile[]): SitemapItem[] =>
+  profiles.flatMap((profile) =>
+    LOCALES.map((locale) => ({
+      path: localizedPath({ type: 'profile', userId: profile.userId }, locale),
+    })),
+  );
+
 const companyItems = (): SitemapItem[] => sitemapCompanyItems();
 
 export const sitemapItems = (data: SitemapData): SitemapItem[] => {
@@ -76,6 +84,7 @@ export const sitemapItems = (data: SitemapData): SitemapItem[] => {
     ...eventItems(data.events),
     ...organisationItems(data.organisations),
     ...projectItems(data.projects),
+    ...profileItems(data.profiles),
     ...companyItems(),
   ];
   const seen = new Set<string>();

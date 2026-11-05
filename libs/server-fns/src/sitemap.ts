@@ -1,8 +1,9 @@
 import { createServerFn } from '@tanstack/react-start';
 
-import { geo, markets } from '@founders-coffee/domain';
+import { geo, markets, profile } from '@founders-coffee/domain';
 import {
   listCitiesWithUpcomingEvents,
+  listIndexableProfiles,
   listPublicEventSitemapRows,
   hackathonsEnabled,
   listIndexableProjects,
@@ -31,6 +32,9 @@ export type SitemapProject = {
   readonly slug: string;
   readonly updatedAt: Date;
 };
+export type SitemapProfile = {
+  readonly userId: string;
+};
 
 export type SitemapData = {
   readonly markets: readonly SitemapMarket[];
@@ -38,6 +42,7 @@ export type SitemapData = {
   readonly events: readonly SitemapEvent[];
   readonly organisations: readonly SitemapOrganisation[];
   readonly projects: readonly SitemapProject[];
+  readonly profiles: readonly SitemapProfile[];
 };
 
 /**
@@ -72,12 +77,13 @@ export const getSitemapData = createServerFn({ strict: false }).handler(
     const marketByCode = new Map(
       visibleMarkets.map((market) => [market.code, market]),
     );
-    const [eventRows, cityRows, organisationSlugs, projectRows] =
+    const [eventRows, cityRows, organisationSlugs, projectRows, profileRows] =
       await Promise.all([
         listPublicEventSitemapRows(db),
         listCitiesWithUpcomingEvents(db),
         listPublicOrganisationSlugs(db, markets.VISIBLE_STATES),
         listIndexableProjects(db, markets.VISIBLE_STATES),
+        listIndexableProfiles(db),
       ]);
     const projectMarkets = [
       ...new Set(projectRows.map((row) => row.marketCode)),
@@ -112,6 +118,9 @@ export const getSitemapData = createServerFn({ strict: false }).handler(
       projects: projectRows
         .filter((row) => hackathonsOn.has(row.marketCode))
         .map(({ slug, updatedAt }) => ({ slug, updatedAt })),
+      profiles: profileRows
+        .filter((row) => profile.safeProfileDisplayName(row.name, row.email))
+        .map(({ userId }) => ({ userId })),
     };
   },
 );

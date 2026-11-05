@@ -12,97 +12,17 @@ import { attachAttendance } from './events/attendance.js';
 import { attachCityNames } from './events/resolver.js';
 import { groupCityHosts } from './markets/city-hosts.js';
 import { ownerProfileProjection } from './profile/projection.js';
-
-const PUBLIC_PROFILE_FIELDS = [
-  'displayName',
-  'headline',
-  'interests',
-  'introduction',
-  'links',
-  'memberSince',
-  'openTo',
-  'photoAssetId',
-  'skills',
-  'spokenLanguages',
-  'stage',
-  'userId',
-] as const;
-
-const OWNER_PROFILE_FIELDS = [
-  ...PUBLIC_PROFILE_FIELDS,
-  'revision',
-  'visibility',
-] as const;
-
-const MEETUP_RECORD_FIELDS = ['attendedCount', 'hostedCount'] as const;
-const HACKATHON_FIELDS = ['hackathonRecord', 'projects'] as const;
-
-const EVENT_COLUMNS = [
-  'cancellationReason',
-  'cancelledAt',
-  'cityCode',
-  'createdAt',
-  'description',
-  'endsAt',
-  'format',
-  'hostId',
-  'id',
-  'kind',
-  'language',
-  'languages',
-  'latitude',
-  'longitude',
-  'marketCode',
-  'meetingUrl',
-  'rsvps',
-  'slug',
-  'startsAt',
-  'stateCode',
-  'status',
-  'tags',
-  'title',
-  'updatedAt',
-  'venue',
-  'venueAddress',
-  'version',
-] as const;
-
-const PUBLIC_EVENT_FIELDS = [
-  ...EVENT_COLUMNS.filter((column) => column !== 'meetingUrl'),
-  'cityName',
-  'cityNameAr',
-  'cityNameFr',
-  'citySlug',
-  'goingCount',
-  'hostName',
-  'hostPhotoAssetId',
-  'runBy',
-  'viewerRsvp',
-] as const;
-
-const PUBLIC_CITY_HOST_FIELDS = ['name', 'photoAssetId'] as const;
-
-const PUBLIC_MARKET_FIELDS = [
-  'brandOverrides',
-  'code',
-  'createdAt',
-  'defaultCurrency',
-  'defaultLocale',
-  'direction',
-  'featureFlags',
-  'name',
-  'nameAr',
-  'nameFr',
-  'slug',
-  'state',
-  'timezone',
-] as const;
-
-const GENERIC_IDENTITY_COLUMNS = ['createdAt', 'id', 'name', 'updatedAt'];
-
-const IDENTITY_COLUMNS_NEVER_PUBLISHED = Object.keys(
-  getTableColumns(user),
-).filter((column) => !GENERIC_IDENTITY_COLUMNS.includes(column));
+import {
+  PUBLIC_PROFILE_FIELDS,
+  OWNER_PROFILE_FIELDS,
+  MEETUP_RECORD_FIELDS,
+  HACKATHON_FIELDS,
+  EVENT_COLUMNS,
+  PUBLIC_EVENT_FIELDS,
+  PUBLIC_CITY_HOST_FIELDS,
+  PUBLIC_MARKET_FIELDS,
+  IDENTITY_COLUMNS_NEVER_PUBLISHED,
+} from './public-contract.fixtures.js';
 
 const sorted = (keys: readonly string[]) => [...keys].sort();
 
@@ -187,6 +107,7 @@ describe('public response contract', () => {
       skills: [],
       links: [],
       openTo: [],
+      indexable: false,
       photoAssetId: owner.photoAssetId,
       interests: [],
       spokenLanguages: [],
