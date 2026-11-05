@@ -189,6 +189,13 @@ describe('how the card says where the meetup happens (B-EVT-12)', () => {
     expect(view.container.textContent).toContain('Online');
   });
 
+  it('starts the place with the city, not a comma, when there is no venue', () => {
+    const view = show({ format: 'online', venue: null, venueAddress: null });
+
+    expect(view.container.textContent).toContain(`·${event.cityName}`);
+    expect(view.container.textContent).not.toContain(`, ${event.cityName}`);
+  });
+
   it('labels a hybrid meetup online and in person, beside its venue', () => {
     const view = show({ format: 'hybrid' });
 
