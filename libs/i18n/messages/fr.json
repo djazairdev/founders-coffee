@@ -402,6 +402,7 @@
   "profile_loading": "Chargement de votre profil…",
   "profile_load_error": "Impossible de charger votre profil. Réessayez.",
   "profile_title": "Votre profil",
+  "profile_view_public": "Voir votre profil public",
   "profile_save": "Enregistrer",
   "public_no_events": "Aucune rencontre organisée pour le moment",
   "role_host": "Hôte",

@@ -303,6 +303,7 @@
   "profile_loading": "Loading your profile…",
   "profile_load_error": "Could not load your profile. Please try again.",
   "profile_title": "Your profile",
+  "profile_view_public": "View your public profile",
   "profile_save": "Save changes",
   "public_no_events": "No meetups hosted yet",
   "role_host": "Host",
