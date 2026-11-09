@@ -48,6 +48,7 @@
       }
     }
   ],
+  "affected": { "legacy": true },
   "targetDefaults": {
     "build": {
       "dependsOn": ["^build"],
