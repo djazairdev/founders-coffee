@@ -2,12 +2,14 @@ import { beforeEach, describe, expect, it } from 'vitest';
 
 import { eq, events, type Db } from '@founders-coffee/db';
 
+import { judgeOf } from '../hackathons/judging.fixtures.js';
 import { registerForHackathonResolver } from '../hackathons/registration.js';
 import {
   openHackathon,
   setHackathons,
 } from '../hackathons/registration.fixtures.js';
 import { members, seedEvent, setupDb } from '../rsvps/resolver.fixtures.js';
+import { coOrganise, organisation, signUp } from './organisers.fixtures.js';
 import { readEventPage } from './page.js';
 
 let db: Db;
@@ -52,14 +54,20 @@ describe('the registration card’s data on a hackathon page (B-REG-06, real D1)
     expect(await registrationOn(eventId, member.id)).toEqual({
       isFull: false,
       viewer: { status: 'registered', attendanceMode: 'in_person' },
+      isJudge: false,
+      isOrganiser: false,
     });
     expect(await registrationOn(eventId, other.id)).toEqual({
       isFull: false,
       viewer: null,
+      isJudge: false,
+      isOrganiser: false,
     });
     expect(await registrationOn(eventId)).toEqual({
       isFull: false,
       viewer: null,
+      isJudge: false,
+      isOrganiser: false,
     });
   });
 
@@ -73,6 +81,35 @@ describe('the registration card’s data on a hackathon page (B-REG-06, real D1)
     expect(await registrationOn(eventId, second.id)).toEqual({
       isFull: true,
       viewer: { status: 'waitlisted', attendanceMode: 'in_person' },
+      isJudge: false,
+      isOrganiser: false,
+    });
+  });
+
+  it('says who judges the hackathon and who belongs to the organisation leading it', async () => {
+    const eventId = await openHackathon(db);
+    const judge = await judgeOf(db, eventId);
+    const invited = await judgeOf(db, eventId, 'invited');
+    await signUp(db, 'usr_lead');
+    await signUp(db, 'usr_cohost');
+    await organisation(db, 'org_lead', 'usr_lead');
+    await organisation(db, 'org_cohost', 'usr_cohost');
+    await coOrganise(db, eventId, 'org_lead', 'lead');
+    await coOrganise(db, eventId, 'org_cohost');
+
+    expect(await registrationOn(eventId, judge.userId)).toMatchObject({
+      isJudge: true,
+      isOrganiser: false,
+    });
+    expect(await registrationOn(eventId, invited.userId)).toMatchObject({
+      isJudge: false,
+    });
+    expect(await registrationOn(eventId, 'usr_lead')).toMatchObject({
+      isJudge: false,
+      isOrganiser: true,
+    });
+    expect(await registrationOn(eventId, 'usr_cohost')).toMatchObject({
+      isOrganiser: false,
     });
   });
 

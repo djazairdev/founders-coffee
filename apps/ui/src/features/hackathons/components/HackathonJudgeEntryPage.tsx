@@ -17,6 +17,7 @@ import type { JudgeEntryPageView } from '../api';
 import { useJudgeEntryPage } from '../judging-hooks';
 import { HackathonJudgeEntryDetails } from './HackathonJudgeEntryDetails';
 import { useFocusAfterChange } from '../../../lib/useFocusAfterChange';
+import { HackathonJudgeNextEntry } from './HackathonJudgeNextEntry';
 import { HackathonJudgeRecusal } from './HackathonJudgeRecusal';
 import { HackathonJudgeScoreForm } from './HackathonJudgeScoreForm';
 import { HackathonJudgingNotice } from './HackathonJudgingNotice';
@@ -63,6 +64,11 @@ const Scoring = ({
         submissionId={submissionId}
         criteria={view.criteria}
         scores={view.scores}
+        locale={locale}
+      />
+      <HackathonJudgeNextEntry
+        eventId={view.event.id}
+        submissionId={submissionId}
         locale={locale}
       />
       <HackathonJudgeRecusal

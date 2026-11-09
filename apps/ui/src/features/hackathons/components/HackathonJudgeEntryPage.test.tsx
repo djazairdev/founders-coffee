@@ -32,6 +32,7 @@ const mocks = vi.hoisted(() => ({
     ReturnType<typeof import('../team-page.fixtures').mutation> | undefined,
   recuse: undefined as
     ReturnType<typeof import('../team-page.fixtures').mutation> | undefined,
+  list: undefined as unknown,
 }));
 
 vi.mock('@tanstack/react-router', () => ({
@@ -50,6 +51,7 @@ vi.mock('@tanstack/react-router', () => ({
 
 vi.mock('../judging-hooks', () => ({
   useJudgeEntryPage: () => mocks.page,
+  useJudgePage: () => ({ data: mocks.list }),
   useSaveJudgeScores: () => {
     mocks.save ??= mutation();
     return mocks.save;
@@ -223,6 +225,19 @@ describe('HackathonJudgeEntryPage (B-JDG-07)', () => {
       submissionId: SUBMISSION_ID,
       reason: 'I mentored this team.',
     });
+  });
+
+  it('points the judge to the next submission still to score', () => {
+    mocks.list = {
+      entries: [
+        { submissionId: 'sub_done', title: 'Ledger', state: 'scored' },
+        { submissionId: 'sub_next', title: 'Souk', state: 'to_score' },
+      ],
+    };
+    renderPage(entryView());
+
+    expect(screen.getByRole('link', { name: 'Souk' })).toBeTruthy();
+    mocks.list = undefined;
   });
 
   it('tells a judge who recused, and shows them neither the submission nor the form', () => {

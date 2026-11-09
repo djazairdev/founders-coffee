@@ -15,6 +15,7 @@ import { localizedLogin } from '../../../lib/locale-routing';
 import { useFocusAfterChange } from '../../../lib/useFocusAfterChange';
 import type { HackathonRegistrationView, HackathonSchedule } from '../api';
 import { phaseSentence } from '../schedule';
+import { HackathonParticipantLinks } from './HackathonParticipantLinks';
 import { HackathonRegistrationForm } from './HackathonRegistrationForm';
 import { HackathonRegistrationStanding } from './HackathonRegistrationStanding';
 
@@ -124,6 +125,13 @@ export const HackathonRegistrationCard = (
       <div className="mt-3">
         <Body {...props} />
       </div>
+      <HackathonParticipantLinks
+        eventId={props.eventId}
+        isRegistered={props.registration.viewer?.status === 'registered'}
+        isJudge={props.registration.isJudge}
+        isOrganiser={props.registration.isOrganiser}
+        locale={props.locale}
+      />
     </section>
   );
 };
