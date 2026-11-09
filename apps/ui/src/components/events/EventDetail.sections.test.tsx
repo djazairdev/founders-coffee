@@ -51,13 +51,16 @@ describe('what the details of an event are called (#477)', () => {
     },
   );
 
-  it('keeps the sections of a hackathon beside its details, not inside them', () => {
+  it('keeps the sections of a hackathon out of its details, after them', () => {
     show('hackathon', {} as HackathonPageDetails);
 
     const details = screen.getByRole('region', { name: 'Details' });
     const rules = screen.getByRole('region', { name: 'Rules' });
 
     expect(details.contains(rules)).toBe(false);
-    expect(rules.parentElement).toBe(details.parentElement);
+    expect(details.parentElement?.contains(rules)).toBe(false);
+    expect(
+      details.compareDocumentPosition(rules) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
   });
 });

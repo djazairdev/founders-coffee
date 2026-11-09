@@ -25,7 +25,7 @@ export const HackathonAside = ({
   timeZone: string;
   locale: Locale;
 }) => (
-  <div className="flex flex-col gap-4 self-start">
+  <div className="flex flex-col gap-4 self-start lg:col-start-2 lg:row-span-2 lg:row-start-1">
     {details?.registration && !isCancelled ? (
       <HackathonRegistrationCard
         eventId={eventId}

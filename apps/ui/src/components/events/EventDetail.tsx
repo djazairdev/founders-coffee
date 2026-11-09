@@ -198,7 +198,7 @@ export const EventDetail = ({
       </h2>
 
       <div
-        className={`mt-4 grid gap-8 ${hasAside ? 'lg:grid-cols-[minmax(0,1.45fr)_minmax(18rem,0.75fr)]' : ''}`}
+        className={`mt-4 grid gap-8 ${hasAside ? 'lg:grid-cols-[minmax(0,1.45fr)_minmax(18rem,0.75fr)]' : ''} ${details ? 'lg:grid-rows-[auto_1fr]' : ''}`}
       >
         <div className="flex flex-col">
           <section
@@ -245,14 +245,6 @@ export const EventDetail = ({
               organisations={organisations}
             />
           </section>
-          {details ? (
-            <HackathonPageDetails
-              details={details}
-              market={market}
-              reportEventId={canReport ? event.id : null}
-              locale={locale}
-            />
-          ) : null}
         </div>
 
         {hasRsvpBox ? (
@@ -276,6 +268,14 @@ export const EventDetail = ({
             details={details}
             isCancelled={isCancelled}
             timeZone={market.timezone}
+            locale={locale}
+          />
+        ) : null}
+        {details ? (
+          <HackathonPageDetails
+            details={details}
+            market={market}
+            reportEventId={canReport ? event.id : null}
             locale={locale}
           />
         ) : null}
