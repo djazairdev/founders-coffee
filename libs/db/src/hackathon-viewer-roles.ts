@@ -1,17 +1,27 @@
-import { eq, sql } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
+
+import type { OrganisationStatus } from '@founders-coffee/core';
 
 import type { Db } from './db.js';
-import { eventOrganisers, events, hackathonJudges, member } from './schema.js';
+import {
+  eventOrganisers,
+  events,
+  hackathonJudges,
+  member,
+  organization,
+} from './schema.js';
 
 export type HackathonViewerRoles = {
   readonly isJudge: boolean;
-  readonly isOrganiser: boolean;
+  readonly leadMembership: {
+    readonly status: OrganisationStatus;
+    readonly role: string;
+  } | null;
 };
 
 /**
- * Whether a member judges a hackathon, having accepted, and whether they belong to the
- * organisation that leads it, in one read, so its page can lead them to their scoring or to its
- * management. Neither is a permission: each page they lead to checks again.
+ * The viewer's accepted judge place and membership of the organisation leading the hackathon,
+ * read together for its page. The destination routes still authorise access.
  */
 export const readHackathonViewerRoles = async (
   db: Db,
@@ -19,13 +29,40 @@ export const readHackathonViewerRoles = async (
 ): Promise<HackathonViewerRoles> => {
   const [row] = await db
     .select({
-      isJudge: sql<number>`EXISTS (SELECT 1 FROM ${hackathonJudges} WHERE ${hackathonJudges.eventId} = ${input.eventId} AND ${hackathonJudges.userId} = ${input.userId} AND ${hackathonJudges.status} = 'accepted')`,
-      isOrganiser: sql<number>`EXISTS (SELECT 1 FROM ${eventOrganisers} AS lead INNER JOIN ${member} AS joined ON joined.organization_id = lead.organisation_id WHERE lead.event_id = ${input.eventId} AND lead.role = 'lead' AND joined.user_id = ${input.userId})`,
+      judgeId: hackathonJudges.id,
+      leadStatus: organization.status,
+      leadRole: member.role,
     })
     .from(events)
+    .leftJoin(
+      hackathonJudges,
+      and(
+        eq(hackathonJudges.eventId, events.id),
+        eq(hackathonJudges.userId, input.userId),
+        eq(hackathonJudges.status, 'accepted'),
+      ),
+    )
+    .leftJoin(
+      eventOrganisers,
+      and(
+        eq(eventOrganisers.eventId, events.id),
+        eq(eventOrganisers.role, 'lead'),
+      ),
+    )
+    .leftJoin(organization, eq(organization.id, eventOrganisers.organisationId))
+    .leftJoin(
+      member,
+      and(
+        eq(member.organizationId, organization.id),
+        eq(member.userId, input.userId),
+      ),
+    )
     .where(eq(events.id, input.eventId));
   return {
-    isJudge: Boolean(row?.isJudge),
-    isOrganiser: Boolean(row?.isOrganiser),
+    isJudge: Boolean(row?.judgeId),
+    leadMembership:
+      row?.leadRole && row.leadStatus
+        ? { status: row.leadStatus, role: row.leadRole }
+        : null,
   };
 };

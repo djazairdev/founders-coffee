@@ -1,3 +1,4 @@
+import { organisationRoleAllows } from '@founders-coffee/auth';
 import type {
   AttendanceMode,
   HackathonRegistrationStatus,
@@ -7,6 +8,7 @@ import {
   readHackathonViewerRoles,
   type Db,
 } from '@founders-coffee/db';
+import { organisations } from '@founders-coffee/domain';
 
 export type HackathonRegistrationView = {
   readonly isFull: boolean;
@@ -21,8 +23,8 @@ export type HackathonRegistrationView = {
 /**
  * What a hackathon page's registration card needs (B-REG-06): whether every place is taken, so a
  * new registration joins the waitlist, and the reader's own registration, read only for a reader
- * who is signed in, with whether they judge it or belong to the organisation leading it, so the card
- * can lead them to their team, their scoring or its management. `null` for anything but a hackathon with its details.
+ * who is signed in, with whether they judge or may manage it. This lets the card offer links to
+ * the team, judging and management pages. Returns `null` for an event without hackathon details.
  */
 export const hackathonRegistrationView = async (
   db: Db,
@@ -40,15 +42,19 @@ export const hackathonRegistrationView = async (
   const viewer = input.viewerId
     ? { eventId: input.eventId, userId: input.viewerId }
     : null;
-  const [registration, roles] = viewer
+  const [registration, { isJudge, leadMembership }] = viewer
     ? await Promise.all([
         readHackathonRegistration(db, viewer),
         readHackathonViewerRoles(db, viewer),
       ])
-    : [null, { isJudge: false, isOrganiser: false }];
+    : [null, { isJudge: false, leadMembership: null }];
   return {
     isFull: capacity !== null && registeredCount >= capacity,
     viewer: registration,
-    ...roles,
+    isJudge,
+    isOrganiser:
+      leadMembership !== null &&
+      organisations.isOrganisationActive(leadMembership.status) &&
+      organisationRoleAllows(leadMembership.role, 'hackathon', 'manage'),
   };
 };

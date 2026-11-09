@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { eq, events, type Db } from '@founders-coffee/db';
+import { eq, events, organization, type Db } from '@founders-coffee/db';
 
 import { judgeOf } from '../hackathons/judging.fixtures.js';
 import { registerForHackathonResolver } from '../hackathons/registration.js';
@@ -109,6 +109,22 @@ describe('the registration card’s data on a hackathon page (B-REG-06, real D1)
       isOrganiser: true,
     });
     expect(await registrationOn(eventId, 'usr_cohost')).toMatchObject({
+      isOrganiser: false,
+    });
+  });
+
+  it('does not offer hackathon management after the lead organisation is suspended (B-OPS-01)', async () => {
+    const eventId = await openHackathon(db);
+    await signUp(db, 'usr_lead');
+    await organisation(db, 'org_lead', 'usr_lead');
+    await coOrganise(db, eventId, 'org_lead', 'lead');
+
+    await db
+      .update(organization)
+      .set({ status: 'suspended' })
+      .where(eq(organization.id, 'org_lead'));
+
+    expect(await registrationOn(eventId, 'usr_lead')).toMatchObject({
       isOrganiser: false,
     });
   });

@@ -25,6 +25,7 @@ import {
   type HostMapContext,
   type HostMapLocationInput,
   type NearbyVenuesInput,
+  type OrganisationView,
   type RsvpInput,
   type RepeatEventTemplate,
   type VenueCandidate,
@@ -173,7 +174,7 @@ export const useCreateOrganisationEvent = () =>
 
 /** The organisations the signed-in member belongs to, read only once they are signed in. */
 export const useMyOrganisations = (isSignedIn: boolean) =>
-  useQuery({
+  useQuery<readonly OrganisationView[]>({
     queryKey: ['organisations', 'mine'],
     queryFn: () => eventsApi.listMyOrganisations(),
     enabled: isSignedIn,

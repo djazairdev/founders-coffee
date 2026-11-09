@@ -121,7 +121,12 @@ export const HackathonJudgeEntryPage = ({
           locale={locale}
         />
       ) : view.isJudge && view.stage === 'judging' ? (
-        <Scoring view={view} submissionId={submissionId} locale={locale} />
+        <Scoring
+          key={submissionId}
+          view={view}
+          submissionId={submissionId}
+          locale={locale}
+        />
       ) : (
         <HackathonJudgingNotice
           view={view}
