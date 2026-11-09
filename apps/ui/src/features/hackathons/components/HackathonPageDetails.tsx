@@ -20,7 +20,7 @@ export const HackathonPageDetails = ({
   reportEventId?: string | null;
   locale: Locale;
 }) => (
-  <>
+  <div className="*:first:mt-0 lg:col-start-1">
     {details.results ? (
       <HackathonResults
         results={details.results}
@@ -43,5 +43,5 @@ export const HackathonPageDetails = ({
         locale={locale}
       />
     ) : null}
-  </>
+  </div>
 );
