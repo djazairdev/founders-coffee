@@ -62,6 +62,14 @@ describe('hasSuccessfulStagingJobs', () => {
       ]),
     ).toBe(false);
   });
+
+  it('rejects evidence from before the separate server coverage job', () => {
+    const jobs = successfulJobs().filter(
+      ({ name }) => name !== 'Verify / Server functions tests',
+    );
+
+    expect(hasSuccessfulStagingJobs(jobs)).toBe(false);
+  });
 });
 
 describe('findVerifiedStagingRun', () => {

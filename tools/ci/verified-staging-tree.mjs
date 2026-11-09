@@ -3,6 +3,7 @@ import { pathToFileURL } from 'node:url';
 
 export const REQUIRED_STAGING_JOBS = [
   'Verify / Format, sync, typecheck, lint and test',
+  'Verify / Server functions tests',
   'Verify / Build and Miniflare SEO gate',
   'Migrate and deploy',
 ];
