@@ -74,22 +74,20 @@ const mapOver = async (library: () => object) => {
   vi.resetModules();
   vi.doMock('mapbox-gl/dist/mapbox-gl-csp.js', library);
   const { HostMap } = await import('./HostMap');
-  await act(async () => {
-    render(
-      createElement(HostMap, {
-        accessToken: 'test-token',
-        venue: null,
-        viewport: {
-          center: { latitude: 36.7538, longitude: 3.0588 },
-          bounds: [2.9, 36.6, 3.3, 36.9],
-        },
-        marketCode: 'DZ',
-        locale: 'en',
-        onVenueSelect: vi.fn(),
-        onVenueInvalidate: vi.fn(),
-      }),
-    );
-  });
+  render(
+    createElement(HostMap, {
+      accessToken: 'test-token',
+      venue: null,
+      viewport: {
+        center: { latitude: 36.7538, longitude: 3.0588 },
+        bounds: [2.9, 36.6, 3.3, 36.9],
+      },
+      marketCode: 'DZ',
+      locale: 'en',
+      onVenueSelect: vi.fn(),
+      onVenueInvalidate: vi.fn(),
+    }),
+  );
 };
 
 const pressRetry = () =>

@@ -161,7 +161,7 @@ const load = async () => {
     throw new Error('the meetup route lost its loader');
   return loader({
     params: { locale: 'en', market: 'algeria', slug: upcoming.slug },
-    context: { locale: 'en', markets: [market] },
+    context: { locale: 'en', eventMarket: market },
   } as never);
 };
 

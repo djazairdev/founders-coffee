@@ -61,7 +61,7 @@
         }
       ],
       "options": {
-        "command": "vite build && wrangler deploy",
+        "command": "npm run build && wrangler deploy",
         "cwd": "apps/ui",
         "env": {
           "CLOUDFLARE_ENV": "staging"
@@ -81,7 +81,7 @@
         }
       ],
       "options": {
-        "command": "vite build && wrangler deploy",
+        "command": "npm run build && wrangler deploy",
         "cwd": "apps/ui",
         "env": {
           "CLOUDFLARE_ENV": "production"
