@@ -99,7 +99,7 @@ export const Route = createFileRoute('/$locale/$market/e/$slug')({
     chat: z.literal(true).optional().catch(undefined),
   }),
   component: EventRoute,
-  loader: async ({ params, context }): Promise<EventRouteData> => {
+  beforeLoad: ({ params, context }) => {
     const market = context.markets.find(
       (listed) => listed.slug === params.market,
     );
@@ -110,10 +110,13 @@ export const Route = createFileRoute('/$locale/$market/e/$slug')({
       if (!byCode) throw notFound();
       throw redirect(localizedEvent(context.locale, byCode.slug, params.slug));
     }
+    return { eventMarket: market };
+  },
+  loader: async ({ params, context }): Promise<EventRouteData> => {
     try {
       const [page, mapboxToken] = await Promise.all([
         getEventPage({
-          data: { marketCode: market.code, slug: params.slug },
+          data: { marketCode: context.eventMarket.code, slug: params.slug },
         }),
         getMapboxToken().catch(() => null),
       ]);

@@ -1,6 +1,7 @@
 import { defineConfig, type Plugin } from 'vite';
 import { fileURLToPath } from 'node:url';
 
+import { nxReadySignal } from '@nx/vite/plugins/nx-ready-signal.plugin';
 import { tanstackStart } from '@tanstack/react-start/plugin/vite';
 
 import viteReact from '@vitejs/plugin-react';
@@ -97,6 +98,7 @@ export default defineConfig(({ command }) => ({
     ],
   },
   plugins: [
+    nxReadySignal(),
     cloudflare({
       viteEnvironment: { name: 'ssr' },
       persistState: { path: LOCAL_STATE_PATH },

@@ -2,6 +2,7 @@ import { fileURLToPath } from 'node:url';
 
 import { defineConfig } from 'vite';
 
+import { nxReadySignal } from '@nx/vite/plugins/nx-ready-signal.plugin';
 import { tanstackStart } from '@tanstack/react-start/plugin/vite';
 
 import viteReact from '@vitejs/plugin-react';
@@ -15,6 +16,7 @@ const LOCAL_STATE_PATH = fileURLToPath(
 const config = defineConfig({
   resolve: { tsconfigPaths: true },
   plugins: [
+    nxReadySignal(),
     cloudflare({
       viteEnvironment: { name: 'ssr' },
       persistState: { path: LOCAL_STATE_PATH },

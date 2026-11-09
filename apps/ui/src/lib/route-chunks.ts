@@ -12,7 +12,7 @@ import { createIsomorphicFn, getRouterInstance } from '@tanstack/react-start';
 export const loadMatchedRouteChunks = createIsomorphicFn()
   .server(async (): Promise<void> => {
     const router = await getRouterInstance();
-    const { matchedRoutes } = router.getMatchedRoutes(
+    const [matchedRoutes] = router.getMatchedRoutes(
       router.latestLocation.pathname,
     );
     await Promise.all(
