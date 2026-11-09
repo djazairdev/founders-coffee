@@ -332,6 +332,7 @@
   "profile_loading": "جارٍ تحميل ملفك…",
   "profile_load_error": "تعذّر تحميل الملف الشخصي. حاول مجددًا.",
   "profile_title": "ملفك الشخصي",
+  "profile_view_public": "عرض ملفك العام",
   "profile_save": "حفظ التغييرات",
   "public_no_events": "لم يستضف لقاءً بعد",
   "role_host": "مضيف",
