@@ -6,6 +6,7 @@ import {
   organisationsApi,
   type OrganisationPage,
 } from '../features/organisations/api';
+import { OrganisationManageLink } from '../features/organisations/components/OrganisationManageLink';
 import { OrganisationPublicPage } from '../features/organisations/components/OrganisationPublicPage';
 import { organisationPageHead } from '../lib/seo-organisation';
 
@@ -13,7 +14,14 @@ const OrganisationRoute = () => {
   const { locale, markets } = Route.useRouteContext();
   const page = Route.useLoaderData();
   return (
-    <OrganisationPublicPage locale={locale} page={page} markets={markets} />
+    <OrganisationPublicPage
+      locale={locale}
+      page={page}
+      markets={markets}
+      manageLink={
+        <OrganisationManageLink slug={page.organisation.slug} locale={locale} />
+      }
+    />
   );
 };
 

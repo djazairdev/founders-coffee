@@ -71,7 +71,12 @@ const schedule = (phase: HackathonSchedule['phase']): HackathonSchedule => ({
 
 const renderCard = ({
   phase = 'registration_open',
-  registration = { isFull: false, viewer: null },
+  registration = {
+    isFull: false,
+    viewer: null,
+    isJudge: false,
+    isOrganiser: false,
+  },
   format = 'hybrid',
   minimumAge = 18,
   locale = 'en',
@@ -101,6 +106,8 @@ const viewer = (
 ) => ({
   isFull: false,
   viewer: { status, attendanceMode: 'online' as const },
+  isJudge: false,
+  isOrganiser: false,
 });
 
 const submit = () =>
@@ -195,7 +202,14 @@ describe('HackathonRegistrationCard (B-REG-06)', () => {
   });
 
   it('offers the waitlist once every place is taken', () => {
-    renderCard({ registration: { isFull: true, viewer: null } });
+    renderCard({
+      registration: {
+        isFull: true,
+        viewer: null,
+        isJudge: false,
+        isOrganiser: false,
+      },
+    });
 
     expect(screen.getByText(/^Every place is taken\./u)).toBeTruthy();
     expect(
@@ -234,6 +248,14 @@ describe('HackathonRegistrationCard (B-REG-06)', () => {
     expect(mocks.withdraw.mock.calls[0]?.[0]).toBe('evt_builders');
   });
 
+  it('leads a registered member to their team, not a waitlisted one', () => {
+    renderCard({ phase: 'building', registration: viewer('registered') });
+    expect(screen.getByRole('link', { name: 'Go to your team' })).toBeTruthy();
+    cleanup();
+    renderCard({ registration: viewer('waitlisted') });
+    expect(screen.queryByRole('link', { name: 'Go to your team' })).toBeNull();
+  });
+
   it('lets a waitlisted member leave the list, until submissions close', () => {
     renderCard({ registration: viewer('waitlisted') });
     expect(screen.getByText(/^You’re on the waitlist\./u)).toBeTruthy();
@@ -258,7 +280,15 @@ describe('HackathonRegistrationCard (B-REG-06)', () => {
   });
 
   it('reads in Arabic', () => {
-    renderCard({ locale: 'ar', registration: { isFull: true, viewer: null } });
+    renderCard({
+      locale: 'ar',
+      registration: {
+        isFull: true,
+        viewer: null,
+        isJudge: false,
+        isOrganiser: false,
+      },
+    });
 
     expect(screen.getByRole('heading', { name: 'المشاركة' })).toBeTruthy();
     expect(

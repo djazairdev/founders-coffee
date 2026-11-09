@@ -10,11 +10,16 @@ import {
 } from '@founders-coffee/i18n';
 import { StatusMessage } from '@founders-coffee/ui';
 
-const HackathonReportDialog = lazy(() =>
+const loadDialog = () =>
   import('./HackathonReportDialog').then((module) => ({
     default: module.HackathonReportDialog,
-  })),
-);
+  }));
+
+const HackathonReportDialog = lazy(loadDialog);
+
+const preloadDialog = () => {
+  void loadDialog().catch(() => undefined);
+};
 
 const DONE = { sent: hackathon_report_sent, already: hackathon_report_already };
 
@@ -49,6 +54,9 @@ export const HackathonReportButton = ({
         type="button"
         aria-label={hackathon_report_open_label({ name }, { locale })}
         className="tap-target link link-hover min-h-6 w-fit text-caption text-neutral"
+        onPointerEnter={preloadDialog}
+        onFocus={preloadDialog}
+        onTouchStart={preloadDialog}
         onClick={() => setIsOpen(true)}
       >
         {hackathon_report_open({}, { locale })}

@@ -1,4 +1,5 @@
 import { ExternalLink } from 'lucide-react';
+import type { ReactNode } from 'react';
 
 import {
   org_page_no_past,
@@ -19,10 +20,12 @@ export const OrganisationPublicPage = ({
   locale,
   page,
   markets,
+  manageLink = null,
 }: {
   locale: Locale;
   page: OrganisationPage;
   markets: readonly RootMarket[];
+  manageLink?: ReactNode;
 }) => {
   const { organisation } = page;
   const website = org_page_website({}, { locale });
@@ -45,18 +48,21 @@ export const OrganisationPublicPage = ({
               <bdi>{organisation.name}</bdi>
             </h1>
           </div>
-          {organisation.websiteUrl ? (
-            <a
-              href={organisation.websiteUrl}
-              target="_blank"
-              rel="noopener noreferrer nofollow ugc"
-              aria-label={`${website}: ${organisation.websiteUrl}`}
-              className="btn btn-outline btn-xs shrink-0 self-start sm:btn-sm md:btn-md"
-            >
-              <span>{website}</span>
-              <ExternalLink className="size-4" aria-hidden="true" />
-            </a>
-          ) : null}
+          <div className="flex flex-wrap gap-2">
+            {manageLink}
+            {organisation.websiteUrl ? (
+              <a
+                href={organisation.websiteUrl}
+                target="_blank"
+                rel="noopener noreferrer nofollow ugc"
+                aria-label={`${website}: ${organisation.websiteUrl}`}
+                className="btn btn-outline btn-xs shrink-0 self-start sm:btn-sm md:btn-md"
+              >
+                <span>{website}</span>
+                <ExternalLink className="size-4" aria-hidden="true" />
+              </a>
+            ) : null}
+          </div>
         </header>
         <p className="mt-5 max-w-prose whitespace-pre-line break-words text-body-lg">
           <IsolatedLines text={organisation.description} />
