@@ -51,6 +51,8 @@ export const useHackathonDraft = (eventId: string) =>
   useQuery<HackathonDraftView>({
     queryKey: [...DRAFT, eventId],
     queryFn: () => hackathonsApi.draft(eventId),
+    refetchOnWindowFocus: (query) =>
+      query.state.data?.review.status === 'submitted' ? 'always' : false,
   });
 
 /** Who registered for a hackathon, for its organisers (B-REG-08). */
@@ -58,6 +60,7 @@ export const useHackathonParticipants = (eventId: string) =>
   useQuery<HackathonParticipantsView>({
     queryKey: [...DRAFT, eventId, 'participants'],
     queryFn: () => hackathonsApi.roster(eventId),
+    refetchOnWindowFocus: 'always',
   });
 
 /** A hackathon's teams and entries, for its organisers (B-OPS-02). */
@@ -65,6 +68,7 @@ export const useHackathonTeams = (eventId: string) =>
   useQuery<HackathonTeamsView>({
     queryKey: [...DRAFT, eventId, 'teams'],
     queryFn: () => hackathonsApi.teams(eventId),
+    refetchOnWindowFocus: 'always',
   });
 
 /**
@@ -76,6 +80,7 @@ export const useHackathonDashboard = (eventId: string, isEnabled: boolean) =>
     queryKey: [...DRAFT, eventId, 'dashboard'],
     queryFn: () => hackathonsApi.dashboard(eventId),
     enabled: isEnabled,
+    refetchOnWindowFocus: 'always',
   });
 
 /**
