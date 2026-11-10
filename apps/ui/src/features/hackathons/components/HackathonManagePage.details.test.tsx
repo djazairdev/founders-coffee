@@ -62,6 +62,28 @@ describe('HackathonManagePage: the details form (B-HKN-12)', () => {
     expect(screen.getByText('Choose an AI policy.')).toBeTruthy();
   });
 
+  it.each([
+    ['draft', 'draft'],
+    ['draft', 'submitted'],
+    ['draft', 'rejected'],
+    ['published', 'approved'],
+  ] as const)(
+    'does not repeat the creation notice for a configured %s event with %s review',
+    (status, reviewStatus) => {
+      mocks.draft.data = draftView(
+        {
+          details: savedDetails,
+          isEditable: reviewStatus !== 'submitted',
+          review: { status: reviewStatus, note: null, gaps: [] },
+        },
+        { status },
+      );
+      renderPage('en', true);
+
+      expect(screen.queryByText(/^Draft saved\./u)).toBeNull();
+    },
+  );
+
   it('opens on the saved details, and says when they were saved or refused', () => {
     mocks.draft.data = draftView({ details: savedDetails });
     mocks.save.isSuccess = true;

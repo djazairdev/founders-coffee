@@ -134,11 +134,12 @@ export const HackathonDashboard = ({
       </h2>
       {dashboard ? (
         <>
-          {dashboard.status === 'cancelled' ? null : (
+          {draft.event.status === 'published' &&
+          dashboard.status === 'published' ? (
             <p className="mt-1 text-body-sm text-neutral">
               {phaseSentence(dashboard.schedule, locale, timeZone)}
             </p>
-          )}
+          ) : null}
           <Counts dashboard={dashboard} locale={locale} />
         </>
       ) : query.isError ? (

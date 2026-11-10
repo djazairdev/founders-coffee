@@ -4,7 +4,6 @@ import {
   formatDate,
   hackathon_details_heading,
   hackathon_details_sub,
-  hackathon_manage_created,
   hackathon_manage_error,
   hackathon_manage_loading,
   hackathon_manage_locked,
@@ -123,12 +122,11 @@ export const HackathonManagePage = ({
       <p className="mt-1 text-body-sm text-neutral">
         {org_hackathon_dates({ start: kickoff, end: demoDay }, { locale })}
       </p>
-      {isJustCreated ? (
-        <StatusMessage variant="success" className="mt-6">
-          {hackathon_manage_created({}, { locale })}
-        </StatusMessage>
-      ) : null}
-      <HackathonReviewBanner draft={draft} locale={locale} />
+      <HackathonReviewBanner
+        draft={draft}
+        locale={locale}
+        isJustCreated={isJustCreated}
+      />
       <HackathonDashboard
         draft={draft}
         locale={locale}

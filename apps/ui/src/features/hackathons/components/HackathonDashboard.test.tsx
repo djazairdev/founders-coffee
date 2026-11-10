@@ -153,6 +153,7 @@ describe('HackathonDashboard (B-OPS-01)', () => {
     );
 
     expect(screen.queryByRole('link', { name: 'Public page' })).toBeNull();
+    expect(screen.queryByText(/^Registration is open/u)).toBeNull();
     expect(
       screen.getByRole('link', { name: 'Go to review' }).getAttribute('href'),
     ).toBe('#hackathon-review-heading');

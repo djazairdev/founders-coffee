@@ -17,7 +17,13 @@ const review = (
 });
 
 const renderBanner = (draft: HackathonDraftView, locale: Locale = 'en') =>
-  render(<HackathonReviewBanner draft={draft} locale={locale} />);
+  render(
+    <HackathonReviewBanner
+      draft={draft}
+      locale={locale}
+      isJustCreated={false}
+    />,
+  );
 
 afterEach(cleanup);
 
