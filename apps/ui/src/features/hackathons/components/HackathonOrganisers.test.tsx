@@ -14,11 +14,7 @@ import {
 } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
 
-import {
-  hackathon_organisers_apply,
-  hackathon_organisers_manage,
-  type Locale,
-} from '@founders-coffee/i18n';
+import { hackathon_organisers_apply, type Locale } from '@founders-coffee/i18n';
 
 import { HackathonOrganisers } from './HackathonOrganisers';
 
@@ -42,15 +38,8 @@ const renderSection = async (locale: Locale, isEnabled = true) => {
     path: 'o/apply',
     component: () => null,
   });
-  const activity = createRoute({
-    getParentRoute: () => localized,
-    path: 'profile/activity',
-    component: () => null,
-  });
   const router = createRouter({
-    routeTree: root.addChildren([
-      localized.addChildren([home, apply, activity]),
-    ]),
+    routeTree: root.addChildren([localized.addChildren([home, apply])]),
     history: createMemoryHistory({ initialEntries: [`/${locale}/algeria`] }),
   });
   await router.load();
@@ -63,6 +52,7 @@ describe.each(['ar', 'en', 'fr'] as const)(
   (locale) => {
     it('takes a new organiser into the existing organisation setup', async () => {
       const router = await renderSection(locale);
+      expect(await screen.findAllByRole('link')).toHaveLength(1);
       fireEvent.click(
         await screen.findByRole('link', {
           name: hackathon_organisers_apply({}, { locale }),
@@ -71,21 +61,6 @@ describe.each(['ar', 'en', 'fr'] as const)(
       await waitFor(() =>
         expect(router.state.location.pathname).toBe(`/${locale}/o/apply`),
       );
-    });
-
-    it('takes an existing organiser to their organisations', async () => {
-      const router = await renderSection(locale);
-      fireEvent.click(
-        await screen.findByRole('link', {
-          name: hackathon_organisers_manage({}, { locale }),
-        }),
-      );
-      await waitFor(() => {
-        expect(router.state.location.pathname).toBe(
-          `/${locale}/profile/activity`,
-        );
-        expect(router.state.location.hash).toBe('my-organisations-heading');
-      });
     });
 
     it('does not offer hackathon setup in a disabled market', async () => {

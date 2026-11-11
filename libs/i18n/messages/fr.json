@@ -112,10 +112,10 @@
   "llms_event_feed": "Flux de rencontres lisible par machine",
   "llms_staging": "Cet environnement de staging n'est pas destiné à la découverte publique.",
   "market_hero_desc": "Nous réunissons entrepreneurs et fondateurs en {market} autour d’un café convivial pour tisser de vrais liens, échanger et grandir en s’associant.",
-  "hero_tagline": "Un café, un partenariat",
+  "hero_tagline": "Événements et innovation pour demain",
   "hero_subtitle": "Nous réunissons les fondateurs pour créer des liens et grandir ensemble",
   "hero_search_placeholder": "Votre ville…",
-  "hero_search_cta": "Explorer les rencontres",
+  "hero_search_cta": "Explorer les événements",
   "hero_social_proof": [
     {
       "declarations": [
@@ -176,7 +176,7 @@
   "hero_waitlist_already": "Vous êtes déjà sur la liste d’attente pour {city} !",
   "hero_waitlist_invalid_email": "Veuillez entrer un email valide",
   "host_in_your_city": "Organisez une rencontre",
-  "cities_in": "Partenariats et rencontres qui commencent maintenant dans les villes d’{market}",
+  "cities_in": "Événements qui commencent maintenant dans les villes d’{market}",
   "market_cities": "Villes",
   "going_count": [
     {
@@ -2174,18 +2174,16 @@
   "hackathon_role_mentor_prompt": "Les organisateurs vous invitent à accompagner les équipes. Indiquez comment vous pouvez les aider et quand vous êtes disponible.",
   "hackathon_role_mentor_note_required": "Indiquez en quelques mots comment vous pouvez aider.",
   "hackathon_role_accepted": "Vous avez accepté l’invitation.",
-  "hackathon_organisers_label": "Pour les organisateurs",
-  "hackathon_organisers_title": "Organisez votre prochain hackathon",
-  "hackathon_organisers_intro": "Rassemblez votre club, votre communauté ou votre entreprise autour d’un défi. Gérez les inscriptions, les projets et les évaluations au même endroit.",
-  "hackathon_organisers_apply": "Organiser un hackathon",
-  "hackathon_organisers_manage": "Gérer mon organisation",
-  "hackathon_organisers_note": "Ajoutez d’abord votre organisation. Les organisations et les hackathons sont validés avant leur publication.",
-  "hackathon_organisers_registration_title": "Inscriptions et équipes",
+  "hackathon_organisers_label": "Pour les entreprises, clubs étudiants et incubateurs",
+  "hackathon_organisers_title": "Là où les entreprises, les clubs étudiants et les communautés tech d’Algérie innovent ensemble.",
+  "hackathon_organisers_intro": "Founders Coffee réunit entreprises, incubateurs universitaires, clubs étudiants et développeurs autour de hackathons et de défis d’innovation pour résoudre des problèmes concrets, découvrir de nouveaux talents et créer des occasions de collaborer et de se développer.",
+  "hackathon_organisers_apply": "Créer un hackathon",
+  "hackathon_organisers_registration_title": "Inscriptions et formation des équipes",
   "hackathon_organisers_registration_body": "Ouvrez les inscriptions et fixez le nombre de participants et la taille des équipes.",
   "hackathon_organisers_submissions_title": "Dépôt des projets",
-  "hackathon_organisers_submissions_body": "Recevez les projets et les liens des équipes avant la date limite.",
-  "hackathon_organisers_judging_title": "Jury et résultats",
-  "hackathon_organisers_judging_body": "Invitez le jury, suivez les évaluations et publiez les résultats et les certificats.",
+  "hackathon_organisers_submissions_body": "Recevez les projets et fichiers des équipes et gérez les dépôts au même endroit.",
+  "hackathon_organisers_judging_title": "Jury et annonce des résultats",
+  "hackathon_organisers_judging_body": "Invitez le jury, suivez les évaluations et annoncez les gagnants.",
   "innovation_stat_statement": "des entreprises interrogées par BCG plaçaient l’innovation parmi leurs trois priorités principales.",
   "innovation_stat_source": "Source : enquête mondiale BCG sur l’innovation, 2024"
 }

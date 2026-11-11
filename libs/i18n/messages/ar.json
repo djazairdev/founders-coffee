@@ -112,10 +112,10 @@
   "llms_event_feed": "خلاصة اللقاءات للقراءة الآلية",
   "llms_staging": "هذه بيئة تجريبية وليست للاكتشاف العام.",
   "market_hero_desc": "نجمع رواد الأعمال والمؤسسين في {market} في لقاءات ودية حول فنجان قهوة، لبناء علاقات حقيقية، تبادل الخبرات، واكتشاف فرص جديدة للنمو والشراكة.",
-  "hero_tagline": "شراكات تبدأ بقهوة",
+  "hero_tagline": "فعاليات تجمعنا وابتكار يصنع مستقبلنا",
   "hero_subtitle": "نجمع رواد الأعمال لبناء العلاقات والنمو معًا",
   "hero_search_placeholder": "اسم مدينتك…",
-  "hero_search_cta": "استكشف اللقاءات",
+  "hero_search_cta": "استكشف الفعاليات",
   "hero_social_proof": [
     {
       "declarations": [
@@ -146,7 +146,7 @@
   "hero_waitlist_already": "أنت على قائمة الانتظار لـ{city} بالفعل!",
   "hero_waitlist_invalid_email": "يرجى إدخال بريد إلكتروني صحيح",
   "host_in_your_city": "استضف في مدينتك",
-  "cities_in": "شراكات ولقاءات تبدأ الآن في مدن {market}",
+  "cities_in": "فعاليات تبدأ الآن في مدن {market}",
   "market_cities": "المدن",
   "going_count": [
     {
@@ -2048,18 +2048,16 @@
   "hackathon_role_mentor_prompt": "يدعوك المنظمون إلى إرشاد الفرق. أخبرهم كيف يمكنك مساعدتهم ومتى تكون متاحًا.",
   "hackathon_role_mentor_note_required": "اكتب نبذة قصيرة عما يمكنك المساعدة فيه.",
   "hackathon_role_accepted": "قبلت الدعوة.",
-  "hackathon_organisers_label": "للمنظّمين",
-  "hackathon_organisers_title": "نظّم هاكاثونك القادم",
-  "hackathon_organisers_intro": "اجمع المشاركين حول تحدٍّ في هاكاثون ينظّمه ناديك أو مجتمعك أو شركتك. أدر التسجيل والمشاريع والتحكيم في مكان واحد.",
-  "hackathon_organisers_apply": "ابدأ تنظيم هاكاثون",
-  "hackathon_organisers_manage": "إدارة منظمتي",
-  "hackathon_organisers_note": "أضف منظمتك أولًا. نراجع المنظمة والهاكاثون قبل النشر.",
-  "hackathon_organisers_registration_title": "التسجيل والفرق",
-  "hackathon_organisers_registration_body": "افتح التسجيل، وحدّد عدد المشاركين وحجم الفرق.",
-  "hackathon_organisers_submissions_title": "المشاريع المقدّمة",
-  "hackathon_organisers_submissions_body": "استقبل مشاريع الفرق وروابطها قبل الموعد النهائي.",
-  "hackathon_organisers_judging_title": "التحكيم والنتائج",
-  "hackathon_organisers_judging_body": "ادعُ المحكّمين، وتابع التقييمات، وانشر النتائج والشهادات.",
+  "hackathon_organisers_label": "للشركات والنوادي الطلابية والحاضنات",
+  "hackathon_organisers_title": "هنا تلتقي الشركات والنوادي الطلابية والمجتمعات التقنية في الجزائر لصناعة الابتكار.",
+  "hackathon_organisers_intro": "تجمع Founders Coffee الشركات والحاضنات الجامعية والنوادي الطلابية والمطورين عبر هاكاثونات وتحديات ابتكارية تهدف إلى إيجاد حلول لمشاكل واقعية، واكتشاف المواهب الواعدة، وفتح آفاق جديدة للتعاون والنمو.",
+  "hackathon_organisers_apply": "أنشئ هاكاثون",
+  "hackathon_organisers_registration_title": "التسجيل وتشكيل الفرق",
+  "hackathon_organisers_registration_body": "افتح باب التسجيل، وحدّد عدد المشاركين وحجم الفرق.",
+  "hackathon_organisers_submissions_title": "تسليم المشاريع",
+  "hackathon_organisers_submissions_body": "استقبل مشاريع الفرق وملفاتها، ونظّم المشاركات في مكان واحد.",
+  "hackathon_organisers_judging_title": "التحكيم وإعلان النتائج",
+  "hackathon_organisers_judging_body": "ادعُ المحكّمين، وتابع التقييمات، وأعلن الفائزين.",
   "innovation_stat_statement": "من الشركات المشاركة في استطلاع BCG وضعت الابتكار ضمن أهم ثلاث أولوياتها.",
   "innovation_stat_source": "المصدر: استطلاع BCG العالمي للابتكار، 2024"
 }
