@@ -175,7 +175,7 @@ Announce the first hackathon now, and collect who wants to take part, before the
 | Ticket                          | Issue | What                                                                   | Size | Depends on | Milestone       |
 | ------------------------------- | ----- | ---------------------------------------------------------------------- | ---- | ---------- | --------------- |
 | <a id="b-ann-01"></a>B-ANN-01   | #293  | A "tell me when registration opens" list for the first hackathon       | M    | #172       | First hackathon |
-| <a id="b-ann-02"></a>B-ANN-02 ★ | #294  | Announce the first hackathon on the Algeria page and every city page   | S    | —          | First hackathon |
+| <a id="b-ann-02"></a>B-ANN-02 ★ | #294  | Announce the first hackathon on Algerian city pages                    | S    | —          | First hackathon |
 | <a id="b-ann-03"></a>B-ANN-03   | #295  | The form on the announcement: tell me when registration opens          | S    | #293, #294 | First hackathon |
 | <a id="b-ann-04"></a>B-ANN-04 ⚙ | #296  | Add the hackathon interest list to the privacy policy                  | S    | #293       | First hackathon |
 | <a id="b-ann-05"></a>B-ANN-05   | #297  | Email the interest list when registration opens                        | S    | #293, #237 | First hackathon |
@@ -253,7 +253,7 @@ The hackathon itself: its details, timeline, tracks, prizes and rubric, the orga
 | <a id="b-hkn-17"></a>B-HKN-17 ★ | #228  | Hackathon page: schedule and current phase                                                            | S    | #213, #219                   | First hackathon |
 | <a id="b-hkn-18"></a>B-HKN-18 ★ | #229  | Hackathon page: tracks and confirmed prizes                                                           | S    | #228, #215                   | First hackathon |
 | <a id="b-hkn-19"></a>B-HKN-19   | #235  | Hackathon page: rules, eligibility, AI policy and judges                                              | S    | #228, #234                   | First hackathon |
-| <a id="b-hkn-20"></a>B-HKN-20   | #236  | Hackathons on the market page                                                                         | S    | #228                         | First hackathon |
+| <a id="b-hkn-20"></a>B-HKN-20   | #236  | Hackathons in the market's regular event feed                                                         | S    | #228                         | First hackathon |
 | <a id="b-hkn-21"></a>B-HKN-21   | #237  | Schedule hackathon reminders                                                                          | M    | #219, #177                   | First hackathon |
 | <a id="b-hkn-22"></a>B-HKN-22   | #240  | Participants, organisers, judges and mentors use the hackathon chat, open until 30 days after results | S    | #239, #234                   | First hackathon |
 | <a id="b-hkn-25"></a>B-HKN-25   | #301  | Mentors for a hackathon                                                                               | S    | #218, #233                   | First hackathon |

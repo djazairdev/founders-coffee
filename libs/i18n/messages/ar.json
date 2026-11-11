@@ -1700,8 +1700,6 @@
   "admin_hkn_decided": "حُفظ القرار، وسيُبلَّغ المنظمون بالبريد.",
   "admin_hkn_stale": "تغيّر هذا الهاكاثون منذ تحميل القائمة. القائمة محدّثة الآن.",
   "admin_hkn_decision_failed": "تعذّر حفظ القرار.",
-  "hackathon_market_heading": "الهاكاثونات",
-  "hackathon_market_empty": "لا هاكاثونات قادمة هنا بعد.",
   "hackathon_mentors_heading": "المرشدون",
   "hackathon_mentor_helps_with": "مجالات المساعدة",
   "hackathon_mentor_office_hours": "ساعات الاستقبال",
