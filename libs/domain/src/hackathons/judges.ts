@@ -8,6 +8,11 @@ export const HACKATHON_JUDGE_LIMIT = HACKATHON_PLACE_LIMIT;
 
 export const placeTokenSchema = z.string().regex(/^[A-Za-z0-9_-]{43}$/);
 
+export const hackathonPlaceInvitePreviewSchema = z.strictObject({
+  role: z.enum(['judge', 'mentor']),
+  token: placeTokenSchema,
+});
+
 export const hackathonJudgeInviteSchema = z.strictObject({ eventId: idSchema });
 
 export const hackathonJudgeRemoveSchema = z.strictObject({

@@ -32,19 +32,22 @@ export const useHackathonSubmissionForm = ({
   tracks,
   entry,
   aiPolicy,
+  isReadOnly,
   locale,
 }: {
   eventId: string;
   tracks: SubmissionPageView['tracks'];
   entry: SubmissionPageView['entry'];
   aiPolicy: HackathonAiPolicy;
+  isReadOnly: boolean;
   locale: Locale;
 }) => {
   const save = useSaveSubmissionDraft(eventId);
   const send = useSubmitSubmission(eventId);
-  const [form, setForm] = useState<SubmissionFormDraft>(() =>
+  const [draft, setForm] = useState<SubmissionFormDraft>(() =>
     formDraftOf(entry),
   );
+  const form = isReadOnly ? formDraftOf(entry) : draft;
   const [errors, setErrors] = useState<SubmissionFormErrors>({});
   const [savedVersion, setSavedVersion] = useState(0);
   const [isDirty, setIsDirty] = useState(false);

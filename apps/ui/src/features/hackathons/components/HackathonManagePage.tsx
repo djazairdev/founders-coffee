@@ -30,6 +30,7 @@ import { HackathonPrizesSection } from './HackathonPrizesSection';
 import { HackathonResultsPanel } from './HackathonResultsPanel';
 import { HackathonReviewBanner } from './HackathonReviewBanner';
 import { HackathonReviewSection } from './HackathonReviewSection';
+import { HackathonRoleRoster } from './HackathonRoleRoster';
 import { HackathonRubricSection } from './HackathonRubricSection';
 import { HackathonTeamsList } from './HackathonTeamsList';
 import { HackathonTracksSection } from './HackathonTracksSection';
@@ -102,6 +103,10 @@ export const HackathonManagePage = ({
 
   const kickoff = momentOf(draft.event.startsAt, locale, timeZone);
   const demoDay = momentOf(draft.event.endsAt, locale, timeZone);
+  const canChangeRoles =
+    draft.details !== null &&
+    draft.event.status !== 'cancelled' &&
+    Date.now() < draft.details.judgingEndsAt;
 
   return (
     <div className="mx-auto w-full max-w-2xl px-4 py-8 sm:py-12">
@@ -133,6 +138,22 @@ export const HackathonManagePage = ({
         timeZone={timeZone}
         markets={markets}
       />
+      {draft.details !== null ? (
+        <>
+          <HackathonRoleRoster
+            eventId={eventId}
+            role="judge"
+            canChange={canChangeRoles}
+            locale={locale}
+          />
+          <HackathonRoleRoster
+            eventId={eventId}
+            role="mentor"
+            canChange={canChangeRoles}
+            locale={locale}
+          />
+        </>
+      ) : null}
       {draft.event.status === 'published' ? (
         <>
           <HackathonParticipantsList eventId={draft.event.id} locale={locale} />

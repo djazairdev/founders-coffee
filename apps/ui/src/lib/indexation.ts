@@ -62,6 +62,7 @@ const LEGACY_PRIVATE_ADDRESS = /^\/(?:account|activity|preferences)(?:\/|$)/iu;
 const HOST_WIZARD = /^\/(?:[^/]+\/){1,2}host\/create(?:\/|$)/iu;
 const HACKATHON_SCREEN =
   /^\/(?:[^/]+\/)?hackathon\/[^/]+\/(?:manage|team|looking|submit|judge)(?:\/|$)/iu;
+const HACKATHON_INVITATION = /^\/(?:[^/]+\/)?hackathon\/invitation(?:\/|$)/iu;
 const PROJECT_SCREEN = /^\/(?:[^/]+\/)?p\/[^/]+\/[^/]/iu;
 const ORGANISATION_SCREEN =
   /^\/(?:[^/]+\/)?o\/(?:apply|invitations|[^/]+\/[^/]+)(?:\/|$)/iu;
@@ -133,6 +134,7 @@ export const isPrivatePath = (pathname: string): boolean => {
     LEGACY_PRIVATE_ADDRESS.test(path) ||
     HOST_WIZARD.test(path) ||
     HACKATHON_SCREEN.test(path) ||
+    HACKATHON_INVITATION.test(path) ||
     ORGANISATION_SCREEN.test(path) ||
     PROJECT_SCREEN.test(path)
   );
@@ -168,6 +170,8 @@ export const withPrivateRouteHeaders = (
   if (!isPrivatePath(pathname)) return response;
   const headers = new Headers(response.headers);
   headers.set('Cache-Control', PRIVATE_DOCUMENT_CACHE_CONTROL);
+  if (HACKATHON_INVITATION.test(routedPath(pathname)))
+    headers.set('Referrer-Policy', 'no-referrer');
   if (!isRenderedProfilePage(response, pathname))
     headers.set('X-Robots-Tag', NO_INDEX_VALUE);
   return new Response(response.body, {

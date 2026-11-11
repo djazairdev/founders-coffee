@@ -81,6 +81,8 @@ export type {
   MentorInviteCreated,
   OrganiserMentorView,
 } from './mentors.js';
+export { getHackathonPlaceInvite } from './place-invite-rpc.js';
+export type { PlaceInviteView } from './place-invite.js';
 export {
   getHackathonJudgeEntries,
   getHackathonJudgeEntryPage,

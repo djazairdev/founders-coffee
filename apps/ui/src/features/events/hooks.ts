@@ -199,10 +199,14 @@ export const useInvalidateCreatedEvent = () => {
  * so the map moves across to it rather than dropping back to its skeleton, and the search box they
  * are typing in stays enabled. A first load still has nothing to show, and waits.
  */
-export const useHostMapContext = (input: HostMapLocationInput) =>
+export const useHostMapContext = (
+  input: HostMapLocationInput,
+  isEnabled = true,
+) =>
   useQuery<HostMapContext>({
     queryKey: ['events', 'host-map', input],
     queryFn: () => eventsApi.getHostMapContext({ data: input }),
+    enabled: isEnabled,
     placeholderData: keepPreviousData,
     staleTime: 30 * 60_000,
     retry: false,

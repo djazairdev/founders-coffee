@@ -80,6 +80,8 @@ vi.mock('../results-hooks', () => ({
   useRemindHackathonJudges: () => ({ mutate: vi.fn() }),
 }));
 
+vi.mock('./HackathonRoleRoster', () => ({ HackathonRoleRoster: () => null }));
+
 vi.mock('../hooks', () => ({
   useHackathonDraft: () => mocks.draft,
   useHackathonDashboard: () => mocks.dashboard,

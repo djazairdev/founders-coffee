@@ -98,6 +98,33 @@ describe('creating a hackathon draft (B-HKN-06, real D1)', () => {
     );
   });
 
+  it('creates an online draft without a map provider', async () => {
+    const result = await createHackathonDraftResolver(db, null, {
+      hostId: TEST_HOST_ID,
+      organisationId: 'org_hackathon_lead',
+      basics: basics({
+        format: 'online',
+        meetingUrl: 'https://meet.example.org/builders',
+        latitude: undefined,
+        longitude: undefined,
+        venueName: undefined,
+        venueAddress: undefined,
+      }),
+    });
+    if (!result.ok) throw result.error;
+    const [event] = await db
+      .select()
+      .from(events)
+      .where(eq(events.id, result.data.eventId));
+    expect(event).toMatchObject({
+      format: 'online',
+      cityCode: '1',
+      latitude: null,
+      longitude: null,
+      meetingUrl: 'https://meet.example.org/builders',
+    });
+  });
+
   it('writes a draft hackathon, its lead and its chat in one go, and no details yet', async () => {
     const result = await create(db);
     if (!result.ok) throw result.error;

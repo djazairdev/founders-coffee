@@ -41,6 +41,7 @@ export const HackathonSubmissionForm = ({
     tracks,
     entry,
     aiPolicy,
+    isReadOnly,
     locale,
   });
 

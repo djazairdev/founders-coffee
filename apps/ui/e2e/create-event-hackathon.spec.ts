@@ -77,7 +77,11 @@ const createDraft = async (
   const online = page.getByRole('radio', {
     name: t(locale, 'host_format_online'),
   });
+  const inPerson = page.getByRole('radio', {
+    name: t(locale, 'host_format_in_person'),
+  });
   await expect(async () => {
+    await page.locator('label', { has: inPerson }).click();
     await page.locator('label', { has: online }).click();
     await expect(page.locator('#host-meeting-url')).toBeVisible({
       timeout: 1_000,
@@ -246,23 +250,20 @@ test.describe('an organiser creates a hackathon and an admin approves it (B-LCH-
     });
 
     const adminContext = await browser.newContext({ baseURL: ADMIN_URL });
-    await adminContext.addCookies([
-      { name: 'PARAGLIDE_LOCALE', value: locale, url: ADMIN_URL },
-    ]);
     const admin = await adminContext.newPage();
     await signInToAdmin(admin, operatorEmail, '/hackathons?page=0');
     const card = admin.getByRole('listitem').filter({
       has: admin.getByRole('heading', { name: title }),
     });
     const approve = card.getByRole('button', {
-      name: t(locale, 'admin_hkn_approve'),
+      name: t('ar', 'admin_hkn_approve'),
     });
     await expect(approve).toBeVisible({ timeout: 60_000 });
     await expect(async () => {
       if (await approve.isVisible()) await approve.click({ timeout: 2_000 });
-      await expect(admin.getByText(t(locale, 'admin_hkn_decided'))).toBeVisible(
-        { timeout: 5_000 },
-      );
+      await expect(admin.getByText(t('ar', 'admin_hkn_decided'))).toBeVisible({
+        timeout: 5_000,
+      });
     }).toPass({ timeout: 60_000 });
     await adminContext.close();
 

@@ -25,6 +25,7 @@ import {
   listJudgesResolver,
   removeJudgeResolver,
 } from './judges.js';
+import { placeInviteResolver } from './place-invite.js';
 
 let db: Db;
 
@@ -73,6 +74,27 @@ const placesOf = async (eventId: string) => {
 };
 
 describe('judge invite links (B-JDG-03, real D1)', () => {
+  it('previews an invitation for its role and keeps used invitations private to the accepting member', async () => {
+    const { eventId } = await hackathonWithDetails(db, {}, true);
+    const { token } = await linkFor(eventId);
+    const preview = (userId: string, role: 'judge' | 'mentor' = 'judge') =>
+      placeInviteResolver(db, { role, token, userId });
+
+    expect(await preview(JUDGE)).toMatchObject({
+      ok: true,
+      data: { eventId, isAccepted: false, isDraft: false },
+    });
+    expect(codeOf(await preview(JUDGE, 'mentor'))).toBe(
+      'mentor_invite_invalid',
+    );
+    expect((await answer(token, JUDGE)).ok).toBe(true);
+    expect(await preview(JUDGE)).toMatchObject({
+      ok: true,
+      data: { eventId, isAccepted: true },
+    });
+    expect(codeOf(await preview(OTHER))).toBe('judge_invite_invalid');
+  });
+
   it('makes one link per judge, keeping only the token’s hash', async () => {
     const { eventId } = await hackathonWithDetails(db, {}, true);
 

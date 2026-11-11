@@ -11,6 +11,11 @@ import {
   WINNER,
   type Hackathon,
 } from './support/hackathon-judging';
+import {
+  acceptRole,
+  inviteRole,
+  MENTOR_HELP,
+} from './support/hackathon-role-invites';
 import { cleanupHackathon, turnOnHackathons } from './support/hackathons';
 import { t, type E2eLocale } from './support/messages';
 import { signInBackTo } from './support/profile-auth';
@@ -132,6 +137,7 @@ for (const locale of LOCALES) {
           hackathon.host.email,
           hackathon.scoringJudge.email,
           hackathon.recusingJudge.email,
+          hackathon.mentor.email,
           hackathon.winnerCaptain.email,
           hackathon.runnerUpCaptain.email,
         ],
@@ -145,22 +151,31 @@ for (const locale of LOCALES) {
       page,
     }) => {
       test.setTimeout(300_000);
+      const organiser = await pageIn(browser, locale, baseURL as string);
+      await signInBackTo(organiser, locale, hackathon.host.email, managePath);
+      const scorerLink = await inviteRole(organiser, locale, 'judge');
+      const recuserLink = await inviteRole(organiser, locale, 'judge');
+      const mentorLink = await inviteRole(organiser, locale, 'mentor');
+
       const scorer = await pageIn(browser, locale, baseURL as string);
-      await signInBackTo(
+      await acceptRole(
         scorer,
         locale,
         hackathon.scoringJudge.email,
-        judgePath,
+        scorerLink,
       );
+      await expect(
+        scorer.getByRole('link', { name: t(locale, 'hackathon_go_judging') }),
+      ).toHaveAttribute('href', judgePath);
       await scoreEntry(scorer, locale, hackathon, WINNER, [5, 5]);
       await scoreEntry(scorer, locale, hackathon, RUNNER_UP, [3, 3]);
 
       const recuser = await pageIn(browser, locale, baseURL as string);
-      await signInBackTo(
+      await acceptRole(
         recuser,
         locale,
         hackathon.recusingJudge.email,
-        judgePath,
+        recuserLink,
       );
       await recuseFrom(recuser, locale, hackathon, WINNER);
       await scoreEntry(recuser, locale, hackathon, RUNNER_UP, [2, 2]);
@@ -169,13 +184,21 @@ for (const locale of LOCALES) {
       expect(scoreCount(hackathon, hackathon.runnerUpId)).toBe(4);
       expect(recusalCount(hackathon)).toBe(1);
 
+      const mentor = await pageIn(browser, locale, baseURL as string);
+      await acceptRole(
+        mentor,
+        locale,
+        hackathon.mentor.email,
+        mentorLink,
+        true,
+      );
       await page.goto(eventPath);
       await expect(page.locator('h1').first()).toBeVisible({ timeout: 30_000 });
+      await expect(page.getByText(MENTOR_HELP, { exact: true })).toBeVisible();
       await expect(publicResults(page)).toHaveCount(0);
 
       endJudging(hackathon);
-      const organiser = await pageIn(browser, locale, baseURL as string);
-      await signInBackTo(organiser, locale, hackathon.host.email, managePath);
+      await organiser.reload();
       const publish = organiser.getByRole('button', {
         name: t(locale, 'hackathon_results_panel_publish'),
         exact: true,
@@ -212,6 +235,7 @@ for (const locale of LOCALES) {
 
       await scorer.context().close();
       await recuser.context().close();
+      await mentor.context().close();
       await organiser.context().close();
     });
   });
