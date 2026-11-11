@@ -41,6 +41,7 @@ export {
   hackathonJudgeAnswerSchema,
   hackathonJudgeInviteSchema,
   hackathonJudgeRemoveSchema,
+  hackathonPlaceInvitePreviewSchema,
   type HackathonJudgeAnswerInput,
 } from './judges.js';
 export {
@@ -55,6 +56,7 @@ export {
   type HackathonMentorNote,
 } from './mentors.js';
 export {
+  canChangePlaces,
   decidePlaceAnswer,
   decidePlaceChange,
   HACKATHON_PLACE_LIMIT,

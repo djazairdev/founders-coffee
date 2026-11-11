@@ -23,6 +23,7 @@ export const hackathonFor = (locale: E2eLocale) => {
     host: person('host'),
     scoringJudge: person('scorer'),
     recusingJudge: person('recuser'),
+    mentor: person('mentor'),
     winnerCaptain: person('winner'),
     runnerUpCaptain: person('runner'),
     slug: `e2e-hkn-judging-${locale}-${RUN_ID}`,
@@ -54,8 +55,7 @@ const seedEntry = (
 };
 
 /**
- * A hackathon in judging: submissions closed an hour ago with two entries in, two criteria, two
- * judges who accepted, and judging open for another day.
+ * A hackathon in judging with two entries, two criteria, and time to invite judges and mentors.
  */
 export const seed = (hackathon: Hackathon): void => {
   const now = nowSeconds();
@@ -66,6 +66,7 @@ export const seed = (hackathon: Hackathon): void => {
     hackathon.host,
     hackathon.scoringJudge,
     hackathon.recusingJudge,
+    hackathon.mentor,
     hackathon.winnerCaptain,
     hackathon.runnerUpCaptain,
   ];
@@ -86,12 +87,6 @@ export const seed = (hackathon: Hackathon): void => {
         .map(
           (id, position) =>
             `INSERT INTO hackathon_criteria (id, event_id, name, description, weight, scale, position) VALUES ('${id}', '${eventId}', 'Criterion ${position + 1}', 'How well the entry does.', ${position === 0 ? 60 : 40}, 5, ${position}); `,
-        )
-        .join('') +
-      [hackathon.scoringJudge, hackathon.recusingJudge]
-        .map(
-          ({ id }) =>
-            `INSERT INTO hackathon_judges (id, event_id, user_id, status, token_hash, invited_by, responded_at) VALUES ('${newId('jdg')}', '${eventId}', '${id}', 'accepted', '${newId('tkn')}', '${host.id}', ${deadline}); `,
         )
         .join('') +
       `INSERT INTO organization (id, name, slug, kind, status, market_code, description) VALUES ('${hackathon.organisationId}', 'E2E organisers ${RUN_ID}', '${hackathon.slug}', 'club', 'approved', 'DZ', 'Seeded to organise a hackathon.'); ` +

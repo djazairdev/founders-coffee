@@ -17,6 +17,7 @@ import {
   removeMentorResolver,
   saveMentorNoteResolver,
 } from '../mentors.js';
+import { placeInviteResolver } from '../place-invite.js';
 import {
   everyone,
   everyoneBut,
@@ -76,6 +77,21 @@ const judgePageCells = (): Cells => {
 };
 
 export const JUDGING_OPERATIONS: Operations = {
+  getHackathonPlaceInvite: {
+    gate: may('hackathon', 'register'),
+    needs: 'judgeAnswers',
+    run: ({ db, world, actor, userId }) =>
+      placeInviteResolver(db, {
+        role: 'judge',
+        token: world.answerTokens[actor] ?? '',
+        userId,
+      }),
+    cells: inEveryPhase(everyone('ok'), {
+      judged: everyone('judging_closed'),
+      results: everyone('judging_closed'),
+      cancelled: everyone('hackathon_not_editable'),
+    }),
+  },
   getHackathonJudgeEntries: {
     gate: may('judging', 'score'),
     run: (call) => listJudgeEntriesResolver(call.db, selfOf(call)),

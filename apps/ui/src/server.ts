@@ -232,11 +232,9 @@ export default {
           request,
           await handler.fetch(request, requestOptions),
         );
-        return secure(
-          withPrivateRouteHeaders(
-            removeEarlyHintsFromResponse(response),
-            url.pathname,
-          ),
+        return withPrivateRouteHeaders(
+          secure(removeEarlyHintsFromResponse(response)),
+          url.pathname,
         );
       },
     );

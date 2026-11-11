@@ -32,6 +32,7 @@ export const useHackathonJudgingProgress = (eventId: string) =>
   useQuery<JudgingProgressView>({
     queryKey: [...RESULTS, eventId, 'judges'],
     queryFn: () => hackathonResultsApi.judges(eventId),
+    refetchOnWindowFocus: 'always',
   });
 
 /** Remind the judges who still have scores to give. */
