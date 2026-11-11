@@ -2049,5 +2049,17 @@
   "hackathon_role_judge_prompt": "يدعوك المنظمون إلى تقييم مشاريع هذا الهاكاثون.",
   "hackathon_role_mentor_prompt": "يدعوك المنظمون إلى إرشاد الفرق. أخبرهم كيف يمكنك مساعدتهم ومتى تكون متاحًا.",
   "hackathon_role_mentor_note_required": "اكتب نبذة قصيرة عما يمكنك المساعدة فيه.",
-  "hackathon_role_accepted": "قبلت الدعوة."
+  "hackathon_role_accepted": "قبلت الدعوة.",
+  "hackathon_organisers_label": "للمنظّمين",
+  "hackathon_organisers_title": "نظّم هاكاثونك القادم",
+  "hackathon_organisers_intro": "اجمع المشاركين حول تحدٍّ في هاكاثون ينظّمه ناديك أو مجتمعك أو شركتك. أدر التسجيل والمشاريع والتحكيم في مكان واحد.",
+  "hackathon_organisers_apply": "ابدأ تنظيم هاكاثون",
+  "hackathon_organisers_manage": "إدارة منظمتي",
+  "hackathon_organisers_note": "أضف منظمتك أولًا. نراجع المنظمة والهاكاثون قبل النشر.",
+  "hackathon_organisers_registration_title": "التسجيل والفرق",
+  "hackathon_organisers_registration_body": "افتح التسجيل، وحدّد عدد المشاركين وحجم الفرق.",
+  "hackathon_organisers_submissions_title": "المشاريع المقدّمة",
+  "hackathon_organisers_submissions_body": "استقبل مشاريع الفرق وروابطها قبل الموعد النهائي.",
+  "hackathon_organisers_judging_title": "التحكيم والنتائج",
+  "hackathon_organisers_judging_body": "ادعُ المحكّمين، وتابع التقييمات، وانشر النتائج والشهادات."
 }

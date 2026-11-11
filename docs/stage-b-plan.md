@@ -172,13 +172,14 @@ Flags, permissions, audit, metrics and a privacy guard every other group uses.
 
 Announce the first hackathon now, and collect who wants to take part, before the product exists.
 
-| Ticket                          | Issue | What                                                                 | Size | Depends on | Milestone       |
-| ------------------------------- | ----- | -------------------------------------------------------------------- | ---- | ---------- | --------------- |
-| <a id="b-ann-01"></a>B-ANN-01   | #293  | A "tell me when registration opens" list for the first hackathon     | M    | #172       | First hackathon |
-| <a id="b-ann-02"></a>B-ANN-02 ★ | #294  | Announce the first hackathon on the Algeria page and every city page | S    | —          | First hackathon |
-| <a id="b-ann-03"></a>B-ANN-03   | #295  | The form on the announcement: tell me when registration opens        | S    | #293, #294 | First hackathon |
-| <a id="b-ann-04"></a>B-ANN-04 ⚙ | #296  | Add the hackathon interest list to the privacy policy                | S    | #293       | First hackathon |
-| <a id="b-ann-05"></a>B-ANN-05   | #297  | Email the interest list when registration opens                      | S    | #293, #237 | First hackathon |
+| Ticket                          | Issue | What                                                                   | Size | Depends on | Milestone       |
+| ------------------------------- | ----- | ---------------------------------------------------------------------- | ---- | ---------- | --------------- |
+| <a id="b-ann-01"></a>B-ANN-01   | #293  | A "tell me when registration opens" list for the first hackathon       | M    | #172       | First hackathon |
+| <a id="b-ann-02"></a>B-ANN-02 ★ | #294  | Announce the first hackathon on the Algeria page and every city page   | S    | —          | First hackathon |
+| <a id="b-ann-03"></a>B-ANN-03   | #295  | The form on the announcement: tell me when registration opens          | S    | #293, #294 | First hackathon |
+| <a id="b-ann-04"></a>B-ANN-04 ⚙ | #296  | Add the hackathon interest list to the privacy policy                  | S    | #293       | First hackathon |
+| <a id="b-ann-05"></a>B-ANN-05   | #297  | Email the interest list when registration opens                        | S    | #293, #237 | First hackathon |
+| <a id="b-ann-06"></a>B-ANN-06   | #518  | Home-page section for organisers, with hackathon tools and setup links | S    | #186, #187 | First hackathon |
 
 ### Organisations
 

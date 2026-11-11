@@ -14,6 +14,7 @@ import {
   isAnnouncementShown,
 } from '../../content/hackathon/announcement';
 import { MarketHackathons } from '../../features/hackathons/components/MarketHackathons';
+import { HackathonOrganisers } from '../../features/hackathons/components/HackathonOrganisers';
 
 import { DiscoverFeed } from './DiscoverFeed';
 import { HackathonAnnouncement } from './HackathonAnnouncement';
@@ -71,6 +72,10 @@ export const MarketLanding = ({
         hackathons={hackathons}
         isAnnounced={isAnnounced}
         className="mx-auto max-w-content px-4 pt-10 md:px-8 md:pt-14"
+      />
+      <HackathonOrganisers
+        locale={locale}
+        isEnabled={market.featureFlags.hackathons}
       />
       <TrendingStates locale={locale} market={market} trending={trending} />
       <DiscoverFeed

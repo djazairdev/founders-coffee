@@ -2175,5 +2175,17 @@
   "hackathon_role_judge_prompt": "Les organisateurs vous invitent à évaluer les projets de ce hackathon.",
   "hackathon_role_mentor_prompt": "Les organisateurs vous invitent à accompagner les équipes. Indiquez comment vous pouvez les aider et quand vous êtes disponible.",
   "hackathon_role_mentor_note_required": "Indiquez en quelques mots comment vous pouvez aider.",
-  "hackathon_role_accepted": "Vous avez accepté l’invitation."
+  "hackathon_role_accepted": "Vous avez accepté l’invitation.",
+  "hackathon_organisers_label": "Pour les organisateurs",
+  "hackathon_organisers_title": "Organisez votre prochain hackathon",
+  "hackathon_organisers_intro": "Rassemblez votre club, votre communauté ou votre entreprise autour d’un défi. Gérez les inscriptions, les projets et les évaluations au même endroit.",
+  "hackathon_organisers_apply": "Organiser un hackathon",
+  "hackathon_organisers_manage": "Gérer mon organisation",
+  "hackathon_organisers_note": "Ajoutez d’abord votre organisation. Les organisations et les hackathons sont validés avant leur publication.",
+  "hackathon_organisers_registration_title": "Inscriptions et équipes",
+  "hackathon_organisers_registration_body": "Ouvrez les inscriptions et fixez le nombre de participants et la taille des équipes.",
+  "hackathon_organisers_submissions_title": "Dépôt des projets",
+  "hackathon_organisers_submissions_body": "Recevez les projets et les liens des équipes avant la date limite.",
+  "hackathon_organisers_judging_title": "Jury et résultats",
+  "hackathon_organisers_judging_body": "Invitez le jury, suivez les évaluations et publiez les résultats et les certificats."
 }

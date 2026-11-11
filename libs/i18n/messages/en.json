@@ -1982,5 +1982,17 @@
   "hackathon_role_judge_prompt": "The organisers invite you to score submissions for this hackathon.",
   "hackathon_role_mentor_prompt": "The organisers invite you to support teams as a mentor. Tell teams what you can help with and when you’re available.",
   "hackathon_role_mentor_note_required": "Add a short note about what you can help with.",
-  "hackathon_role_accepted": "You accepted the invitation."
+  "hackathon_role_accepted": "You accepted the invitation.",
+  "hackathon_organisers_label": "For organisers",
+  "hackathon_organisers_title": "Run your next hackathon",
+  "hackathon_organisers_intro": "Bring your club, community or company together around a challenge. Manage registration, submissions and judging in one place.",
+  "hackathon_organisers_apply": "Start organising a hackathon",
+  "hackathon_organisers_manage": "Manage my organisation",
+  "hackathon_organisers_note": "Add your organisation first. We review organisations and hackathons before they go public.",
+  "hackathon_organisers_registration_title": "Registration and teams",
+  "hackathon_organisers_registration_body": "Open registration and set participant limits and team sizes.",
+  "hackathon_organisers_submissions_title": "Project submissions",
+  "hackathon_organisers_submissions_body": "Collect each team’s project and links before the deadline.",
+  "hackathon_organisers_judging_title": "Judging and results",
+  "hackathon_organisers_judging_body": "Invite judges, track scores, and publish results and certificates."
 }
