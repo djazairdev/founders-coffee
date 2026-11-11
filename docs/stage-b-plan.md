@@ -183,8 +183,8 @@ Announce the first hackathon now, and collect who wants to take part, before the
 
 B-ANN-06 includes an innovation statistic immediately before the organiser section.
 The figure is 83% from [BCG's Global Innovation Survey 2024](https://www.bcg.com/publications/2024/innovation-systems-need-a-reboot):
-surveyed companies ranking innovation among their top three priorities. The copy names the survey
-year and links to the report in all three locales. It describes the survey, not platform usage.
+surveyed companies ranking innovation among their top three priorities. The source citation names
+the survey year and links to the report in all three locales. It describes the survey, not platform usage.
 
 ### Organisations
 
