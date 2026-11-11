@@ -18,12 +18,13 @@ export const d1 = <T = Record<string, unknown>>(sql: string): T[] => {
     'd1',
     'execute',
     DATABASE,
-    REMOTE ? '--remote' : '--local',
+    ...(REMOTE
+      ? ['--remote', '--env', 'staging']
+      : ['--local', '--persist-to', '../../.wrangler/state']),
     '--json',
     '--command',
     sql,
   ];
-  if (REMOTE) args.splice(5, 0, '--env', 'staging');
   const raw = execFileSync('npx', args, {
     cwd: new URL('../../', import.meta.url).pathname,
     encoding: 'utf8',
