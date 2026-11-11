@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
 
 import { AppError } from '@founders-coffee/core';
 
@@ -12,6 +13,7 @@ import {
 } from './api';
 
 const SUBMISSION = ['hackathons', 'submission'] as const;
+const MAX_TIMER_DELAY = 2 ** 31 - 1;
 
 type DraftSave = {
   readonly version: number;
@@ -19,11 +21,48 @@ type DraftSave = {
 };
 
 /** The signed-in member's submission page for a hackathon (B-SUB-05). */
-export const useSubmissionPage = (eventId: string) =>
-  useQuery<SubmissionPageView>({
+export const useSubmissionPage = (eventId: string) => {
+  const query = useQuery<SubmissionPageView>({
     queryKey: [...SUBMISSION, eventId],
     queryFn: () => submissionsApi.page(eventId),
+    refetchOnWindowFocus: 'always',
   });
+  const { data, refetch } = query;
+  const [elapsedAt, setElapsedAt] = useState<number>();
+  const boundary =
+    data?.stage === 'building'
+      ? data.submissionDeadlineAt
+      : data?.stage === 'not_started'
+        ? data.kickoffAt
+        : undefined;
+
+  useEffect(() => {
+    if (boundary === undefined) return;
+    let timer: ReturnType<typeof setTimeout>;
+    const schedule = () => {
+      const delay = Math.max(0, boundary - Date.now());
+      timer = setTimeout(
+        () => {
+          if (Date.now() < boundary) {
+            schedule();
+            return;
+          }
+          setElapsedAt(boundary);
+          void refetch();
+        },
+        Math.min(delay, MAX_TIMER_DELAY),
+      );
+    };
+    schedule();
+    return () => clearTimeout(timer);
+  }, [boundary, refetch]);
+
+  const isPastDeadline =
+    data?.stage === 'building' && elapsedAt === data.submissionDeadlineAt;
+  return isPastDeadline
+    ? { ...query, data: { ...data, stage: 'closed' as const } }
+    : query;
+};
 
 /** Save the team's project as a draft, then read the page again whether it worked or not. */
 export const useSaveSubmissionDraft = (eventId: string) => {

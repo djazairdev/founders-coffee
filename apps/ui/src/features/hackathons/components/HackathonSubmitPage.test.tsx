@@ -241,6 +241,21 @@ describe('HackathonSubmitPage (B-SUB-05)', () => {
     expect(screen.queryByRole('button', { name: 'Save' })).toBeNull();
   });
 
+  it('shows the saved project when the deadline locks a form with unsaved edits', () => {
+    const view = submissionView({}, { status: 'submitted' });
+    const { rerender } = renderPage(view);
+    fireEvent.change(field('Project name'), { target: { value: 'Unsaved' } });
+    expect(field('Project name').value).toBe('Unsaved');
+
+    mocks.page.data = { ...view, stage: 'closed' };
+    rerender(
+      <HackathonSubmitPage eventId={EVENT_ID} locale="en" markets={markets} />,
+    );
+
+    expect(field('Project name').value).toBe('Ledger');
+    expect(field('Project name').readOnly).toBe(true);
+  });
+
   it('sends someone with no team to their team page, and says why to anyone not registered', () => {
     renderPage(submissionView({ team: null, tracks: [] }, null));
     expect(screen.getByText(/^Start or join a team first/u)).toBeTruthy();

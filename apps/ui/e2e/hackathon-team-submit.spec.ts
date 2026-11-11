@@ -234,6 +234,30 @@ for (const locale of LOCALES) {
         mate.getByText(t(locale, 'hackathon_submission_captain_only')),
       ).toBeVisible();
 
+      const deadline = nowSeconds() + 20;
+      d1(
+        `UPDATE hackathons SET submission_deadline_at = ${deadline} WHERE event_id = '${hackathon.eventId}'`,
+      );
+      await captain.reload();
+      const projectName = captain.locator('#hackathon-submission-title');
+      await expect(projectName).toHaveValue('Ledger');
+      await projectName.fill('An unsaved revision');
+      await expect(
+        captain.getByText(t(locale, 'hackathon_submission_closed')),
+      ).toBeVisible({ timeout: 30_000 });
+      await expect(projectName).toHaveValue('Ledger');
+      await expect(projectName).toHaveAttribute('readonly');
+      await expect(
+        captain.getByRole('button', {
+          name: t(locale, 'hackathon_submission_save'),
+          exact: true,
+        }),
+      ).toHaveCount(0);
+      expect(standing(hackathon)).toMatchObject({
+        status: 'submitted',
+        title: 'Ledger',
+      });
+
       await captain.context().close();
       await mate.context().close();
     });
