@@ -45,10 +45,6 @@ export const MarketLanding = ({
       market={market}
       cityEventCounts={cityEventCounts}
     />
-    <HackathonOrganisers
-      locale={locale}
-      isEnabled={market.featureFlags.hackathons}
-    />
     <TrendingStates locale={locale} market={market} trending={trending} />
     <DiscoverFeed
       locale={locale}
@@ -60,5 +56,9 @@ export const MarketLanding = ({
       type={type}
     />
     <HowItWorks locale={locale} marketSlug={market.slug} />
+    <HackathonOrganisers
+      locale={locale}
+      isEnabled={market.featureFlags.hackathons}
+    />
   </>
 );
