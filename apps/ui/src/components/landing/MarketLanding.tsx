@@ -12,6 +12,7 @@ import { HackathonOrganisers } from '../../features/hackathons/components/Hackat
 
 import { DiscoverFeed } from './DiscoverFeed';
 import { HowItWorks } from './HowItWorks';
+import { InnovationInsight } from './InnovationInsight';
 import { MarketHero } from './MarketHero';
 import { TrendingStates } from './TrendingStates';
 
@@ -56,6 +57,9 @@ export const MarketLanding = ({
       type={type}
     />
     <HowItWorks locale={locale} marketSlug={market.slug} />
+    {market.featureFlags.hackathons ? (
+      <InnovationInsight locale={locale} />
+    ) : null}
     <HackathonOrganisers
       locale={locale}
       isEnabled={market.featureFlags.hackathons}

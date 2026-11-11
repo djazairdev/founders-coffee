@@ -181,6 +181,11 @@ Announce the first hackathon now, and collect who wants to take part, before the
 | <a id="b-ann-05"></a>B-ANN-05   | #297  | Email the interest list when registration opens                        | S    | #293, #237 | First hackathon |
 | <a id="b-ann-06"></a>B-ANN-06   | #518  | Home-page section for organisers, with hackathon tools and setup links | S    | #186, #187 | First hackathon |
 
+B-ANN-06 includes an innovation statistic immediately before the organiser section.
+The figure is 83% from [BCG's Global Innovation Survey 2024](https://www.bcg.com/publications/2024/innovation-systems-need-a-reboot):
+surveyed companies ranking innovation among their top three priorities. The copy names the survey
+year and links to the report in all three locales. It describes the survey, not platform usage.
+
 ### Organisations
 
 Clubs, universities and companies apply, an admin approves them, and their members create events and hackathons.
