@@ -18,7 +18,7 @@ type HackathonCreateLoaderData = {
   organisation: OrganisationRoster;
   market: Market;
   city: geo.GeoCity | null;
-  mapboxToken: string;
+  mapboxToken: string | null;
 };
 
 const HackathonCreateRoute = () => {
@@ -73,7 +73,7 @@ export const Route = createFileRoute('/$locale/o/$slug/hackathons/new')({
       cityCode
         ? eventsApi.getCity({ data: { country: market.code, cityCode } })
         : null,
-      eventsApi.getMapboxToken(),
+      eventsApi.getOptionalMapboxToken(),
     ]);
     return { organisation, market, city: city ?? null, mapboxToken };
   },

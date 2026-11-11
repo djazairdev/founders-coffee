@@ -1,6 +1,10 @@
 export { getPublicAuthConfig } from './auth-config.js';
 export { hasAuthSession } from './auth-session.js';
-export { getFirebaseConfig, getMapboxToken } from './config.js';
+export {
+  getFirebaseConfig,
+  getMapboxToken,
+  getOptionalMapboxToken,
+} from './config.js';
 export { getGeoCountry } from './geo.js';
 export {
   getCities,

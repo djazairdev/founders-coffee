@@ -10,6 +10,7 @@ import {
   getHostMapContext,
   getMyJoinedEvents,
   getMapboxToken,
+  getOptionalMapboxToken,
   getMarket,
   getPublicAuthConfig,
   getRepeatEventTemplate,
@@ -60,6 +61,7 @@ export const eventsApi = {
   getMarket,
   getCity,
   getMapboxToken,
+  getOptionalMapboxToken,
   getPublicAuthConfig,
   getRepeatEventTemplate,
 };

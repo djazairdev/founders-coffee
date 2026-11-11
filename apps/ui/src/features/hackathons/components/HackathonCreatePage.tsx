@@ -10,6 +10,7 @@ import {
   hackathon_online_panel,
   hackathon_save_draft,
   hackathon_saving,
+  host_map_error,
   host_progress_label,
   host_step_progress,
   type Locale,
@@ -42,7 +43,7 @@ type HackathonCreatePageProps = {
   organisation: OrganisationRoster;
   market: Market;
   city: geo.GeoCity | null;
-  mapboxToken: string;
+  mapboxToken: string | null;
 };
 
 export const HackathonCreatePage = ({
@@ -58,17 +59,20 @@ export const HackathonCreatePage = ({
     latitude: number;
     longitude: number;
   } | null>(null);
-  const mapContext = useHostMapContext({
-    marketCode: market.code,
-    cityCode: city?.code,
-    locale,
-  });
   const wizard = useHackathonCreateWizard({
     locale,
     market,
     city,
     organisation,
   });
+  const mapContext = useHostMapContext(
+    {
+      marketCode: market.code,
+      cityCode: city?.code,
+      locale,
+    },
+    Boolean(mapboxToken && wizard.isVenueFormat),
+  );
   const headingRef = useRef<HTMLHeadingElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   useStepFocus(wizard.step, headingRef, scrollRef);
@@ -156,7 +160,7 @@ export const HackathonCreatePage = ({
             wizard={wizard}
             venueOverlay={venueOverlay}
             listCenter={listCenter}
-            isMapReady={!!mapContext.data}
+            isMapReady={Boolean(mapboxToken && mapContext.data)}
             onCitySelect={switchCity}
           />
         </div>
@@ -172,7 +176,12 @@ export const HackathonCreatePage = ({
           isMapStep ? '' : 'hidden lg:block'
         }`}
       >
-        {wizard.isVenueFormat ? (
+        {!wizard.isVenueFormat ? (
+          <HostOnlinePanel
+            locale={locale}
+            text={hackathon_online_panel({}, { locale })}
+          />
+        ) : mapboxToken ? (
           <HostMapPanel
             locale={locale}
             accessToken={mapboxToken}
@@ -197,10 +206,11 @@ export const HackathonCreatePage = ({
             {...venueOverlay.map}
           />
         ) : (
-          <HostOnlinePanel
-            locale={locale}
-            text={hackathon_online_panel({}, { locale })}
-          />
+          <div className="flex h-full items-center justify-center bg-base-200 p-6">
+            <StatusMessage variant="error">
+              {host_map_error({}, { locale })}
+            </StatusMessage>
+          </div>
         )}
       </div>
 

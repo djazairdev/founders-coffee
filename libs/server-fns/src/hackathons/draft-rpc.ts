@@ -48,10 +48,14 @@ export const createHackathonDraft = createServerFn({
   .handler(async ({ context, data }) => {
     const session = requireAuth(context.session);
     return handleResult(
-      createHackathonDraftResolver(getDb(), getMapProvider(), {
-        hostId: session.user.id,
-        organisationId: context.organisationId,
-        basics: data.hackathon,
-      }),
+      createHackathonDraftResolver(
+        getDb(),
+        data.hackathon.format === 'online' ? null : getMapProvider(),
+        {
+          hostId: session.user.id,
+          organisationId: context.organisationId,
+          basics: data.hackathon,
+        },
+      ),
     );
   });

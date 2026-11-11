@@ -70,7 +70,7 @@ const namedCity = (
  * Mohamed" tells an attendee nothing about which door to walk through.
  */
 const eventLocation = async (
-  mapProvider: MapProvider,
+  mapProvider: MapProvider | null,
   input: EventRowInput,
   locale: Locale,
 ): Promise<Result<EventPlacement>> => {
@@ -78,6 +78,11 @@ const eventLocation = async (
     return input.cityCode === undefined
       ? err(new AppError('validation_failed', 'An online event names its city'))
       : namedCity(input.marketCode, input.cityCode, null);
+
+  if (!mapProvider)
+    return err(
+      new AppError('env_missing', 'Venue lookup requires a map provider'),
+    );
 
   const located = await locatePoint(mapProvider, {
     marketCode: input.marketCode,
@@ -123,7 +128,7 @@ export const eventSlugCandidates = (
  */
 export const prepareEventRow = async (
   db: Db,
-  mapProvider: MapProvider,
+  mapProvider: MapProvider | null,
   request: EventRowRequest,
 ): Promise<Result<Omit<NewEvent, 'slug'>>> => {
   const { input, leadOrganisationId } = request;

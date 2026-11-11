@@ -32,7 +32,7 @@ export type CreateHackathonDraftInput = {
  */
 export const createHackathonDraftResolver = async (
   db: Db,
-  mapProvider: MapProvider,
+  mapProvider: MapProvider | null,
   input: CreateHackathonDraftInput,
 ): Promise<Result<HackathonDraftCreated>> => {
   const { basics, organisationId } = input;
