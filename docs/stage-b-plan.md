@@ -18,11 +18,11 @@ An audit of `develop` on 16 October 2026:
 | Area          | What exists                                                                                                                                                                                       | What Stage B needs                                                                          |
 | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
 | Events        | One kind of event: an in-person meetup of 30 minutes to 8 hours. `venue`, address and coordinates are required. Statuses are `published` and `cancelled`. Hosts can repeat their own past events. | Types, online and hybrid formats, hackathons up to 14 days, drafts, organisations as owners |
-| Organisers    | One global role per user (`member`, `host`, `moderator`, `admin`, `sponsor_contact`) through Better Auth's admin plugin                                                                           | Organisations with their own members and roles, and an approval step                        |
+| Organisers    | One global role per user (`member`, `host`, `moderator`, `admin`, `sponsor_contact`) through Better Auth's admin plugin                                                                           | Organisations with their own members and roles, active on registration                      |
 | Feature flags | `feature_flags.hackathons` exists in every market, set to `false`, and nothing reads it                                                                                                           | A reader and a clear state when it is off                                                   |
 | Notifications | An outbox (`scheduled_notifications`) and `NotificationScheduleDO`, one alarm per event; push and email                                                                                           | Hackathon categories and reminders, on the same machinery                                   |
 | Chat          | One chat per meetup for its host and everyone going                                                                                                                                               | The same chat for hackathon participants, organisers and judges                             |
-| Admin         | `apps/admin`: sign-in and a status page behind Cloudflare Access                                                                                                                                  | Review queues for organisations, hackathons and reports                                     |
+| Admin         | `apps/admin`: sign-in and a status page behind Cloudflare Access                                                                                                                                  | Hackathon and report review queues; organisation suspension and reinstatement               |
 | Uploads       | Profile photos only, through R2 and Cloudflare Images                                                                                                                                             | Submission screenshots, if a new bucket is approved                                         |
 | Payments      | `libs/payments` with a manual provider and order purposes for sponsorship, hosted challenges and prize payouts                                                                                    | Nothing in Stage B: no money moves (V2)                                                     |
 | Privacy       | Account closure with a tombstone, retention sweeps, a privacy policy in three languages                                                                                                           | Every new table in erasure and retention, and an updated policy                             |
@@ -56,7 +56,7 @@ An audit of `develop` on 16 October 2026:
 Better Auth 1.7's `organization` plugin provides organisations, members with roles (`owner`, `admin`, `member`), email invitations, an active organisation on the session and `hasPermission` checks with our own access-control statements. Stage B uses it this way:
 
 - **Fields we add** through `additionalFields`: `kind` (club, university, community, company, platform), `status` (pending, approved, rejected, suspended; never set by the client), `marketCode`, `cityCode`, `description` and `websiteUrl`.
-- **Approval:** anyone signed in may apply; a hook stores every new organisation as `pending`; only an admin approves it in `apps/admin`. Unapproved or suspended organisations can do nothing.
+- **Registration and review:** anyone signed in may register an organiser, which is immediately active. Members can create hackathons; each hackathon must pass publication review in `apps/admin`. Admins may suspend and reinstate an organiser for moderation. Existing pending registrations become active; historical rejected and suspended records remain blocked.
 - **No public endpoints:** every `/organization/*` HTTP endpoint is disabled. Our server functions call `auth.api.*`, so each action keeps our validation, rate limits, logs and error codes (AGENTS.md §10).
 - **Permissions:** `requireOrganisationPermission(resource, action)` checks organisation roles in one middleware, as `requirePermission` does for global roles.
 - **Invitations** expire after 7 days and need a verified email; the email goes through Cloudflare Email in three languages.
@@ -188,7 +188,7 @@ the survey year and links to the report in all three locales. It describes the s
 
 ### Organisations
 
-Clubs, universities and companies apply, an admin approves them, and their members create events and hackathons.
+Clubs, universities, communities and companies register and can immediately create events and hackathon drafts. Admins review each hackathon before publication and can suspend organisers for moderation.
 
 | Ticket                          | Issue | What                                                                              | Size | Depends on       | Milestone       |
 | ------------------------------- | ----- | --------------------------------------------------------------------------------- | ---- | ---------------- | --------------- |
@@ -197,7 +197,7 @@ Clubs, universities and companies apply, an admin approves them, and their membe
 | <a id="b-org-03"></a>B-ORG-03 ★ | #181  | Organisation schemas and status rules in the domain                               | S    | —                | First hackathon |
 | <a id="b-org-04"></a>B-ORG-04   | #182  | Server functions: apply for an organisation, list mine, edit its profile          | M    | #180, #181, #173 | First hackathon |
 | <a id="b-org-05"></a>B-ORG-05   | #183  | Invite members to an organisation by email                                        | M    | #182             | First hackathon |
-| <a id="b-org-06"></a>B-ORG-06   | #184  | Admin: review organisation applications                                           | M    | #182, #175       | First hackathon |
+| <a id="b-org-06"></a>B-ORG-06   | #184  | Admin: suspend and reinstate organisers                                           | M    | #182, #175       | First hackathon |
 | <a id="b-org-07"></a>B-ORG-07 ★ | #185  | Seed the founders.coffee organisation                                             | S    | #179             | First hackathon |
 | <a id="b-org-08"></a>B-ORG-08   | #186  | Page: apply for an organisation                                                   | S    | #182             | First hackathon |
 | <a id="b-org-09"></a>B-ORG-09   | #187  | Page: my organisation (status, members, invitations)                              | M    | #183, #186       | First hackathon |
@@ -205,7 +205,7 @@ Clubs, universities and companies apply, an admin approves them, and their membe
 | <a id="b-org-11"></a>B-ORG-11   | #189  | Public organisation page, with its SEO route type                                 | M    | #184             | Can follow      |
 | <a id="b-org-12"></a>B-ORG-12   | #190  | Account closure removes memberships and flags organisations left without an owner | S    | #179, #178       | First hackathon |
 
-B-ORG-04 / B-ORG-08: organiser applications collect the name, type, description and optional website. The server creates the organisation in Algeria (`DZ`) without a city, generates its address from the name, and retries unique-address collisions with random numeric suffixes. Names without a usable Latin address receive an `organisation` prefix with a numeric suffix. Saving submits the organiser registration for review.
+B-ORG-04 / B-ORG-08: organiser applications collect the name, type, description and optional website. The server creates the organisation in Algeria (`DZ`) without a city, generates its address from the name, and retries unique-address collisions with random numeric suffixes. Names without a usable Latin address receive an `organisation` prefix with a numeric suffix. Saving activates the organiser immediately and offers a create-hackathon action. Only hackathon publication requires review.
 
 ### Events
 
@@ -246,7 +246,7 @@ The hackathon itself: its details, timeline, tracks, prizes and rubric, the orga
 | <a id="b-hkn-03"></a>B-HKN-03   | #214  | Tracks, including the open-source track                                                               | S    | #212                         | First hackathon |
 | <a id="b-hkn-04"></a>B-HKN-04   | #215  | Prizes, public only once confirmed                                                                    | S    | #214                         | First hackathon |
 | <a id="b-hkn-05"></a>B-HKN-05 ★ | #216  | Judging criteria                                                                                      | S    | #212                         | First hackathon |
-| <a id="b-hkn-06"></a>B-HKN-06   | #217  | Create a hackathon draft as an approved organisation                                                  | M    | #213, #212, #180, #173, #204 | First hackathon |
+| <a id="b-hkn-06"></a>B-HKN-06   | #217  | Create a hackathon draft as an active organiser                                                       | M    | #213, #212, #180, #173, #204 | First hackathon |
 | <a id="b-hkn-07"></a>B-HKN-07   | #218  | Edit a hackathon, with fields locked once it moves on                                                 | M    | #217, #214, #215, #216       | First hackathon |
 | <a id="b-hkn-08"></a>B-HKN-08   | #219  | Submit for review; an admin approves or rejects                                                       | M    | #218, #175                   | First hackathon |
 | <a id="b-hkn-09"></a>B-HKN-09   | #220  | Admin: hackathon review queue                                                                         | M    | #219, #184                   | First hackathon |

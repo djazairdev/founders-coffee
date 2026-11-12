@@ -37,7 +37,7 @@ export type UpdateOrganisationRequest = z.input<
   typeof updateOrganisationSchema
 >;
 
-/** Apply for an organisation, which starts pending with the applicant as its owner (B-ORG-04). */
+/** Apply for an organisation, which is immediately active with the applicant as its owner (B-ORG-04). */
 export const applyForOrganisation = createServerFn({
   method: 'POST',
   strict: false,

@@ -547,6 +547,13 @@
       "when": 1793875602904,
       "tag": "0077_hackathon_submission_screenshots",
       "breakpoints": true
+    },
+    {
+      "idx": 78,
+      "version": "6",
+      "when": 1794497353460,
+      "tag": "0078_organiser_registration",
+      "breakpoints": true
     }
   ]
 }

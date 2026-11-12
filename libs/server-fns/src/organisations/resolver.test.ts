@@ -63,7 +63,7 @@ describe('organisation applications (B-ORG-04, real D1)', () => {
     await setHackathons(db, 'EG', false);
   });
 
-  it('files the organisation as pending, with the applicant as its owner', async () => {
+  it('files the organisation as active, with the applicant as its owner', async () => {
     const userId = await signUp();
     const input = application();
 
@@ -77,7 +77,7 @@ describe('organisation applications (B-ORG-04, real D1)', () => {
         kind: 'club',
         marketCode: 'DZ',
         cityCode: null,
-        status: 'pending',
+        status: 'approved',
         role: 'owner',
       },
     });

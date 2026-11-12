@@ -28,7 +28,6 @@ export {
 export {
   decideOrganisationStatus,
   ORGANISATION_DECISIONS,
-  ORGANISATION_REJECTION_NOTE_MIN_LENGTH,
   ORGANISATION_REVIEW_NOTE_MAX_LENGTH,
   organisationDecisionSchema,
   type OrganisationDecision,

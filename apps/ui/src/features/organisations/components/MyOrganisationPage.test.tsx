@@ -55,8 +55,8 @@ describe('MyOrganisationPage (B-ORG-09)', () => {
       await screen.findByRole('heading', { level: 1, name: 'Oran Makers' }),
     ).toBeTruthy();
     expect(mocks.mine).toHaveBeenCalledWith('oran-makers');
-    expect(screen.getByText('Approved')).toBeTruthy();
-    expect(screen.getByText('Approved on October 1, 2026')).toBeTruthy();
+    expect(screen.getByText('Active')).toBeTruthy();
+    expect(screen.getByText('Active since October 1, 2026')).toBeTruthy();
     expect(screen.getByText('Amina Kaci')).toBeTruthy();
     expect(screen.getByText('You')).toBeTruthy();
     expect(
@@ -92,9 +92,9 @@ describe('MyOrganisationPage (B-ORG-09)', () => {
     );
     renderPage();
 
-    expect(await screen.findByText('Waiting for review')).toBeTruthy();
-    expect(screen.getByText('Applied on October 20, 2026')).toBeTruthy();
-    expect(screen.getByText(/replies by email/)).toBeTruthy();
+    expect(await screen.findByText('Inactive')).toBeTruthy();
+    expect(screen.getByText('Registered on October 20, 2026')).toBeTruthy();
+    expect(screen.getByText(/Contact us for help/)).toBeTruthy();
     expect(screen.queryByRole('heading', { name: 'Members' })).toBeNull();
     expect(
       screen.queryByRole('button', { name: 'Send invitation' }),
@@ -114,7 +114,7 @@ describe('MyOrganisationPage (B-ORG-09)', () => {
     );
     renderPage();
 
-    expect(await screen.findByText('Not approved')).toBeTruthy();
+    expect(await screen.findByText('Disabled')).toBeTruthy();
     expect(screen.getByText('Decided on October 2, 2026')).toBeTruthy();
     expect(screen.getByText('The team’s note')).toBeTruthy();
     expect(screen.getByText('Add a website we can check.')).toBeTruthy();
@@ -169,9 +169,9 @@ describe('MyOrganisationPage (B-ORG-09)', () => {
     mocks.mine.mockResolvedValue(ownerView);
     renderPage('ar');
 
-    expect(await screen.findByText('معتمدة')).toBeTruthy();
+    expect(await screen.findByText('نشطة')).toBeTruthy();
     expect(screen.getByText('الأعضاء')).toBeTruthy();
     expect(screen.getByText('المالك')).toBeTruthy();
-    expect(screen.getByText(/^اعتُمدت في 1 /)).toBeTruthy();
+    expect(screen.getByText(/^نشطة منذ 1 /)).toBeTruthy();
   });
 });

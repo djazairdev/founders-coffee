@@ -36,7 +36,7 @@ export const readOrganisationMembership = async (
 };
 
 /**
- * File an application: the organisation as `pending`, with the applicant as its owner, in one batch.
+ * File an application: an immediately active organisation, with the applicant as its owner, in one batch.
  *
  * The owner row is selected from the organisation's own row, so a slug that was already taken
  * writes neither and the caller gets `undefined`; there is never an organisation without its owner.
@@ -52,7 +52,7 @@ export const createOrganisationApplication = async (
   const [created] = await batch(db, [
     db
       .insert(organization)
-      .values({ ...input.organisation, status: 'pending' })
+      .values({ ...input.organisation, status: 'approved' })
       .onConflictDoNothing({ target: organization.slug })
       .returning(),
     db.insert(member).select(

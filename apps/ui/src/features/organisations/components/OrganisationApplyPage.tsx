@@ -6,11 +6,15 @@ import {
   org_apply_sent_link,
   org_apply_sent_title,
   org_apply_title,
+  hackathon_create,
   type Locale,
 } from '@founders-coffee/i18n';
 import { StatusMessage } from '@founders-coffee/ui';
 
-import { localizedMyOrganisation } from '../../../lib/locale-routing';
+import {
+  localizedHackathonCreate,
+  localizedMyOrganisation,
+} from '../../../lib/locale-routing';
 import { OrganisationApplyForm } from './OrganisationApplyForm';
 
 type Stage =
@@ -32,6 +36,12 @@ export const OrganisationApplyPage = ({ locale }: { locale: Locale }) => {
           <StatusMessage variant="success">
             {org_apply_sent({ name: stage.name }, { locale })}
           </StatusMessage>
+          <Link
+            {...localizedHackathonCreate(locale, stage.slug)}
+            className="btn btn-primary btn-xs sm:btn-sm md:btn-md"
+          >
+            {hackathon_create({}, { locale })}
+          </Link>
           <Link
             {...localizedMyOrganisation(locale, stage.slug)}
             className="link link-hover font-medium text-secondary"
