@@ -34,4 +34,4 @@ export {
   type OrganisationDecision,
   type OrganisationDecisionInput,
 } from './decisions.js';
-export { suggestOrganisationSlug } from './slug.js';
+export { organisationSlugFor, suggestOrganisationSlug } from './slug.js';

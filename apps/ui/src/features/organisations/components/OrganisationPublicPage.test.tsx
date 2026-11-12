@@ -44,21 +44,21 @@ const page: OrganisationPage = {
 
 const TEXT = {
   ar: {
-    kind: 'نادي',
+    kind: 'نادي طلابي أو جامعي',
     upcoming: 'الفعاليات القادمة',
     past: 'الفعاليات السابقة',
     noPast: 'لا توجد فعاليات سابقة بعد.',
     website: 'الموقع الإلكتروني',
   },
   fr: {
-    kind: 'Club',
+    kind: 'Club étudiant ou universitaire',
     upcoming: 'Événements à venir',
     past: 'Événements passés',
     noPast: 'Aucun événement passé pour l’instant.',
     website: 'Site web',
   },
   en: {
-    kind: 'Club',
+    kind: 'Student or university club',
     upcoming: 'Upcoming events',
     past: 'Past events',
     noPast: 'No past events yet.',

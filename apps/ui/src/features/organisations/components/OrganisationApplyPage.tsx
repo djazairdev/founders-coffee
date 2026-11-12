@@ -2,7 +2,6 @@ import { Link } from '@tanstack/react-router';
 import { useState } from 'react';
 
 import {
-  org_apply_intro,
   org_apply_sent,
   org_apply_sent_link,
   org_apply_sent_title,
@@ -12,22 +11,13 @@ import {
 import { StatusMessage } from '@founders-coffee/ui';
 
 import { localizedMyOrganisation } from '../../../lib/locale-routing';
-import type { RootMarket } from '../../markets/api';
 import { OrganisationApplyForm } from './OrganisationApplyForm';
 
 type Stage =
   | { readonly kind: 'form' }
   | { readonly kind: 'sent'; readonly name: string; readonly slug: string };
 
-export const OrganisationApplyPage = ({
-  locale,
-  markets,
-  defaultMarketCode,
-}: {
-  locale: Locale;
-  markets: readonly RootMarket[];
-  defaultMarketCode: string;
-}) => {
+export const OrganisationApplyPage = ({ locale }: { locale: Locale }) => {
   const [stage, setStage] = useState<Stage>({ kind: 'form' });
   return (
     <div className="mx-auto w-full max-w-xl px-4 py-8 sm:py-12">
@@ -50,19 +40,12 @@ export const OrganisationApplyPage = ({
           </Link>
         </section>
       ) : (
-        <>
-          <p className="mt-2 text-body text-neutral">
-            {org_apply_intro({}, { locale })}
-          </p>
-          <div className="mt-6">
-            <OrganisationApplyForm
-              defaultMarketCode={defaultMarketCode}
-              locale={locale}
-              markets={markets}
-              onSent={(sent) => setStage({ kind: 'sent', ...sent })}
-            />
-          </div>
-        </>
+        <div className="mt-6">
+          <OrganisationApplyForm
+            locale={locale}
+            onSent={(sent) => setStage({ kind: 'sent', ...sent })}
+          />
+        </div>
       )}
     </div>
   );

@@ -14,12 +14,14 @@ import {
   type InviteMemberRequest,
   type MyOrganisationPage,
   type OrganisationPage,
+  type OrganisationView,
   type RemoveMemberRequest,
 } from '@founders-coffee/server-fns';
 
 export const organisationsApi = {
-  apply: (application: ApplyForOrganisationRequest) =>
-    applyForOrganisation({ data: application }),
+  apply: (
+    application: ApplyForOrganisationRequest,
+  ): Promise<OrganisationView> => applyForOrganisation({ data: application }),
   mine: (slug: string) => getMyOrganisation({ data: { slug } }),
   page: (slug: string) => getOrganisationPage({ data: { slug } }),
   invite: (request: InviteMemberRequest) =>

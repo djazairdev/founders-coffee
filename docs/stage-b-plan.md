@@ -205,6 +205,8 @@ Clubs, universities and companies apply, an admin approves them, and their membe
 | <a id="b-org-11"></a>B-ORG-11   | #189  | Public organisation page, with its SEO route type                                 | M    | #184             | Can follow      |
 | <a id="b-org-12"></a>B-ORG-12   | #190  | Account closure removes memberships and flags organisations left without an owner | S    | #179, #178       | First hackathon |
 
+B-ORG-04 / B-ORG-08: organiser applications collect the name, type, description and optional website. The server creates the organisation in Algeria (`DZ`) without a city, generates its address from the name, and retries unique-address collisions with random numeric suffixes. Names without a usable Latin address receive an `organisation` prefix with a numeric suffix. Saving submits the organiser registration for review.
+
 ### Events
 
 Event types, online and hybrid events, drafts, and who runs each event.

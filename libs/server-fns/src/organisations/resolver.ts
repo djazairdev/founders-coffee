@@ -1,6 +1,5 @@
-import { AppError, err, id, ok, type Result } from '@founders-coffee/core';
+import { AppError, err, ok, type Result } from '@founders-coffee/core';
 import {
-  createOrganisationApplication,
   getOrganisation,
   listOrganisationsOfUser,
   readOrganisationMembership,
@@ -12,6 +11,7 @@ import { geo, type organisations } from '@founders-coffee/domain';
 import { logger } from '@founders-coffee/observability';
 
 import { requireHackathonsEnabled } from '../hackathons/flag.js';
+import { createApplication } from './application.js';
 
 export type OrganisationView = {
   readonly id: string;
@@ -51,36 +51,25 @@ const checkCity = (
     ? new AppError('validation_failed', 'Choose a city in this market')
     : null;
 
-/**
- * File an application for an organisation, with the applicant as its owner (B-ORG-04).
- *
- * Anyone signed in may apply, in a market that has switched hackathons on; the organisation starts
- * `pending` and can do nothing until an admin approves it (B-ORG-06). A slug another organisation
- * holds is refused with `organisation_slug_taken`, and nothing is written.
- */
+/** Apply in Algeria with an allocated address and the applicant as owner (B-ORG-04). */
 export const applyForOrganisationResolver = async (
   db: Db,
   userId: string,
   application: organisations.OrganisationApplication,
 ): Promise<Result<OrganisationView>> => {
-  const closed = await requireHackathonsEnabled(db, application.marketCode);
+  const marketCode = 'DZ';
+  const closed = await requireHackathonsEnabled(db, marketCode);
   if (closed) return err(closed);
-  const city = checkCity(application.marketCode, application.cityCode);
-  if (city) return err(city);
-  const created = await createOrganisationApplication(db, {
-    organisation: { id: id('org'), ...application },
-    memberId: id('mem'),
-    userId,
-  });
+  const created = await createApplication(db, userId, application, marketCode);
   if (!created) {
     logger.warn('organisation.apply_refused', {
-      marketCode: application.marketCode,
+      marketCode,
       code: 'organisation_slug_taken',
     });
     return err(
       new AppError(
         'organisation_slug_taken',
-        'Another organisation already uses this address',
+        'Could not allocate an organisation address',
       ),
     );
   }

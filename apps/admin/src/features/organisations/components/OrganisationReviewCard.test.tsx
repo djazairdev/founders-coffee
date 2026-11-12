@@ -39,7 +39,7 @@ describe('an organisation in the review queue (B-ORG-06)', () => {
     renderCard();
 
     expect(screen.getByRole('heading', { name: 'Oran Makers' })).toBeTruthy();
-    expect(screen.getByText('Club')).toBeTruthy();
+    expect(screen.getByText('Student or university club')).toBeTruthy();
     expect(
       screen.getByText('Builders meeting every month in Oran.'),
     ).toBeTruthy();
